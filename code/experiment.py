@@ -279,6 +279,22 @@ def experiment(
     else:
         raise NotImplementedError
 
+    if variant["perturb"]:
+        if variant["perturb_per_layer"] and variant["perturb_absolute"]:
+            raise Exception("only one std value mode can be set at a time.")
+        elif not variant["perturb_per_layer"] and not variant["perturb_absolute"]:
+            raise Exception("set a std value")
+        
+        if variant["perturb_per_layer"]:
+            with torch.no_grad():
+                for p in model.parameters():
+                    orig_std = torch.std(p)
+                    p.add_(torch.normal(torch.zeros_like(p), orig_std * variant["perturb_per_layer"]))
+        elif variant["perturb_absolute"]:
+            with torch.no_grad():
+                for p in model.parameters():
+                    p.add_(torch.normal(torch.zeros_like(p), 1. * variant["perturb_absolute"]))
+                
     model = model.to(device=device)
 
     warmup_steps = variant["warmup_steps"]
@@ -353,11 +369,11 @@ if __name__ == "__main__":
     parser.add_argument("--learning_rate", "-lr", type=float, default=1e-4)
     parser.add_argument("--lm_learning_rate", "-lmlr", type=float, default=None)
     parser.add_argument("--weight_decay", "-wd", type=float, default=1e-4)
-    parser.add_argument("--warmup_steps", type=int, default=10000)
+    parser.add_argument("--warmup_steps", type=int, default=5000)
 
-    parser.add_argument("--num_eval_episodes", type=int, default=100)
-    parser.add_argument("--max_iters", type=int, default=40)
-    parser.add_argument("--num_steps_per_iter", type=int, default=2500)
+    parser.add_argument("--num_eval_episodes", type=int, default=10)
+    parser.add_argument("--max_iters", type=int, default=20)
+    parser.add_argument("--num_steps_per_iter", type=int, default=5000)
 
     parser.add_argument("--device", type=str, default="cuda")
     parser.add_argument("--pretrained_lm", type=str, default=None)
@@ -376,6 +392,11 @@ if __name__ == "__main__":
 
     parser.add_argument("--share_input_output_proj", action="store_true", default=False)
     parser.add_argument("--kmeans_mean", action="store_true", default=False)
+
+    parser.add_argument("--perturb", action="store_true", default=False)
+    parser.add_argument("--perturb_per_layer", type=float, default=None)
+    parser.add_argument("--perturb_absolute", type=float, default=None)
+
     args = parser.parse_args()
 
     experiment("gym-experiment", variant=vars(args))
