@@ -22,7 +22,7 @@ Follow the instructions in the [mujoco-py repo](https://github.com/openai/mujoco
 Then, dependencies can be installed with the following command:
 
 ```
-conda env create -f conda_env.yml
+conda env create -f environment.yml
 ```
 
 ### Downloading datasets
@@ -44,21 +44,24 @@ gdown --id 1-ziehUyca2eyu5sQRux_q8BkKCnHqOn1
 
 ### Example usage
 
-Experiments can be reproduced with the following:
+Once downloaded datasets and necessary checkpoints, modify example commands in `run.sh` file to reproduce or perturb weights.
 
+To run the commands on Greene, an `ext3` overlay install with all the dependencies is needed for the Singularity container. 
+For example, example commands can be run with: 
 ```
-python experiment.py --env hopper --dataset medium --model_type dt --pretrained_lm gpt2 \ # or path to chibiT
---gpt_kmeans --gpt_kmeans-const 0.1 
---
+singularity exec --nv \
+--overlay /path/to/your/overlay.ext3:rw \
+/scratch/work/public/singularity/cuda11.3.0-cudnn8-devel-ubuntu20.04.sif \
+/bin/bash -c "
+source /ext3/env.sh
+conda activate wikirl-gym
+python experiment.py --env hopper --dataset medium --model_type dt --seed 666  --pretrained_lm chibiT  --outdir "checkpoints/cibiT_kmeans_medium_positions_hopper_perturb_8e0_666" --extend_positions --gpt_kmeans 1000 --kmeans_cache "kmeans_cache/chibiv2_lm_1000.pt" --gpt_kmeans_const 0.1  --dropout 0.2 --share_input_output_proj --perturb --perturb_per_layer 8e0
+python experiment.py --env hopper --dataset medium --model_type dt --seed 42  --pretrained_lm chibiT  --outdir "checkpoints/cibiT_kmeans_medium_positions_hopper_perturb_8e0_42" --extend_positions --gpt_kmeans 1000 --kmeans_cache "kmeans_cache/chibiv2_lm_1000.pt" --gpt_kmeans_const 0.1  --dropout 0.2 --share_input_output_proj --perturb --perturb_per_layer 8e0
+python experiment.py --env hopper --dataset medium --model_type dt --seed 1024  --pretrained_lm chibiT  --outdir "checkpoints/cibiT_kmeans_medium_positions_hopper_perturb_8e0_1024" --extend_positions --gpt_kmeans 1000 --kmeans_cache "kmeans_cache/chibiv2_lm_1000.pt" --gpt_kmeans_const 0.1  --dropout 0.2 --share_input_output_proj --perturb --perturb_per_layer 8e0
+"
 ```
-
-The `run.sh` file has example commands.
-
-Adding `-w True` will log results to Weights and Biases.
-
 ## Citation
 
-Please cite our paper as:
 
 ```
 @misc{reid2022wikipedia,
