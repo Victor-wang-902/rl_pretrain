@@ -2,7 +2,7 @@ import gym
 import numpy as np
 import torch
 import wandb
-
+from logx import EpochLogger
 import argparse
 import pickle
 import random
@@ -33,6 +33,10 @@ def experiment(
     exp_prefix,
     variant,
 ):
+
+    logger = EpochLogger(variant["outdir"], variant["output_fname"], variant["exp_name"])
+    logger.save_config(locals())
+
     torch.manual_seed(variant["seed"])
     os.makedirs(variant["outdir"], exist_ok=True)
     device = variant.get("device", "cuda")
@@ -287,12 +291,36 @@ def experiment(
         
         if variant["perturb_per_layer"]:
             with torch.no_grad():
-                for p in model.parameters():
+                for n, p in model.named_parameters():
+                    if variant["perturb_transformer_only"]:
+                        if "transformer" not in n:
+                            continue
+                    if variant["perturb_attn_only"]:
+                        if "attn" not in n:
+                            continue
+                    if variant["perturb_mlp_only"]:
+                        if "mlp" not in n:
+                            continue
+                    if variant["perturb_ln_only"]:
+                        if "ln" not in n:
+                            continue
+                    if variant["not_perturb_attn"]:
+                        if "attn" in n:
+                            continue
+                    if variant["not_perturb_mlp"]:
+                        if "mlp" in n:
+                            continue
+                    if variant["not_perturb_ln"]:
+                        if "ln" in n:
+                            continue
                     orig_std = torch.std(p)
                     p.add_(torch.normal(torch.zeros_like(p), orig_std * variant["perturb_per_layer"]))
         elif variant["perturb_absolute"]:
             with torch.no_grad():
                 for p in model.parameters():
+                    if variant["perturb_transformer_only"]:
+                        if "transformer" not in p:
+                            continue
                     p.add_(torch.normal(torch.zeros_like(p), 1. * variant["perturb_absolute"]))
                 
     model = model.to(device=device)
@@ -341,6 +369,20 @@ def experiment(
             num_steps=variant["num_steps_per_iter"], iter_num=iter + 1, print_logs=True
         )
         print("HI2!")
+        logger.log_tabular("current_itr_train_time", outputs["time/training"])
+        logger.log_tabular("current_itr_train_loss_mean", outputs["training/train_loss_mean"])
+        logger.log_tabular("current_itr_train_loss_std", outputs["training/train_loss_std"])
+        logger.log_tabular("current_itr_eval_" + str(env_targets[0]) + "_return_mean", outputs["evaluation/target_" + str(env_targets[0]) + "_return_mean"])
+        logger.log_tabular("current_itr_eval_" + str(env_targets[0]) + "_return_std", outputs["evaluation/target_" + str(env_targets[0]) + "_return_std"])
+        logger.log_tabular("current_itr_eval_" + str(env_targets[0]) + "_length_mean", outputs["evaluation/target_" + str(env_targets[0]) + "_length_mean"])
+        logger.log_tabular("current_itr_eval_" + str(env_targets[0]) + "_length_std", outputs["evaluation/target_" + str(env_targets[0]) + "_length_std"])
+        logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_return_mean", outputs["evaluation/target_" + str(env_targets[1]) + "_return_mean"])
+        logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_return_std", outputs["evaluation/target_" + str(env_targets[1]) + "_return_std"])
+        logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_length_mean", outputs["evaluation/target_" + str(env_targets[1]) + "_length_mean"])
+        logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_length_std", outputs["evaluation/target_" + str(env_targets[1]) + "_length_std"])
+        logger.log_tabular("total_time", outputs["time/total"])
+        logger.log_tabular("current_eval_time", outputs["time/evaluation"])
+
         if log_to_wandb:
             wandb.log(outputs)
 
@@ -382,6 +424,9 @@ if __name__ == "__main__":
 
     parser.add_argument("--seed", type=int, default=666)
     parser.add_argument("--outdir", type=str, default=None)
+    parser.add_argument("--exp_name", type=str, default=None)
+    parser.add_argument("--output_fname", type=str, default="progress.csv")
+
     parser.add_argument("--fp16", action="store_true", default=False)
 
     parser.add_argument("--frozen", action="store_true", default=False)
@@ -394,9 +439,18 @@ if __name__ == "__main__":
     parser.add_argument("--kmeans_mean", action="store_true", default=False)
 
     parser.add_argument("--perturb", action="store_true", default=False)
+    parser.add_argument("--perturb_transformer_only", action="store_true", default=False)
+    parser.add_argument("--perturb_attn_only", action="store_true", default=False)
+    parser.add_argument("--perturb_mlp_only", action="store_true", default=False)
+    parser.add_argument("--perturb_ln_only", action="store_true", default=False)
+    parser.add_argument("--not_perturb_attn", action="store_true", default=False)
+    parser.add_argument("--not_perturb_mlp", action="store_true", default=False)
+    parser.add_argument("--not_perturb_ln", action="store_true", default=False)    
     parser.add_argument("--perturb_per_layer", type=float, default=None)
     parser.add_argument("--perturb_absolute", type=float, default=None)
+
 
     args = parser.parse_args()
 
     experiment("gym-experiment", variant=vars(args))
+
