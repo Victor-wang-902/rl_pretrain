@@ -33,6 +33,9 @@ if __name__ == '__main__':
         'model_type', '', 'dt',
                 ]
     indexes, actual_setting, total, exp_name_full = get_setting_and_exp_name_dt(settings, setting_id, exp_prefix)
+    print(actual_setting)
+    quit()
+
     print("##### TOTAL NUMBER OF VARIANTS: %d #####" % total)
 
     # modify default dt parameters with ones specificed by the setting id
