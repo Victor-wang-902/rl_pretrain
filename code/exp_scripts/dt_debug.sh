@@ -22,7 +22,7 @@ echo "SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo "Job ID: ${SLURM_ARRAY_TASK_ID}"
 
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/dt-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/dt-sandbox bash -c "
-cd /code/exp_scripts
+cd /code
 export PYTHONPATH=$PYTHONPATH:/code
-python dt_debug.py --setting ${SLURM_ARRAY_TASK_ID}
+python exp_scripts/dt_debug.py --setting ${SLURM_ARRAY_TASK_ID} --device cpu --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4 --num_eval_episodes 1
 "
