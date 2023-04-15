@@ -128,8 +128,8 @@ python experiment.py --env hopper --dataset medium --model_type dt --seed 666  -
 
 ```
 
-CPU debug runs
+Very quick CPU debug run: 
 ```
-python experiment.py --env hopper --dataset medium --model_type dt --seed 666 --outdir "/checkpoints/debug_run_666" --device cpu
+python experiment_new.py --env hopper --dataset medium --model_type dt --seed 666 --outdir "/checkpoints/debug_run_666" --device cpu --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4
 
 ```
