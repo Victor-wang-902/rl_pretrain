@@ -43,7 +43,7 @@ if __name__ == '__main__':
         variant[key] = value
 
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, actual_setting['seed'], data_dir)
-    variant["outdir"] = logger_kwargs["outdir"]
+    variant["outdir"] = logger_kwargs["output_dir"]
     variant["exp_name"] = logger_kwargs["exp_name"]
     variant["device"] = 'cpu'
 
