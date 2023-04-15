@@ -23,18 +23,18 @@ if __name__ == '__main__':
     variant = vars(dt_args)
     data_dir = '/checkpoints'
 
-    # parameter name - abbreviation - values
+    # each 3-tuple is:
+    # parameter name - abbreviation - values (this has to be a list)
     exp_prefix = 'dt'
     # env, dataset and seed values will be added to the end of the folder name string
+    # for each 3-tuple,
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'seed', '', [42, 666, 1024],
-        'model_type', '', 'dt',
+        'model_type', '', ['dt',],
                 ]
     indexes, actual_setting, total, exp_name_full = get_setting_and_exp_name_dt(settings, setting_id, exp_prefix)
-    print(actual_setting)
-    quit()
 
     print("##### TOTAL NUMBER OF VARIANTS: %d #####" % total)
 
