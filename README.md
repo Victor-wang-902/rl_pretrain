@@ -133,3 +133,10 @@ Very quick CPU debug run:
 python experiment_new.py --env hopper --dataset medium --model_type dt --seed 666 --outdir "/checkpoints/debug_run_666" --device cpu --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4
 
 ```
+
+Very quick CPU debug run for grid experiment: 
+```
+python exp_scripts/dt_debug.py --device cpu --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4
+
+```
+

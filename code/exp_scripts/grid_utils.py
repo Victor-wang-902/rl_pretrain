@@ -19,48 +19,7 @@ MUJOCO_9 = ['halfcheetah-medium-v2', 'halfcheetah-medium-replay-v2', 'halfcheeta
             ] # the ones prsented in IQL
 
 
-def setup_logger_kwargs(exp_name, seed=None, data_dir=None, datestamp=False):
-    """
-    Sets up the output_dir for a logger and returns a dict for logger kwargs.
-
-    If no seed is given and datestamp is false,
-
-    ::
-
-        output_dir = data_dir/exp_name
-
-    If a seed is given and datestamp is false,
-
-    ::
-
-        output_dir = data_dir/exp_name/exp_name_s[seed]
-
-    If datestamp is true, amend to
-
-    ::
-
-        output_dir = data_dir/YY-MM-DD_exp_name/YY-MM-DD_HH-MM-SS_exp_name_s[seed]
-
-    You can force datestamp=True by setting ``FORCE_DATESTAMP=True`` in
-    ``spinup/user_config.py``.
-
-    Args:
-
-        exp_name (string): Name for experiment.
-
-        seed (int): Seed for random number generators used by experiment.
-
-        data_dir (string): Path to folder where results should be saved.
-            Default is the ``DEFAULT_DATA_DIR`` in ``spinup/user_config.py``.
-
-        datestamp (bool): Whether to include a date and timestamp in the
-            name of the save directory.
-
-    Returns:
-
-        logger_kwargs, a dict containing output_dir and exp_name.
-    """
-
+def setup_logger_kwargs_dt(exp_name, seed=None, data_dir=None, datestamp=False):
     # Datestamp forcing
     datestamp = datestamp or FORCE_DATESTAMP
 
@@ -83,7 +42,7 @@ def setup_logger_kwargs(exp_name, seed=None, data_dir=None, datestamp=False):
     return logger_kwargs
 
 
-def get_setting_and_exp_name(settings, setting_number, exp_prefix, random_setting_seed=0, random_order=False):
+def get_setting_and_exp_name_dt(settings, setting_number, exp_prefix, random_setting_seed=0, random_order=False):
     np.random.seed(random_setting_seed)
     hypers, lognames, values_list = [], [], []
     hyper2logname = {}
@@ -116,9 +75,9 @@ def get_setting_and_exp_name(settings, setting_number, exp_prefix, random_settin
 
     exp_name_full = exp_prefix
     for hyper, value in actual_setting.items():
-        if hyper not in ['env_name', 'seed']:
+        if hyper not in ['env', 'dataset', 'seed']:
             exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value))
-    exp_name_full = exp_name_full + '_%s' % actual_setting['env_name']
+    exp_name_full = exp_name_full + '_%s_%s' % (actual_setting['env'], actual_setting['dataset'])
 
     return indexes, actual_setting, max_job, exp_name_full
 
