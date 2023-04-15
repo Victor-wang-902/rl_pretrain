@@ -25,16 +25,13 @@ if __name__ == '__main__':
 
     # parameter name - abbreviation - values
     exp_prefix = 'dt'
-    settings = ['model_type', '', 'dt',
-                ]
     # env, dataset and seed values will be added to the end of the folder name string
-    basic_settings = [
-                'env', '', MUJOCO_3_ENVS,
-                'dataset', '', MUJOCO_3_DATASETS,
-                'seed', '', [42, 666, 1024],
+    settings = [
+        'env', '', MUJOCO_3_ENVS,
+        'dataset', '', MUJOCO_3_DATASETS,
+        'seed', '', [42, 666, 1024],
+        'model_type', '', 'dt',
                 ]
-    settings = settings + basic_settings
-
     indexes, actual_setting, total, exp_name_full = get_setting_and_exp_name_dt(settings, setting_id, exp_prefix)
     print("##### TOTAL NUMBER OF VARIANTS: %d #####" % total)
 
