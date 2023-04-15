@@ -483,7 +483,7 @@ def set_dt_args(args_to_parse=None):
 
     parser.add_argument("--data_size", type=float, default=1.0)
 
-    if args_to_parse:
+    if args_to_parse is not None:
         args = parser.parse_args(args_to_parse)
     else:
         args = parser.parse_args()
