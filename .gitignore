@@ -1,0 +1,5 @@
+checkpoints
+wandb
+.idea/
+exp_scripts/logs/*.out
+exp_scripts/logs/*.err

@@ -412,8 +412,7 @@ def experiment(
         if log_to_wandb:
             wandb.log(outputs)
 
-
-if __name__ == "__main__":
+def set_dt_args(args_to_parse=None):
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", type=str, default="hopper")
     parser.add_argument(
@@ -471,14 +470,20 @@ if __name__ == "__main__":
     parser.add_argument("--perturb_ln_only", action="store_true", default=False)
     parser.add_argument("--not_perturb_attn", action="store_true", default=False)
     parser.add_argument("--not_perturb_mlp", action="store_true", default=False)
-    parser.add_argument("--not_perturb_ln", action="store_true", default=False)    
+    parser.add_argument("--not_perturb_ln", action="store_true", default=False)
     parser.add_argument("--perturb_per_layer", type=float, default=None)
     parser.add_argument("--perturb_absolute", type=float, default=None)
 
     parser.add_argument("--data_size", type=float, default=1.0)
 
+    if args_to_parse:
+        args = parser.parse_args(args_to_parse)
+    else:
+        args = parser.parse_args()
 
-    args = parser.parse_args()
+    return args
 
+if __name__ == "__main__":
+    args = set_dt_args()
     experiment("gym-experiment", variant=vars(args))
 

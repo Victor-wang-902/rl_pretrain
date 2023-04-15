@@ -77,3 +77,49 @@ python experiment.py --env hopper --dataset medium --model_type dt --seed 1024  
 ## License
 
 MIT
+
+### grid experiments 
+
+greene interactive session:
+```
+srun --pty --cpus-per-task=1 --mem 8000 -t 0-06:00 bash
+srun --pty --gres=gpu:1 --cpus-per-task=2 --mem 8000 -t 0-06:00 bash
+
+```
+
+
+### Set up DT sandbox
+Set up
+```
+module load singularity # not needed on greene
+cd /scratch/$USER/sing/
+singularity build --sandbox dt-sandbox docker://cwatcherw/dt:0.3
+```
+
+### Run
+```
+cd /scratch/$USER/sing
+singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/dt-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ /scratch/$USER/sing/dt-sandbox bash
+```
+
+### env variables
+```
+export PYTHONPATH=$PYTHONPATH:/code
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/workspace/.mujoco/mujoco210/bin
+export MUJOCO_PY_MUJOCO_PATH=/workspace/.mujoco/mujoco210/
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/nvidia/lib
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/workspace/.mujoco/mujoco210/bin
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia
+export MUJOCO_GL=egl
+cd /code
+```
+
+
+### runs
+```
+python experiment.py --env hopper --dataset medium --model_type dt --seed 666  --outdir "checkpoints/cibiT_kmeans_medium_positions_hopper_perturb_8e0_666" --extend_positions --gpt_kmeans 1000 --kmeans_cache "kmeans_cache/chibiv2_lm_1000.pt" --gpt_kmeans_const 0.1  --dropout 0.2 --share_input_output_proj --perturb --perturb_per_layer 8e0
+
+python experiment.py --env hopper --dataset medium --model_type dt --seed 666 --outdir "checkpoints/cibiT_kmeans_medium_positions_hopper_perturb_8e0_666"
+--
+
+```
