@@ -15,6 +15,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('--setting', type=int, default=0)
     parser.add_argument('--debug', type=int, default=0)
+    parser.add_argument('--seed', type=int, default=42)
     setting_args, remaining_args = parser.parse_known_args()
     setting_id = setting_args.setting
 
@@ -36,6 +37,8 @@ if __name__ == '__main__':
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting_id)
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
+    if 'seed' not in actual_setting:
+        actual_setting['seed'] = setting_args.seed
 
     print("##### TOTAL NUMBER OF VARIANTS: %d #####" % total)
 
