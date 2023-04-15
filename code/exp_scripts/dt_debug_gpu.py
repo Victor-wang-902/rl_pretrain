@@ -31,10 +31,11 @@ if __name__ == '__main__':
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
-        'seed', '', [42, 666, 1024],
         'model_type', '', ['dt',],
                 ]
-    indexes, actual_setting, total, exp_name_full = get_setting_and_exp_name_dt(settings, setting_id, exp_prefix)
+
+    indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting_id)
+    exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
 
     print("##### TOTAL NUMBER OF VARIANTS: %d #####" % total)
 
@@ -45,7 +46,6 @@ if __name__ == '__main__':
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, actual_setting['seed'], data_dir)
     variant["outdir"] = logger_kwargs["output_dir"]
     variant["exp_name"] = logger_kwargs["exp_name"]
-    variant["device"] = 'cpu'
 
     experiment("gym-experiment", variant=variant)
     print("Total time used: %.3f hours." % ((time.time() - start_time)/3600))
@@ -55,6 +55,11 @@ before you submit the jobs:
 - quick test your code to make sure things will run without bug
 - compute the number of jobs, make sure that is consistent with the array number in the .sh file
 - in the .sh file make sure you are running the correct python file 
+
+if doing parallel jobs on gpu, can for example run 3 seeds at the same time, 
+add seed as command line argument
+# 'seed', '', [42, 666, 1024],
+if doing cpu jobs then run 1 seed each job, add seeds to settings
 """
 
 

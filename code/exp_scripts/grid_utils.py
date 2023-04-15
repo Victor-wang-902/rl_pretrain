@@ -42,7 +42,51 @@ def setup_logger_kwargs_dt(exp_name, seed=None, data_dir=None, datestamp=False):
     return logger_kwargs
 
 
-def get_setting_and_exp_name_dt(settings, setting_number, exp_prefix, random_setting_seed=0, random_order=False):
+def get_setting_dt(settings, setting_number, random_setting_seed=0, random_order=False):
+    np.random.seed(random_setting_seed)
+    hypers, lognames, values_list = [], [], []
+    hyper2logname = {}
+    n_settings = int(len(settings)/3)
+    for i in range(n_settings):
+        hypers.append(settings[i*3])
+        lognames.append(settings[i*3+1])
+        values_list.append(settings[i*3+2])
+        hyper2logname[hypers[-1]] = lognames[-1]
+
+    total = 1
+    for values in values_list:
+        total *= len(values)
+    max_job = total
+
+    new_indexes = np.random.choice(total, total, replace=False) if random_order else np.arange(total)
+    new_index = new_indexes[setting_number]
+
+    indexes = []  ## this says which hyperparameter we use
+    remainder = new_index
+    for values in values_list:
+        division = int(total / len(values))
+        index = int(remainder / division)
+        remainder = remainder % division
+        indexes.append(index)
+        total = division
+    actual_setting = {}
+    for j in range(len(indexes)):
+        actual_setting[hypers[j]] = values_list[j][indexes[j]]
+
+    return indexes, actual_setting, max_job, hyper2logname
+
+def get_auto_exp_name(actual_setting, hyper2logname, exp_prefix=None, ):
+    exp_name_full = exp_prefix
+    for hyper, value in actual_setting.items():
+        if hyper not in ['env', 'dataset', 'seed']:
+            if exp_name_full is not None:
+                exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value))
+            else:
+                exp_name_full = '%s' % (hyper2logname[hyper] + str(value))
+    exp_name_full = exp_name_full + '_%s_%s' % (actual_setting['env'], actual_setting['dataset'])
+    return exp_name_full
+
+def get_setting_and_exp_name_dt(settings, setting_number, exp_prefix=None, random_setting_seed=0, random_order=False):
     np.random.seed(random_setting_seed)
     hypers, lognames, values_list = [], [], []
     hyper2logname = {}
@@ -76,7 +120,10 @@ def get_setting_and_exp_name_dt(settings, setting_number, exp_prefix, random_set
     exp_name_full = exp_prefix
     for hyper, value in actual_setting.items():
         if hyper not in ['env', 'dataset', 'seed']:
-            exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value))
+            if exp_name_full is not None:
+                exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value))
+            else:
+                exp_name_full = '%s' % (hyper2logname[hyper] + str(value))
     exp_name_full = exp_name_full + '_%s_%s' % (actual_setting['env'], actual_setting['dataset'])
 
     return indexes, actual_setting, max_job, exp_name_full
