@@ -1,4 +1,5 @@
 checkpoints
 wandb
-
+train_logs/
+trials/
 .idea/
