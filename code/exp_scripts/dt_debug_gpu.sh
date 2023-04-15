@@ -27,5 +27,5 @@ cd /code
 export PYTHONPATH=$PYTHONPATH:/code
 python exp_scripts/dt_debug_gpu.py --setting ${SLURM_ARRAY_TASK_ID} --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4 --num_eval_episodes 1 --seed 42 &
 python exp_scripts/dt_debug_gpu.py --setting ${SLURM_ARRAY_TASK_ID} --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4 --num_eval_episodes 1 --seed 666 &
-python exp_scripts/dt_debug_gpu.py --setting ${SLURM_ARRAY_TASK_ID} --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4 --num_eval_episodes 1 --seed 1024 &
+python exp_scripts/dt_debug_gpu.py --setting ${SLURM_ARRAY_TASK_ID} --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4 --num_eval_episodes 1 --seed 1024
 "
