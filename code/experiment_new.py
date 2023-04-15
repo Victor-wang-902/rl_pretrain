@@ -15,7 +15,7 @@ from decision_transformer.evaluation.evaluate_episodes import (
 from decision_transformer.models.decision_transformer import DecisionTransformer
 from decision_transformer.models.mlp_bc import MLPBCModel
 from decision_transformer.training.act_trainer import ActTrainer
-from decision_transformer.training.seq_trainer import SequenceTrainer
+from decision_transformer.training.seq_trainer_new import SequenceTrainer
 
 from utils import get_optimizer
 import os
@@ -41,7 +41,7 @@ def experiment(
     os.makedirs(variant["outdir"], exist_ok=True)
     device = variant.get("device", "cuda")
     log_to_wandb = variant.get("log_to_wandb", False)
-
+    seed = variant["seed"]
     env_name, dataset = variant["env"], variant["dataset"]
     model_type = variant["model_type"]
     group_name = f"{exp_prefix}-{env_name}-{dataset}"
@@ -84,6 +84,32 @@ def experiment(
     dataset_path = f"data/{env_name}-{dataset}-v2.pkl"
     with open(dataset_path, "rb") as f:
         trajectories = pickle.load(f)
+
+    np.random.seed(0) # for data size
+    num_traj = len(trajectories)
+    if variant["data_size"] != 1.0:
+        idx = np.random.choice(np.arange(num_traj, dtype=int), size=int(num_traj * variant["data_size"]), replace=False)
+        new_trajectories = []
+        for t_id in idx:
+            new_trajectories.append(trajectories[t_id])
+        trajectories = new_trajectories[:]
+        del new_trajectories
+        
+    def seed_numpy(epoch=None):
+        if epoch is not None:
+            seed_shift = epoch * 9999
+            mod_value = 9999999
+            env_seed = (seed + seed_shift) % mod_value
+            np.random.seed(env_seed)
+            random.seed(env_seed)
+
+    def seed_env(epoch=None, env=None):
+        if env is not None and epoch is not None:
+            seed_shift = epoch * 9999
+            mod_value = 999999
+            env_seed = (seed + seed_shift) % mod_value
+            env.seed(env_seed)
+            env.action_space.np_random.seed(env_seed)
 
     # save all path information into separate lists
     mode = variant.get("mode", "normal")
@@ -142,7 +168,6 @@ def experiment(
         for i in range(batch_size):
             traj = trajectories[int(sorted_inds[batch_inds[i]])]
             si = random.randint(0, traj["rewards"].shape[0] - 1)
-
             # get sequences from dataset
             s.append(traj["observations"][si : si + max_len].reshape(1, -1, state_dim))
             a.append(traj["actions"][si : si + max_len].reshape(1, -1, act_dim))
@@ -365,8 +390,9 @@ def experiment(
 
     for iter in range(variant["max_iters"]):
         print("HI!")
+
         outputs = trainer.train_iteration(
-            num_steps=variant["num_steps_per_iter"], iter_num=iter + 1, print_logs=True
+            num_steps=variant["num_steps_per_iter"], iter_num=iter + 1, seeder=seed_numpy, print_logs=True
         )
         print("HI2!")
         logger.log_tabular("current_itr_train_time", outputs["time/training"])
@@ -448,6 +474,8 @@ if __name__ == "__main__":
     parser.add_argument("--not_perturb_ln", action="store_true", default=False)    
     parser.add_argument("--perturb_per_layer", type=float, default=None)
     parser.add_argument("--perturb_absolute", type=float, default=None)
+
+    parser.add_argument("--data_size", type=float, default=1.0)
 
 
     args = parser.parse_args()
