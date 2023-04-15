@@ -21,7 +21,7 @@ if __name__ == '__main__':
     # arg parse for DT experiment
     dt_args = set_dt_args(remaining_args)
     variant = vars(dt_args)
-    data_dir = '/train_logs'
+    data_dir = '/checkpoints'
 
     # parameter name - abbreviation - values
     exp_prefix = 'dt'
