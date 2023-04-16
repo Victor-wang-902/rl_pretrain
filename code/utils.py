@@ -161,7 +161,8 @@ def calculate_feature_diff(
     print("=" * 50)
     batch_size = variant["batch_size"]
     K = variant["K"]
-
+    cur_model.eval()
+    init_model.eval()
     def yield_batch():
         s, a, r, d, rtg, timesteps, mask = [], [], [], [], [], [], []
         batch_id = 0
