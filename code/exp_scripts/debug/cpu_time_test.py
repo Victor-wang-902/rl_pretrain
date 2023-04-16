@@ -33,7 +33,7 @@ if __name__ == '__main__':
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'seed', '', [42, 666, 1024],
-        'model_type', '', ['bc',],
+        'model_type', '', ['dt',],
                 ]
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting_id)
