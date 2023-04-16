@@ -5,7 +5,7 @@ os.environ['LD_LIBRARY_PATH'] = ld_library_path
 os.environ['MUJOCO_GL'] = 'egl'
 os.environ['MUJOCO_PY_MUJOCO_PATH'] = '/workspace/.mujoco/mujoco210/'
 
-from grid_utils import *
+from exp_scripts.grid_utils import *
 from experiment_new import set_dt_args, experiment
 import time
 import argparse
