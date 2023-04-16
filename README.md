@@ -98,22 +98,10 @@ singularity build --sandbox dt-sandbox docker://cwatcherw/dt:0.3
 
 ### Run
 ```
-cd /scratch/$USER/sing
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/dt-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/dt-sandbox bash
 ```
 
 ### env variables
-```
-export PYTHONPATH=$PYTHONPATH:/code
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/workspace/.mujoco/mujoco210/bin
-export MUJOCO_PY_MUJOCO_PATH=/workspace/.mujoco/mujoco210/
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/nvidia/lib
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/workspace/.mujoco/mujoco210/bin
-export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia
-export MUJOCO_GL=egl
-```
-
-
 ```
 export PYTHONPATH=$PYTHONPATH:/code
 cd /code
@@ -121,12 +109,6 @@ cd /code
 
 
 ### runs
-```
-python experiment.py --env hopper --dataset medium --model_type dt --seed 666  --outdir "checkpoints/cibiT_kmeans_medium_positions_hopper_perturb_8e0_666" --extend_positions --gpt_kmeans 1000 --kmeans_cache "kmeans_cache/chibiv2_lm_1000.pt" --gpt_kmeans_const 0.1  --dropout 0.2 --share_input_output_proj --perturb --perturb_per_layer 8e0
-
---
-
-```
 
 Very quick CPU debug run: 
 ```
@@ -143,7 +125,49 @@ python exp_scripts/dt_debug.py --device cpu --embed_dim 3 --max_iters 3 --num_st
 
 Send back files for plotting: 
 ```
-cd code
+cd /scratch/$USER/sing/rl_pretrain/code
 rsync -av --exclude='*.pt' checkpoints/* sendback/
 zip -r send.zip sendback/
+```
+
+### common debug commands
+Check memory usage: 
+```
+ps -u $USER --no-headers -o rss | awk '{sum+=$1} END {printf "%.2f GB\n", sum/(1024*1024)}'
+```
+
+### data format
+```
+        # # data should have consistent format
+        # dt_lr0.01_hopper_medium
+        # - dt_lr0.01_hopper_medium_s42
+        # - dt_lr0.01_hopper_medium_s666
+        # - dt_lr0.01_hopper_medium_s1024
+        #   - extra.json
+        #   - progress.txt
+        #      - TestEpRet
+        #      - TestEpNormRet
+        #      - Iter
+        #      - Step
+
+        # bc_lr0.01_hopper_medium
+
+        """
+        extra_dict = {
+            'weight_diff':weight_diff,
+            'feature_diff':feature_diff, # take 10% trajectory, seed 0
+            'num_feature_data': 
+            'final_test_returns':final_test_returns,
+            'final_test_normalized_returns': final_test_normalized_returns,
+            'best_return': best_return,
+            'best_return_normalized':best_return_normalized,
+            'convergence_step':convergence_step,
+        }
+        logger.save_extra_dict_as_json(extra_dict, 'extra.json')
+        
+        10 11 14 15 14 15 15 
+        best normalized: 15 -> 
+        """
+
+
 ```
