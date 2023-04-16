@@ -83,7 +83,7 @@ MIT
 greene interactive session:
 ```
 srun --pty --cpus-per-task=1 --mem 8000 -t 0-06:00 bash
-srun --pty --gres=gpu:1 --cpus-per-task=2 --mem 8000 -t 0-06:00 bash
+srun --pty --gres=gpu:1 --cpus-per-task=4 --mem 8000 -t 0-06:00 bash
 
 ```
 
@@ -140,3 +140,10 @@ python exp_scripts/dt_debug.py --device cpu --embed_dim 3 --max_iters 3 --num_st
 
 ```
 
+
+Send back files for plotting: 
+```
+cd code
+rsync -av --exclude='*.pt' checkpoints/* sendback/
+zip -r send.zip sendback/
+```
