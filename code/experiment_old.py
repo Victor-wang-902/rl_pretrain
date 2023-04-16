@@ -1,10 +1,3 @@
-import os
-ld_library_path = os.environ.get('LD_LIBRARY_PATH', '')
-ld_library_path += ':/workspace/.mujoco/mujoco210/bin:/usr/local/nvidia/lib:/usr/lib/nvidia'
-os.environ['LD_LIBRARY_PATH'] = ld_library_path
-os.environ['MUJOCO_GL'] = 'egl'
-os.environ['MUJOCO_PY_MUJOCO_PATH'] = '/workspace/.mujoco/mujoco210/'
-
 import gym
 import numpy as np
 import torch
@@ -14,13 +7,6 @@ import argparse
 import pickle
 import random
 import sys
-from utils import get_normalized_score
-from utils import calculate_feature_diff, calculate_statistics, calculate_weight_diff
-import copy
-from exp_scripts.grid_utils import *
-import time
-import json
-from serialization_utils import convert_json
 
 from decision_transformer.evaluation.evaluate_episodes import (
     evaluate_episode,
@@ -31,8 +17,16 @@ from decision_transformer.models.mlp_bc import MLPBCModel
 from decision_transformer.training.act_trainer import ActTrainer
 from decision_transformer.training.seq_trainer_new import SequenceTrainer
 
-from utils import get_optimizer, discount_cumsum
+from utils import get_optimizer
 import os
+
+
+def discount_cumsum(x, gamma):
+    discount_cumsum = np.zeros_like(x)
+    discount_cumsum[-1] = x[-1]
+    for t in reversed(range(x.shape[0] - 1)):
+        discount_cumsum[t] = x[t] + gamma * discount_cumsum[t + 1]
+    return discount_cumsum
 
 
 def experiment(
@@ -58,19 +52,16 @@ def experiment(
         max_ep_len = 1000
         env_targets = [3600, 1800]  # evaluation conditioning targets
         scale = 1000.0  # normalization for rewards/returns
-        final_target = 3600
     elif env_name == "halfcheetah":
         env = gym.make("HalfCheetah-v3")
         max_ep_len = 1000
         env_targets = [12000, 6000]
         scale = 1000.0
-        final_target = 6000
     elif env_name == "walker2d":
         env = gym.make("Walker2d-v3")
         max_ep_len = 1000
         env_targets = [5000, 2500]
         scale = 1000.0
-        final_target = 5000
     elif env_name == "reacher2d":
         from decision_transformer.envs.reacher_2d import Reacher2dEnv
 
@@ -317,8 +308,6 @@ def experiment(
     else:
         raise NotImplementedError
 
-    init_model = copy.deepcopy(model)
-
     if variant["perturb"]:
         if variant["perturb_per_layer"] and variant["perturb_absolute"]:
             raise Exception("only one std value mode can be set at a time.")
@@ -358,7 +347,7 @@ def experiment(
                         if "transformer" not in p:
                             continue
                     p.add_(torch.normal(torch.zeros_like(p), 1. * variant["perturb_absolute"]))
-
+                
     model = model.to(device=device)
 
     warmup_steps = variant["warmup_steps"]
@@ -417,86 +406,14 @@ def experiment(
         logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_return_std", outputs["evaluation/target_" + str(env_targets[1]) + "_return_std"])
         logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_length_mean", outputs["evaluation/target_" + str(env_targets[1]) + "_length_mean"])
         logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_length_std", outputs["evaluation/target_" + str(env_targets[1]) + "_length_std"])
-        logger.log_tabular("TestEpRet", outputs["evaluation/target_" + str(final_target) + "_return_mean"])
-        logger.log_tabular("TestEpNormRet", get_normalized_score(env_name, outputs["evaluation/target_" + str(final_target) + "_return_mean"]))
-        logger.log_tabular("Iteration", iter + 1)
-        logger.log_tabular("Steps", (iter + 1) * variant["num_steps_per_iter"])
         logger.log_tabular("total_time", outputs["time/total"])
         logger.log_tabular("current_eval_time", outputs["time/evaluation"])
         logger.dump_tabular()
         if log_to_wandb:
             wandb.log(outputs)
 
-    (
-        final_test_returns,
-        final_test_normalized_returns,
-        best_return,
-        best_return_normalized,
-        convergence_step,
-        convergence_iter,
-        best_step,
-        best_iter
-    ) = calculate_statistics(variant["outdir"])
 
-    final_weight_diff = calculate_weight_diff(variant["outdir"], variant["max_iters"], init_model)
-    (
-        final_feature_diff, 
-        num_feature_traj, 
-        num_feature_timesteps
-        ) = calculate_feature_diff(
-            variant,
-            variant["outdir"],
-            variant["max_iters"],
-            init_model,
-            trajectories,
-            state_mean,
-            state_std,
-            max_ep_len,
-            scale,
-            state_dim,
-            act_dim
-            )
-    best_weight_diff = calculate_weight_diff(variant["outdir"], best_iter, init_model)
-    (
-        best_feature_diff, 
-        num_feature_traj, 
-        num_feature_timesteps
-        ) = calculate_feature_diff(
-            variant,
-            variant["outdir"],
-            best_iter,
-            init_model,
-            trajectories,
-            state_mean,
-            state_std,
-            max_ep_len,
-            scale,
-            state_dim,
-            act_dim
-            )
-
-    extra_dict = {
-        "final_weight_diff": final_weight_diff,
-        "final_feature_diff": final_feature_diff,
-        "best_weight_diff": best_weight_diff,
-        "best_feature_diff": best_feature_diff,
-        "num_feature_traj": num_feature_traj,
-        "num_feature_timesteps": num_feature_timesteps,
-        "final_test_returns": final_test_returns,
-        "final_test_normalized_returns": final_test_normalized_returns,
-        "best_return": best_return,
-        "best_return_normalized": best_return_normalized,
-        "convergence_step": convergence_step,
-        "convergence_iter": convergence_iter,
-        "best_step": best_step,
-        "best_iter": best_iter
-        }
-
-    with open(os.path.join(variant["outdir"], "extra.json"), "w") as f:
-        extra_dict = convert_json(extra_dict)
-        json.dump(extra_dict, f, indent=4)
-
-def set_dt_args(args_to_parse=None):
+if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--env", type=str, default="hopper")
     parser.add_argument(
@@ -554,37 +471,14 @@ def set_dt_args(args_to_parse=None):
     parser.add_argument("--perturb_ln_only", action="store_true", default=False)
     parser.add_argument("--not_perturb_attn", action="store_true", default=False)
     parser.add_argument("--not_perturb_mlp", action="store_true", default=False)
-    parser.add_argument("--not_perturb_ln", action="store_true", default=False)
+    parser.add_argument("--not_perturb_ln", action="store_true", default=False)    
     parser.add_argument("--perturb_per_layer", type=float, default=None)
     parser.add_argument("--perturb_absolute", type=float, default=None)
 
     parser.add_argument("--data_size", type=float, default=1.0)
 
-    if args_to_parse is not None:
-        args = parser.parse_args(args_to_parse)
-    else:
-        args = parser.parse_args()
 
-    return args
-
-if __name__ == "__main__":
-    start_time = time.time()
-    args = set_dt_args()
-    '''
-    new_args = sys.argv[10:-2]
-    args_dict = dict()
-    num_args = len(new_args) // 2
-    for i in range(0, new_args, 2):
-        args_dict[new_args[i][2:]] = new_args[i+1]
-    '''
-    data_dir = '/checkpoints'
-    exp_prefix = args.outdir
-    exp_suffix = "_%s_%s" % (args.env, args.dataset)
-    exp_name_full = exp_prefix + exp_suffix
-    logger_kwargs = setup_logger_kwargs_dt(exp_name_full, args.seed, data_dir)
-    args.outdir = logger_kwargs["output_dir"]
-    args.exp_name = logger_kwargs["exp_name"]
+    args = parser.parse_args()
 
     experiment("gym-experiment", variant=vars(args))
-    print("Total time used: %.3f hours." % ((time.time() - start_time)/3600))
 
