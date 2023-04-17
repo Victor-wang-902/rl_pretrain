@@ -99,14 +99,14 @@ def calculate_statistics(dir, fname="progress.csv"):
 
 @torch.no_grad()
 def calculate_weight_diff(dir, iter, init_model, weight_only=True):
-    model_state_dict = torch.load(os.path.join(dir, "model_" + str(iter) + ".pt"))
+    model_state_dict = torch.load(os.path.join(dir, "model_" + str(iter) + ".pt"), map_location=torch.device("cpu"))
     layers = []
     for name, layer in model_state_dict.items():
         if "transformer" in name:
             if not weight_only or "weight" in name:
                 layers.append(layer.view(-1))
     weights = torch.cat(layers)
-
+    init_model.to("cpu")
     init_state_dict = init_model.state_dict()
     layers = []
     for name, layer in init_state_dict.items():
@@ -132,7 +132,8 @@ def calculate_feature_diff(
     act_dim, 
     ratio=0.1
     ):
-    cur_state_dict = torch.load(os.path.join(dir, "model_" + str(iter) + ".pt"))
+    init_model.to("cpu")
+    cur_state_dict = torch.load(os.path.join(dir, "model_" + str(iter) + ".pt"), map_location=torch.device("cpu"))
     cur_model = copy.deepcopy(init_model)
     cur_model.load_state_dict(cur_state_dict)
     num_traj = len(data)
@@ -245,6 +246,8 @@ def calculate_feature_diff(
                 else:
                     start_pos += K
     average_feature_norm_list = []
+    cur_model.to(variant["device"])
+    init_model.to(variant["device"])
     for states, actions, rewards, dones, rtg, timesteps, attention_mask in yield_batch():        
         cur_feature = cur_model.get_feature(
             states,
@@ -263,8 +266,8 @@ def calculate_feature_diff(
             timesteps,
             attention_mask=attention_mask,
         )
-        feature_diff = (init_feature - cur_feature)
-        temp = attention_mask[:,:,None]
+        feature_diff = (init_feature - cur_feature).cpu()
+        temp = attention_mask[:,:,None].to(torch.device("cpu"))
         masked_feature_diff = feature_diff * temp
         masked_feature_diff = masked_feature_diff.reshape(batch_size * K, -1)
         feature_norm = torch.norm(masked_feature_diff, p=2, dim=1, keepdim=True)
