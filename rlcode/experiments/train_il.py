@@ -329,8 +329,6 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
             k_conv = k
     convergence_iter, convergence_step = iter_list[k_conv], step_list[k_conv]
 
-    for k, return_normalized in enumerate(ret_normalized_list):
-
     """get weight difference and feature difference"""
     final_weight_diff = get_weight_diff(agent, agent_after_pretrain)
     final_feature_diff, _ = get_feature_diff(agent, agent_after_pretrain, agent.replay_buffer)
