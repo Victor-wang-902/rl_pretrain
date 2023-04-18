@@ -91,33 +91,74 @@ def get_aggregated_value(alg_dataset_dict, alg, measure):
     return np.mean(value_list), np.std(value_list)
 
 """table generation"""
+def generate_aggregate_table(max_value_bold=True, bold_threshold=0.95):
+    print("\nNow generate latex table:\n")
+    algs = ['cpubase_dt', 'cpuquick_dt_emb3_bs4']
+    # each row is a measure, each column is an algorithm variant
+    rows = ['final_test_normalized_returns', 'best_return_normalized',
+            'final_test_normalized_returns_std', 'best_return_normalized_std',
+            'final_weight_diff', 'best_weight_diff',
+            'final_feature_diff', 'best_feature_diff',
+            'convergence_step',
+            ]
+    row_names = ['Final Score', 'Best Score',
+                 'Final Std over Seeds',  'Best Std over Seeds',
+                 'Final Weight Diff', 'Best Weight Diff',
+                 'Final Feature Diff', 'Best Feature Diff',
+                 'Convergence Step']
 
-rows = ['final_test_normalized_returns', 'best_return_normalized',
-        'final_test_normalized_returns_std', 'best_return_normalized_std',
-        'final_weight_diff', 'best_weight_diff',
-        'final_feature_diff', 'best_feature_diff',
-        'convergence_step',
-        ]
-row_names = ['Final Score', 'Best Score',
-             'Final Std over Seeds',  'Best Std over Seeds',
-             'Final Weight Diff', 'Best Weight Diff',
-             'Final Feature Diff', 'Best Feature Diff',
-             'Convergence Step']
+    table = np.zeros((2, len(rows), len(algs)))
+    # each iter we generate a row
+    for i, row in enumerate(rows):
+        for j, alg in enumerate(algs):
+            table[0,i,j], table[1,i,j] = get_aggregated_value(alg_dataset_dict, alg, row)
 
-# each time we generate a row
-for measure, row_name in zip(rows, row_names):
-    row_string = row_name
-    for alg in algs:
-        mean, std = get_aggregated_value(alg_dataset_dict, alg, measure)
-        row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
-    row_string += '\\\\'
-    print(row_string)
+    max_values = np.max(table[0], axis=1)
+
+    for i, row_name in enumerate(row_names):
+        row_string = row_name
+        for j in range(len(algs)):
+            mean, std = table[0, i, j], table[1, i, j]
+            if max_value_bold and mean > bold_threshold*max_values[i]:
+                row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
+            else:
+                row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
+        row_string += '\\\\'
+        print(row_string)
 
 
+def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
+    print("\nNow generate latex table:\n")
+    algs = ['cpubase_dt', 'cpuquick_dt_emb3_bs4']
+    measure = 'best_return_normalized'
+    # each row is a env-dataset pair, each column is an algorithm variant
+    rows = []
+    row_names = []
+    for dataset in [ 'medium-expert', 'medium', 'medium-replay', ]:
+        for e in ['halfcheetah', 'hopper', 'walker2d', ]:
+            rows.append('%s_%s' % (e, dataset))
+            row_names.append('%s-%s' % (e, dataset))
 
-# first compute everything, put them into a dictionary... nested dictionary? first key alg then measure
-# when drawing table, specify the rows and column headers, then for each entry, simply look it up in the dictionary.
 
+    table = np.zeros((2, len(rows), len(algs)))
+    # each iter we generate a row
+    for i, row in enumerate(rows):
+        for j, alg in enumerate(algs):
+            table[0,i,j], table[1,i,j] = alg_dataset_dict[alg][row][measure]
 
+    max_values = np.max(table[0], axis=1)
 
+    for i, row_name in enumerate(row_names):
+        row_string = row_name
+        for j in range(len(algs)):
+            mean, std = table[0, i, j], table[1, i, j]
+            if max_value_bold and mean > bold_threshold*max_values[i]:
+                row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
+            else:
+                row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
+        row_string += '\\\\'
+        print(row_string)
 
+generate_aggregate_table()
+
+generate_per_env_score_table()
