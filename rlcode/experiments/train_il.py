@@ -359,17 +359,17 @@ if __name__ == '__main__':
     parser.add_argument('--dataset', type=str, default='medium')
     parser.add_argument('--seed', '-s', type=int, default=0)
     parser.add_argument('--epochs', type=int, default=100)
-    parser.add_argument('--exp_name', type=str, default='cql')
+    parser.add_argument('--exp_name', type=str, default='il')
     parser.add_argument('--data_dir', type=str, default='../data/')
     parser.add_argument('--debug', action='store_true')
     parser.add_argument('--pretrain', action='store_true')
-    parser.add_argument('--agent', type=str, default='cql')
+    parser.add_argument('--agent', type=str, default='il')
 
     args = parser.parse_args()
 
     ######
     data_dir = '/checkpoints'
-    exp_prefix = 'IL'
+    exp_prefix = args.exp_name
     exp_suffix = "_%s_%s" % (args.env, args.dataset)
     exp_name_full = exp_prefix + exp_suffix
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, args.seed, data_dir)
