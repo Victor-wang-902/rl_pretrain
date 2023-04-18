@@ -171,3 +171,10 @@ ps -u $USER --no-headers -o rss | awk '{sum+=$1} END {printf "%.2f GB\n", sum/(1
 
 
 ```
+
+### Plotting utils
+Download test data for plotting: https://drive.google.com/file/d/1Alr_P4akkXuN3uAyImY8R58DUfcoTtpU/view?usp=sharing
+
+Put data under `code/checkpoints/` (For example, you should see a folder here: `code/checkpoints/cpubase_dt_halfcheetah_medium`)
+
+Run `plot_dt_test.py` and `pretrain_paper_table.py` to generate figures and latex table. 
