@@ -202,7 +202,7 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
     if do_pretrain and pretrain_mode is not None:
         print("Pretraining start, mode:",pretrain_mode)
         # check if pretrain
-        pretrain_model_folder_path = '/rlcode/pretrain'
+        pretrain_model_folder_path = '/rlcode/pretrained_models/'
         try:
             agent.load_pretrained_model(pretrain_model_folder_path, pretrain_mode, pretrain_epochs)
             pretrain_loaded = True
