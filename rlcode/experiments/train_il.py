@@ -118,6 +118,8 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
     """set up environment and seeding"""
     env_fn = lambda: gym.make(env_name)
 
+    data_env_name = '%s-%s-v2' % (env_name, dataset)
+    data_env = gym.make(data_env_name)
     if env_name == "hopper":
         env_fn = lambda: gym.make("Hopper-v3")
     elif env_name == "halfcheetah":
@@ -167,7 +169,8 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
     #################################################################################################
 
     """load data here"""
-    dataset = d4rl.qlearning_dataset(env)
+    dataset = d4rl.qlearning_dataset(data_env)
+    data_env = None
     print("Env: %s, number of data loaded from disk: %d." % (env_name, dataset['actions'].shape[0]))
 
     """init agent and load data into buffer"""
