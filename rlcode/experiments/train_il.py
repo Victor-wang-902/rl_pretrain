@@ -170,7 +170,6 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
 
     """load data here"""
     dataset = d4rl.qlearning_dataset(data_env)
-    data_env = None
     print("Env: %s, number of data loaded from disk: %d." % (env_name, dataset['actions'].shape[0]))
 
     """init agent and load data into buffer"""
@@ -260,7 +259,8 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
             epoch = t // steps_per_epoch
 
             # Test the performance of the deterministic version of the agent.
-            rets, rets_normalized = test_agent_d4rl(agent, test_env, max_ep_len, logger, n_eval=n_evals_per_epoch) # add logging here
+            rets, rets_normalized = test_agent_d4rl(agent, test_env, max_ep_len, logger,
+                                                    n_eval=n_evals_per_epoch, data_env=data_env) # add logging here
             iter_list.append(epoch)
             step_list.append(t)
             ret_normalized_list.append(np.mean(rets_normalized))
