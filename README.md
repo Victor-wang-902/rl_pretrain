@@ -178,3 +178,14 @@ Download test data for plotting: https://drive.google.com/file/d/1Alr_P4akkXuN3u
 Put data under `code/checkpoints/` (For example, you should see a folder here: `code/checkpoints/cpubase_dt_halfcheetah_medium`)
 
 Run `plot_dt_test.py` and `pretrain_paper_table.py` to generate figures and latex table. 
+
+### Offline RL experiments
+```
+singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/dt-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/dt-sandbox bash
+```
+
+```
+export PYTHONPATH=$PYTHONPATH:/code
+export PYTHONPATH=$PYTHONPATH:/rlcode
+cd /rlcode
+```

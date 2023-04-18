@@ -1,4 +1,10 @@
+import os
 import os.path
+ld_library_path = os.environ.get('LD_LIBRARY_PATH', '')
+ld_library_path += ':/workspace/.mujoco/mujoco210/bin:/usr/local/nvidia/lib:/usr/lib/nvidia'
+os.environ['LD_LIBRARY_PATH'] = ld_library_path
+os.environ['MUJOCO_GL'] = 'egl'
+os.environ['MUJOCO_PY_MUJOCO_PATH'] = '/workspace/.mujoco/mujoco210/'
 
 import numpy as np
 import torch
@@ -13,6 +19,7 @@ from redq.algos.core import mbpo_epoches, test_agent_d4rl, get_weight_diff, get_
 from redq.utils.run_utils import setup_logger_kwargs
 from redq.utils.bias_utils import log_bias_evaluation
 from redq.utils.logx import EpochLogger
+from exp_scripts.grid_utils import *
 
 def copy_agent_without_buffer(agent):
     buffer_temp = agent.replay_buffer
@@ -110,6 +117,20 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
 
     """set up environment and seeding"""
     env_fn = lambda: gym.make(env_name)
+
+    if env_name == "hopper":
+        env_fn = lambda: gym.make("Hopper-v3")
+    elif env_name == "halfcheetah":
+        env_fn = lambda: gym.make("HalfCheetah-v3")
+    elif env_name == "walker2d":
+        env_fn = lambda: gym.make("Walker2d-v3")
+    elif env_name == "reacher2d":
+        from decision_transformer.envs.reacher_2d import Reacher2dEnv
+        env_fn = lambda: Reacher2dEnv()
+    else:
+        raise NotImplementedError
+
+    # env_fn = lambda: gym.make(env_name)
     env, test_env, bias_eval_env = env_fn(), env_fn(), env_fn()
     # seed torch and numpy
     torch.manual_seed(seed)
@@ -144,6 +165,7 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
     # flush logger (optional)
     sys.stdout.flush()
     #################################################################################################
+    quit()
 
     """load data here"""
     dataset = d4rl.qlearning_dataset(env)
@@ -346,12 +368,13 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    # modify the code here if you want to use a different naming scheme
-    exp_name_full = args.exp_name + '_%s' % args.env
-
-    # specify experiment name, seed and data_dir.
-    # for example, for seed 0, the progress.txt will be saved under data_dir/exp_name/exp_name_s0
-    logger_kwargs = setup_logger_kwargs(exp_name_full, args.seed, args.data_dir)
+    ######
+    data_dir = '/checkpoints'
+    exp_prefix = 'IL'
+    exp_suffix = "_%s_%s" % (args.env, args.dataset)
+    exp_name_full = exp_prefix + exp_suffix
+    logger_kwargs = setup_logger_kwargs_dt(exp_name_full, args.seed, data_dir)
+    #####
 
     train_d4rl(args.env, args.dataset, seed=args.seed, epochs=args.epochs,
                logger_kwargs=logger_kwargs, debug=args.debug, do_pretrain=args.pretrain,

@@ -4,6 +4,7 @@ wandb
 code/exp_scripts/logs/*.out
 code/exp_scripts/logs/*.err
 figures/
+*.zip
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
