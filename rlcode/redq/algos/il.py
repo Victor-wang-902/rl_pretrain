@@ -77,7 +77,7 @@ class ILAgent(object):
         # store one transition to the buffer
         self.replay_buffer.store(o, a, r, o2, d)
 
-    def load_data(self, dataset, data_ratio, seed): # load a d4rl q learning dataset
+    def load_data(self, dataset, data_ratio, seed=0): # load a d4rl q learning dataset
         # e.g. if ratio is 0.4, we use 40% of the data (depends on how many we have in the dataset)
         assert self.replay_buffer.size == 0
         n_data = dataset['actions'].shape[0]
