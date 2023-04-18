@@ -165,11 +165,10 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
     # flush logger (optional)
     sys.stdout.flush()
     #################################################################################################
-    quit()
 
     """load data here"""
     dataset = d4rl.qlearning_dataset(env)
-    print("Env: %s, number of data loaded: %d." % (env_name, dataset['actions'].shape[0]))
+    print("Env: %s, number of data loaded from disk: %d." % (env_name, dataset['actions'].shape[0]))
 
     """init agent and load data into buffer"""
     if agent_type == 'il':
@@ -192,7 +191,7 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
                          )
 
     agent.load_data(dataset, offline_data_ratio)
-
+    print("agent loaded number of data:", agent.replay_buffer.size)
 
     """========================================== pretrain stage =========================================="""
     # TODO here add check on whether pretrained model already exist
@@ -201,7 +200,7 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
     if do_pretrain and pretrain_mode is not None:
         print("Pretraining start, mode:",pretrain_mode)
         # check if pretrain
-        pretrain_model_folder_path = '/code/pretrain'
+        pretrain_model_folder_path = '/rlcode/pretrain'
         try:
             agent.load_pretrained_model(pretrain_model_folder_path, pretrain_mode, pretrain_epochs)
             pretrain_loaded = True
@@ -321,7 +320,6 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
     """extra info"""
     seed_all(200000)
     final_test_returns, final_test_normalized_returns = np.mean(rets) , np.mean(rets_normalized)
-    # TODO find convergence step
     convergence_threshold = best_return_normalized - 2
     k_conv = len(ret_normalized_list) - 1
     for k in range(len(ret_normalized_list)-1,-1,-1):
