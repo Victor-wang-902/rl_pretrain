@@ -5,7 +5,7 @@ from torch import Tensor
 import torch.nn as nn
 import torch.optim as optim
 import torch.nn.functional as F
-from redq.algos.core import Mlp, soft_update_model1_with_model2, ReplayBuffer, PolicyNetworkPretrain
+from redq.algos.core import soft_update_model1_with_model2, ReplayBuffer, PolicyNetworkPretrain, QNetworkPretrain
 
 def get_probabilistic_num_min(num_mins):
     # allows the number of min to be a float
@@ -44,9 +44,9 @@ class CQLAgent(object):
         self.policy_net = PolicyNetworkPretrain(obs_dim, act_dim, hidden_sizes, action_limit=act_limit).to(device)
         self.q_net_list, self.q_target_net_list = [], []
         for q_i in range(num_Q):
-            new_q_net = Mlp(obs_dim + act_dim, 1, hidden_sizes).to(device)
+            new_q_net = QNetworkPretrain(obs_dim + act_dim, 1, hidden_sizes).to(device)
             self.q_net_list.append(new_q_net)
-            new_q_target_net = Mlp(obs_dim + act_dim, 1, hidden_sizes).to(device)
+            new_q_target_net = QNetworkPretrain(obs_dim + act_dim, 1, hidden_sizes).to(device)
             new_q_target_net.load_state_dict(new_q_net.state_dict())
             self.q_target_net_list.append(new_q_target_net)
         # set up optimizers
