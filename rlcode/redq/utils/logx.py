@@ -174,12 +174,14 @@ class Logger:
         self.log_current_row.clear()
         self.first_row=False
 
-    def save_extra_dict_as_json(self, dictionary, file_name):
+    def save_extra_dict_as_json(self, dictionary, file_name, verbose=1):
         # save a python dictionary to the folder where progress.txt is saved
         # Save the dictionary to a JSON file
         full_save_path = osp.join(self.output_dir, file_name)
         with open(full_save_path, 'w') as file:
             json.dump(dictionary, file)
+        if verbose>0:
+            print("extra dict saved to:", full_save_path)
 
 
 def get_statistics_scalar(x, with_min_and_max=False):

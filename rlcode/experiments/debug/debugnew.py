@@ -23,15 +23,14 @@ if __name__ == '__main__':
 
     # each 3-tuple is:
     # parameter name - abbreviation - values (this has to be a list)
-    exp_prefix = 'debug'
+    exp_prefix = 'rl'
     # env, dataset and seed values will be added to the end of the folder name string
     # for each 3-tuple,
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'seed', '', [42, 666, 1024],
-        'agent_type','',['cql',],
-        'debug', 'd', [True,]
+        'agent_type','',['cql','il'],
     ]
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting_id)
