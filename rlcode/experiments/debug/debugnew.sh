@@ -24,7 +24,6 @@ echo "Job ID: ${SLURM_ARRAY_TASK_ID}"
 
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/dt-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/dt-sandbox bash -c "
 cd /rlcode
-export PYTHONPATH=$PYTHONPATH:/code
-export PYTHONPATH=$PYTHONPATH:/rlcode
+export PYTHONPATH=$PYTHONPATH:/code:/rlcode
 python experiments/debug/debugnew.py --setting ${SLURM_ARRAY_TASK_ID} --device cpu
 "
