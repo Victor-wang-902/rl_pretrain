@@ -181,12 +181,11 @@ Run `plot_dt_test.py` and `pretrain_paper_table.py` to generate figures and late
 
 ## Offline RL experiments
 ```
-singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/dt-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/dt-sandbox bash
+singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/rl_pretrain/cqlcode:/cqlcode -B /scratch/$USER/sing/dt-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/dt-sandbox bash
 ```
 
 ```
-export PYTHONPATH=$PYTHONPATH:/code
-export PYTHONPATH=$PYTHONPATH:/rlcode
+export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
 cd /rlcode
 ```
 
