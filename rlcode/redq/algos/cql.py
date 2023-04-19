@@ -247,6 +247,7 @@ class CQLAgent(object):
             """policy update"""
             self.policy_optimizer.zero_grad()
             policy_loss.backward()
+            self.policy_optimizer.step()
 
             # polyak averaged Q target networks
             for q_i in range(self.num_Q):
