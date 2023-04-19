@@ -8,8 +8,7 @@ os.environ['MUJOCO_PY_MUJOCO_PATH'] = '/workspace/.mujoco/mujoco210/'
 from experiments.train_il import train_d4rl as function_to_run ## here make sure you import correct function
 import time
 from redq.utils.run_utils import setup_logger_kwargs
-from experiments.grid_utils import get_setting_and_exp_name
-from experiments.env_names import *
+from exp_scripts.grid_utils import *
 
 if __name__ == '__main__':
     import argparse

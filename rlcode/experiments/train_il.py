@@ -35,7 +35,7 @@ def save_dict(logger, dictionary, save_name, verbose=1):
     if verbose > 0:
         print("Model saved to", save_path)
 
-def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
+def train_d4rl(env, dataset, seed=0, epochs=20, steps_per_epoch=5000,
                max_ep_len=1000, n_evals_per_epoch=10,
                logger_kwargs=dict(), debug=False,
                # following are agent related hyperparameters
@@ -61,7 +61,7 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
                # e.g. we might save the pretrained networks in a folder called pi_predict_next_state_h2_256_e1000
                ):
     """
-    :param env_name: name of the gym environment
+    :param env: name of the gym environment
     :param seed: random seed
     :param epochs: number of epochs to run
     :param steps_per_epoch: number of timestep (datapoints) for each epoch
@@ -116,17 +116,17 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
     pretrain_logger = EpochLogger(**logger_kwargs)
 
     """set up environment and seeding"""
-    env_fn = lambda: gym.make(env_name)
+    env_fn = lambda: gym.make(env)
 
-    data_env_name = '%s-%s-v2' % (env_name, dataset)
+    data_env_name = '%s-%s-v2' % (env, dataset)
     data_env = gym.make(data_env_name)
-    if env_name == "hopper":
+    if env == "hopper":
         env_fn = lambda: gym.make("Hopper-v3")
-    elif env_name == "halfcheetah":
+    elif env == "halfcheetah":
         env_fn = lambda: gym.make("HalfCheetah-v3")
-    elif env_name == "walker2d":
+    elif env == "walker2d":
         env_fn = lambda: gym.make("Walker2d-v3")
-    elif env_name == "reacher2d":
+    elif env == "reacher2d":
         from decision_transformer.envs.reacher_2d import Reacher2dEnv
         env_fn = lambda: Reacher2dEnv()
     else:
@@ -170,19 +170,19 @@ def train_d4rl(env_name, dataset, seed=0, epochs=20, steps_per_epoch=5000,
 
     """load data here"""
     dataset = d4rl.qlearning_dataset(data_env)
-    print("Env: %s, number of data loaded from disk: %d." % (env_name, dataset['actions'].shape[0]))
+    print("Env: %s, number of data loaded from disk: %d." % (env, dataset['actions'].shape[0]))
 
     """init agent and load data into buffer"""
     if agent_type == 'il':
-        agent = ILAgent(env_name, obs_dim, act_dim, act_limit, device,
-                         hidden_layer, hidden_unit, replay_size, batch_size,
-                         lr, gamma, polyak,
-                         alpha, auto_alpha, target_entropy,
-                         start_steps, delay_update_steps,
-                         utd_ratio, num_Q, num_min, q_target_mode,
-                         policy_update_delay, ensemble_decay_n_data, safe_q_target_factor)
+        agent = ILAgent(env, obs_dim, act_dim, act_limit, device,
+                        hidden_layer, hidden_unit, replay_size, batch_size,
+                        lr, gamma, polyak,
+                        alpha, auto_alpha, target_entropy,
+                        start_steps, delay_update_steps,
+                        utd_ratio, num_Q, num_min, q_target_mode,
+                        policy_update_delay, ensemble_decay_n_data, safe_q_target_factor)
     if agent_type == 'cql':
-        agent = CQLAgent(env_name, obs_dim, act_dim, act_limit, device,
+        agent = CQLAgent(env, obs_dim, act_dim, act_limit, device,
                          hidden_layer, hidden_unit, replay_size, batch_size,
                          lr, gamma, polyak,
                          alpha, auto_alpha, target_entropy,
