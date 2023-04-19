@@ -9,8 +9,8 @@ import torch.optim as optim
 from torch import nn as nn
 import torch.nn.functional as F
 
-from .model import Scalar, soft_target_update
-from .utils import prefix_metrics
+from SimpleSAC.model import Scalar, soft_target_update
+from SimpleSAC.utils import prefix_metrics
 
 
 class ConservativeSAC(object):

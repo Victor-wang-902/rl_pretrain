@@ -12,12 +12,12 @@ import torch
 import absl.app
 import absl.flags
 
-from .sac import SAC
-from .replay_buffer import ReplayBuffer, batch_to_torch
-from .model import TanhGaussianPolicy, FullyConnectedQFunction, SamplerPolicy
-from .sampler import StepSampler, TrajSampler
-from .utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
-from .utils import WandBLogger
+from SimpleSAC.sac import SAC
+from SimpleSAC.replay_buffer import ReplayBuffer, batch_to_torch
+from SimpleSAC.model import TanhGaussianPolicy, FullyConnectedQFunction, SamplerPolicy
+from SimpleSAC.sampler import StepSampler, TrajSampler
+from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
+from SimpleSAC.utils import WandBLogger
 from viskit.logging import logger, setup_logger
 
 

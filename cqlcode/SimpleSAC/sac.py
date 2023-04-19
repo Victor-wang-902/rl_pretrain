@@ -9,7 +9,7 @@ import torch.optim as optim
 from torch import nn as nn
 import torch.nn.functional as F
 
-from .model import Scalar, soft_target_update
+from SimpleSAC.model import Scalar, soft_target_update
 
 
 class SAC(object):
