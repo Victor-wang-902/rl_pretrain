@@ -71,7 +71,7 @@ for e in MUJOCO_3_ENVS:
 
 # final table: for each variant name, for each measure, compute relevant values
 alg_dataset_dict = {}
-algs = ['cpubase_dt', 'rl_il']
+algs = ['rl_cql', 'rl_il', 'cpubase_dt']
 for alg in algs:
     alg_dataset_dict[alg] = {}
     # compute a number of measures
