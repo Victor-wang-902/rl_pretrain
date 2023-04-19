@@ -30,7 +30,7 @@ if __name__ == '__main__':
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'seed', '', [42, 666, 1024],
-        'agent','',['cql',],
+        'agent_type','',['cql',],
         'debug', 'd', [True,]
     ]
 
