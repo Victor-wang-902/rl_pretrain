@@ -115,6 +115,7 @@ RUN pip install --no-cache-dir wandb==0.9.1 tqdm==4.64.1 torch-semiring-einsum==
 
 RUN pip install --no-cache-dir transformers==4.12.5 kmeans-pytorch==0.3
 
+# TODO cql new code requires ml_collections
 
 
 CMD [ "/bin/bash" ]
