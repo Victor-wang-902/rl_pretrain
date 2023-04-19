@@ -113,11 +113,11 @@ RUN cd /workspace/ \
 # dependencies for dt and wiki paper
 RUN pip install --no-cache-dir tqdm==4.64.1 torch-semiring-einsum==1.1.0 typing-extensions==4.4.0 packaging==23.0
 
-RUN pip install --no-cache-dir transformers==4.12.5 kmeans-pytorch==0.3  \
+RUN pip install --no-cache-dir transformers==4.12.5 kmeans-pytorch==0.3
 
 RUN pip install --no-cache-dir wandb ml_collections
 
-# TODO cql new code requires ml_collections
+# TODO cql new code requires ml_collections and newer version of wandb
 
 
 CMD [ "/bin/bash" ]
