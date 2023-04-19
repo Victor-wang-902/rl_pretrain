@@ -4,7 +4,7 @@ import numpy as np
 import pandas as pd
 import seaborn as sns
 from collections import OrderedDict
-from redq_plot_helper import *
+from plot_utils.redq_plot_helper import *
 from pathlib import Path
 
 # the path leading to where the experiment file are located

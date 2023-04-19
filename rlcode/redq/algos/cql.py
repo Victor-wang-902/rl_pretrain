@@ -37,7 +37,7 @@ class CQLAgent(object):
                  policy_update_delay=20,
                  ensemble_decay_n_data=20000, # wait for how many data to reduce number of ensemble (e.g. 20,000 data)
                  safe_q_target_factor=0.5,
-                 cql_weight=1, cql_n_random=10, cql_temp=1, std=0.1,
+                 cql_weight=5, cql_n_random=10, cql_temp=1, std=0.01,
                  ):
         # set up networks
         hidden_sizes = [hidden_unit for _ in range(hidden_layer)]
@@ -247,8 +247,6 @@ class CQLAgent(object):
             """policy update"""
             self.policy_optimizer.zero_grad()
             policy_loss.backward()
-            for sample_idx in range(self.num_Q):
-                self.q_net_list[sample_idx].requires_grad_(True)
 
             # polyak averaged Q target networks
             for q_i in range(self.num_Q):
@@ -260,6 +258,7 @@ class CQLAgent(object):
                     logger.store(LossPi=policy_loss.item(), LossQ=q_loss_all.item() / self.num_Q,
                              Q1Vals=Q1.mean().item(), LogPi=log_prob_a_tilda.mean().item(),
                              PreTanh=pretanh.abs().detach().cpu().numpy().reshape(-1))
+                    # TODO at main loop need to log Q value if it's cql...
 
     def pretrain_update(self, logger, pretrain_mode): # TODO fix
         # pretrain mode example: q_sprime

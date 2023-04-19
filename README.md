@@ -179,7 +179,7 @@ Put data under `code/checkpoints/` (For example, you should see a folder here: `
 
 Run `plot_dt_test.py` and `pretrain_paper_table.py` to generate figures and latex table. 
 
-### Offline RL experiments
+## Offline RL experiments
 ```
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/dt-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/dt-sandbox bash
 ```
@@ -188,4 +188,11 @@ singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/
 export PYTHONPATH=$PYTHONPATH:/code
 export PYTHONPATH=$PYTHONPATH:/rlcode
 cd /rlcode
+```
+
+Send back files for plotting: 
+```
+cd /scratch/$USER/sing/rl_pretrain/code
+rsync -av --exclude='*.pt' checkpoints/rl* sendbackrl/
+zip -r sendrl.zip sendbackrl/
 ```

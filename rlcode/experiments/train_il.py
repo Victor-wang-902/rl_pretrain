@@ -245,7 +245,7 @@ def train_d4rl(env, dataset, seed=0, epochs=20, steps_per_epoch=5000,
     best_step = 0
     best_iter = 0
     iter_list, step_list, ret_normalized_list = [],[],[]
-    best_return, best_return_normalized = 0, 0
+    best_return, best_return_normalized = -np.inf, -np.inf
     seed_all(100000)
     # keep track of run time
     offline_stage_start_time = time.time()
@@ -290,8 +290,9 @@ def train_d4rl(env, dataset, seed=0, epochs=20, steps_per_epoch=5000,
             logger.log_tabular('TestEpLen', average_only=True)
             logger.log_tabular('BestRet', best_return)
             logger.log_tabular('BestNormRet', best_return_normalized)
-            # logger.log_tabular('Q1Vals', with_min_and_max=True)
-            # logger.log_tabular('LossQ1', average_only=True)
+            if agent_type == 'cql':
+                logger.log_tabular('Q1Vals', with_min_and_max=True)
+                logger.log_tabular('LossQ', average_only=True)
             logger.log_tabular('LogPi', with_min_and_max=True)
             logger.log_tabular('LossPi', average_only=True)
             # logger.log_tabular('Alpha', with_min_and_max=True)
