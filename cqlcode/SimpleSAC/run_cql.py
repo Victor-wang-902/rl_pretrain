@@ -39,7 +39,8 @@ else:
     DEVICE = 'cpu'
 
 FLAGS_DEF = define_flags_with_default(
-    env='halfcheetah-medium-v2',
+    env='halfcheetah',
+    dataset='medium',
     max_traj_length=1000,
     seed=42,
     device=DEVICE,
@@ -83,7 +84,7 @@ def main(argv):
     # new logger
     data_dir = '/checkpoints'
     exp_prefix = 'cqlnew'
-    exp_suffix = "_%s_%s" % ('halfcheetah', 'medium')
+    exp_suffix = '_%s-%s' % (FLAGS.env, FLAGS.dataset)
     exp_name_full = exp_prefix + exp_suffix
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, variant['seed'], data_dir)
     variant["outdir"] = logger_kwargs["output_dir"]
@@ -93,7 +94,8 @@ def main(argv):
 
     set_random_seed(FLAGS.seed)
 
-    eval_sampler = TrajSampler(gym.make(FLAGS.env).unwrapped, FLAGS.max_traj_length)
+    env_full = '%s-%s-v2' % (FLAGS.env, FLAGS.dataset)
+    eval_sampler = TrajSampler(gym.make(env_full).unwrapped, FLAGS.max_traj_length)
     dataset = get_d4rl_dataset(eval_sampler.env)
     dataset['rewards'] = dataset['rewards'] * FLAGS.reward_scale + FLAGS.reward_bias
     dataset['actions'] = np.clip(dataset['actions'], -FLAGS.clip_action, FLAGS.clip_action)
