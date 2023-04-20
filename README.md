@@ -200,7 +200,7 @@ cd /cqlcode/SimpleSAC
 
 quick cql + pretrain testing:
 ```
-python run_cql.py --pretrain_mode q_sprime --n_pretrain_epochs 3 --n_train_step_per_epoch 10 --n_epochs 3
+python run_cql.py --pretrain_mode q_sprime --n_pretrain_epochs 3 --n_train_step_per_epoch 10 --n_epochs 3 --eval_n_trajs 1
 ```
 
 Send back files for plotting: 

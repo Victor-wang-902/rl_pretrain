@@ -275,7 +275,7 @@ def main(argv):
     def get_weight_diff(a,b):
         return 0
     def get_feature_diff(a,b,c):
-        return 0
+        return 0, 0
     if agent_100k is not None:
         weight_diff_100k = get_weight_diff(agent, agent_100k)
         feature_diff_100k = get_feature_diff(agent, agent_100k, agent)
