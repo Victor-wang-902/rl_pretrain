@@ -34,7 +34,7 @@ from logx import EpochLogger
 
 
 FLAGS_DEF = define_flags_with_default(
-    env='hopper-medium-v2',
+    env='halfcheetah-medium-v2',
     max_traj_length=1000,
     seed=42,
     device='cuda',
@@ -78,7 +78,7 @@ def main(argv):
     # new logger
     data_dir = '/checkpoints'
     exp_prefix = 'cqlnew'
-    exp_suffix = "_%s_%s" % ('hopper', 'medium')
+    exp_suffix = "_%s_%s" % ('halfcheetah', 'medium')
     exp_name_full = exp_prefix + exp_suffix
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, variant['seed'], data_dir)
     variant["outdir"] = logger_kwargs["output_dir"]
