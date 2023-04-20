@@ -196,6 +196,7 @@ def main(argv):
     """offline stage"""
     print("====OFFLINE STAGE STARTED!====")
     best_agent = deepcopy(agent)
+    agent_100k = None
     best_step, best_iter = 0, 0
     iter_list, step_list, ret_list, ret_normalized_list = [],[],[],[]
     best_return, best_return_normalized = -np.inf, -np.inf
@@ -275,8 +276,12 @@ def main(argv):
         return 0
     def get_feature_diff(a,b,c):
         return 0
-    weight_diff_100k = get_weight_diff(agent, agent_100k)
-    feature_diff_100k = get_feature_diff(agent, agent_100k, agent)
+    if agent_100k is not None:
+        weight_diff_100k = get_weight_diff(agent, agent_100k)
+        feature_diff_100k = get_feature_diff(agent, agent_100k, agent)
+    else:
+        weight_diff_100k = -1
+        feature_diff_100k = -1
     final_weight_diff = get_weight_diff(agent, agent_after_pretrain)
     final_feature_diff, _ = get_feature_diff(agent, agent_after_pretrain, agent)
     best_weight_diff = get_weight_diff(agent, best_agent)
