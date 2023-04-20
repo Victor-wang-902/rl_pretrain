@@ -200,3 +200,9 @@ cd /scratch/$USER/sing/rl_pretrain/code
 rsync -av --exclude='*.pt' checkpoints/rl* sendbackrl/
 zip -r sendrl.zip sendbackrl/
 ```
+
+### others
+background no log job test:
+```
+python sth.py > /dev/null 2>&1 &
+```

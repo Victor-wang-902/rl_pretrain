@@ -157,7 +157,6 @@ def main(argv):
         metrics['epoch_time'] = train_timer() + eval_timer()
         # wandb_logger.log(metrics)
         viskit_metrics.update(metrics)
-        print(viskit_metrics)
 
         things_to_log = ['sac/log_pi', 'sac/policy_loss', 'sac/qf1_loss', 'sac/qf2_loss', 'sac/alpha_loss', 'sac/alpha',
                          'sac/average_qf1', 'sac/average_qf2', 'average_traj_length']
