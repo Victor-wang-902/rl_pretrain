@@ -249,19 +249,24 @@ class FullyConnectedQFunctionPretrain(nn.Module):
         h = self.get_feature(observations, actions)
         return self.hidden_to_value(h)
 
+    @multiple_action_q_function
     def forward(self, observations, actions):
-        multiple_actions = False
-        batch_size = observations.shape[0]
-        if actions.ndim == 3 and observations.ndim == 2:
-            multiple_actions = True
-            observations = extend_and_repeat(observations, 1, actions.shape[1]).reshape(-1, observations.shape[-1])
-            actions = actions.reshape(-1, actions.shape[-1])
-
         h = self.get_feature(observations, actions)
-        q_values = self.last_fc_layer(h)
-        if multiple_actions:
-            q_values = q_values.reshape(batch_size, -1)
-        return q_values
+        return torch.squeeze(self.last_fc_layer(h), dim=-1)
+
+    # def forward(self, observations, actions):
+    #     multiple_actions = False
+    #     batch_size = observations.shape[0]
+    #     if actions.ndim == 3 and observations.ndim == 2:
+    #         multiple_actions = True
+    #         observations = extend_and_repeat(observations, 1, actions.shape[1]).reshape(-1, observations.shape[-1])
+    #         actions = actions.reshape(-1, actions.shape[-1])
+    #
+    #     h = self.get_feature(observations, actions)
+    #     q_values = self.last_fc_layer(h)
+    #     if multiple_actions:
+    #         q_values = q_values.reshape(batch_size, -1)
+    #     return q_values
 
 
 class Scalar(nn.Module):
