@@ -201,7 +201,7 @@ class FullyConnectedQFunctionPretrain(nn.Module):
 
         self.hidden_layers = nn.ModuleList()
         self.hidden_activation = F.relu
-        d = obs_dim
+        d = obs_dim + action_dim
 
         hidden_sizes = [int(h) for h in arch.split('-')]
         for hidden_size in hidden_sizes:
