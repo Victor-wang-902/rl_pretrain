@@ -83,7 +83,6 @@ def main(argv):
     variant["exp_name"] = logger_kwargs["exp_name"]
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
     logger.save_config(locals())
-    quit()
 
     set_random_seed(FLAGS.seed)
 
@@ -155,6 +154,8 @@ def main(argv):
         metrics['epoch_time'] = train_timer() + eval_timer()
         wandb_logger.log(metrics)
         viskit_metrics.update(metrics)
+        print(viskit_metrics)
+        quit()
         logger_other.record_dict(viskit_metrics)
         logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
 
