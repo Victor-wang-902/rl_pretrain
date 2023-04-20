@@ -155,8 +155,8 @@ def main(argv):
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         try:
             pretrain_dict = torch.load(pretrain_full_path)
-            agent.qf1.load_state_dict(pretrain_dict['agent'].qf1)
-            agent.qf2.load_state_dict(pretrain_dict['agent'].qf2)
+            agent.qf1.load_state_dict(pretrain_dict['agent'].qf1.state_dict())
+            agent.qf2.load_state_dict(pretrain_dict['agent'].qf2.state_dict())
             loaded = True
         except Exception as e:
             print("No pretrained model, start pretraining.")
