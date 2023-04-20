@@ -23,7 +23,7 @@ import absl.app
 import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
-from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset, subsample_batch
+from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset, subsample_batch, index_batch
 from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain
 from SimpleSAC.sampler import StepSampler, TrajSampler
 from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
@@ -77,6 +77,55 @@ def get_convergence_index(ret_list, threshold_gap=2):
         if ret_list[k] >= convergence_threshold:
             k_conv = k
     return k_conv
+
+def concatenate_weights_of_model_list(model_list, weight_only=True):
+    concatenated_weights = []
+    for model in model_list:
+        for name, param in model.named_parameters():
+            if not weight_only or 'weight' in name:
+                concatenated_weights.append(param.view(-1))
+    return torch.cat(concatenated_weights)
+
+# when compute weight diff, just provide list of important layers...from
+def get_weight_diff(agent1, agent2):
+    # weight diff, agent class should have layers_for_weight_diff() func
+    weights1 = concatenate_weights_of_model_list(agent1.layers_for_weight_diff())
+    weights2 = concatenate_weights_of_model_list(agent2.layers_for_weight_diff())
+    weight_diff = torch.norm(weights1-weights2, p=2).item()
+    return weight_diff
+
+def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
+    # feature diff: for each data point, get difference of feature from old and new network
+    # compute l2 norm of this diff, average over a number of data points.
+    # agent class should have features_from_batch() func
+    n_total_data = dataset['observations'].shape[0]
+    average_feature_l2_norm_list = []
+    num_feature_timesteps = int(n_total_data * ratio)
+    if num_feature_timesteps % 2 == 1: # avoid potential sampling issue
+        num_feature_timesteps = num_feature_timesteps + 1
+    np.random.seed(seed)
+    idxs_all = np.random.choice(np.arange(0, n_total_data), size=num_feature_timesteps, replace=False)
+    batch_size = 1000
+    n_done = 0
+    i = 0
+    while True:
+        if n_done >= num_feature_timesteps:
+            break
+        idxs = idxs_all[i*batch_size:min((i+1)*batch_size, num_feature_timesteps)]
+
+        batch = index_batch(dataset, idxs)
+        batch = batch_to_torch(batch, device)
+
+        old_feature = agent1.features_from_batch(batch)
+        new_feature = agent2.features_from_batch(batch)
+        feature_diff = old_feature - new_feature
+
+        feature_l2_norm = torch.norm(feature_diff, p=2, dim=1, keepdim=True)
+        average_feature_l2_norm_list.append(feature_l2_norm.mean().item())
+        i += 1
+        n_done += 1000
+
+    return np.mean(average_feature_l2_norm_list), num_feature_timesteps
 
 def main(argv):
     FLAGS = absl.flags.FLAGS
@@ -273,20 +322,16 @@ def main(argv):
     conv_k = get_convergence_index(ret_list)
     convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
     # get weight and feature diff
-    def get_weight_diff(a,b):
-        return 0
-    def get_feature_diff(a,b,c):
-        return 0, 0
     if agent_100k is not None:
         weight_diff_100k = get_weight_diff(agent, agent_100k)
-        feature_diff_100k = get_feature_diff(agent, agent_100k, agent)
+        feature_diff_100k = get_feature_diff(agent, agent_100k, dataset, FLAGS.device)
     else:
         weight_diff_100k = -1
         feature_diff_100k = -1
     final_weight_diff = get_weight_diff(agent, agent_after_pretrain)
-    final_feature_diff, _ = get_feature_diff(agent, agent_after_pretrain, agent)
+    final_feature_diff, _ = get_feature_diff(agent, agent_after_pretrain, dataset, FLAGS.device)
     best_weight_diff = get_weight_diff(agent, best_agent)
-    best_feature_diff, num_feature_timesteps = get_feature_diff(agent, best_agent, agent)# TODO need buffer
+    best_feature_diff, num_feature_timesteps = get_feature_diff(agent, best_agent, dataset, FLAGS.device)
     # save extra dict
     extra_dict = {
         'final_weight_diff':final_weight_diff,

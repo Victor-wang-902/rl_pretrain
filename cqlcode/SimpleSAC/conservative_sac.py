@@ -305,6 +305,26 @@ class ConservativeSAC(object):
 
         return metrics
 
+    def layers_for_weight_diff(self):
+        layer_list = []
+        for layer in self.qf1.hidden_layers:
+            layer_list.append(layer)
+        for layer in self.qf2.hidden_layers:
+            layer_list.append(layer)
+        return layer_list
+
+    def features_from_batch(self, batch):
+        observations = batch['observations']
+        actions = batch['actions']
+        rewards = batch['rewards']
+        next_observations = batch['next_observations']
+        dones = batch['dones']
+
+        with torch.no_grad():
+            feature_q1 = self.qf1.get_feature(observations, actions)
+            feature_q2 = self.qf2.get_feature(observations, actions)
+            return torch.cat([feature_q1, feature_q2], 1)
+
     def torch_to_device(self, device):
         for module in self.modules:
             module.to(device)
