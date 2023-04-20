@@ -11,7 +11,7 @@
 #SBATCH --error=../logs/%A_%a.err # MAKE SURE WHEN YOU RUN THIS, ../logs IS A VALID PATH
 
 # #####################################################
-# #SBATCH --gres=gpu:1 # uncomment this line to request a gpu
+#SBATCH --gres=gpu:1 # uncomment this line to request a gpu
 # #SBATCH --cpus-per-task=3
 
 sleep $(( (RANDOM%10) + 1 )) # to avoid issues when submitting large amounts of jobs
@@ -25,5 +25,5 @@ echo "Job ID: ${SLURM_ARRAY_TASK_ID}"
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/rl_pretrain/cqlcode:/cqlcode -B /scratch/$USER/sing/cql-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/cql-sandbox bash -c "
 cd /cqlcode
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
-python SimpleSAC/run_cql.py --env hopper-medium-v2 --n_epochs 5 --n_train_step_per_epoch 20
+python SimpleSAC/run_cql.py --env hopper-expert-v2 --n_epochs 5 --n_train_step_per_epoch 20
 "
