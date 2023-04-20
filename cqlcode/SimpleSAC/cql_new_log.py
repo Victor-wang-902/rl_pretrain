@@ -164,11 +164,6 @@ def main(argv):
         for m in things_to_log:
             logger.log_tabular(m, viskit_metrics[m])
 
-        logger.log_tabular('sac/qf1_loss', viskit_metrics['sac/qf1_loss'])
-        logger.log_tabular('sac/qf2_loss', viskit_metrics['sac/qf2_loss'])
-        logger.log_tabular('sac/qf1_loss', viskit_metrics['sac/qf1_loss'])
-        logger.log_tabular('sac/qf1_loss', viskit_metrics['sac/qf1_loss'])
-
         logger.log_tabular("TestEpRet", viskit_metrics['average_return'])
         logger.log_tabular("TestEpNormRet", viskit_metrics['average_normalizd_return'])
         logger.log_tabular("Iteration", epoch + 1)
