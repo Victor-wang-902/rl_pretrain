@@ -194,7 +194,7 @@ def main(argv):
     sampler_policy = SamplerPolicy(policy, FLAGS.device)
 
     """pretrain stage"""
-    print("====PRETRAIN STAGE STARTED!====")
+    print("============================ PRETRAIN STAGE STARTED! ============================")
     st = time.time()
     if FLAGS.pretrain_mode != 'none':
         # TODO check if can load pretrained model
@@ -214,7 +214,7 @@ def main(argv):
 
         if not loaded:
             for epoch in range(FLAGS.n_pretrain_epochs):
-                metrics = {'pretrain_epoch': epoch}
+                metrics = {'pretrain_epoch': epoch+1}
                 for i_pretrain in range(FLAGS.n_train_step_per_epoch):
                     batch = subsample_batch(dataset, FLAGS.batch_size)
                     batch = batch_to_torch(batch, FLAGS.device)
@@ -226,6 +226,27 @@ def main(argv):
                 pretrain_logger.log_tabular("est_total_hours", (FLAGS.n_pretrain_epochs / (epoch + 1) * (time.time() - st)) / 3600)
                 pretrain_logger.dump_tabular()
                 sys.stdout.flush()
+
+                if (epoch+1) in (2, 20):
+                    pretrain_model_name_mid = '%s_%s_%s_%s_%d_%d_%s.pth' % (
+                    'cql', FLAGS.env, FLAGS.dataset, FLAGS.pretrain_mode,
+                    2, 256, epoch+1)
+                    pretrain_full_path_mid = os.path.join(pretrain_model_folder_path, pretrain_model_name_mid)
+                    pretrain_dict_mid = {'agent': agent,
+                                     'algorithm': 'cql',
+                                     'env': FLAGS.env,
+                                     'dataset': FLAGS.dataset,
+                                     'pretrain_mode': FLAGS.pretrain_mode,
+                                     'hidden_layer': 2,
+                                     'hidden_size': 256,  # TODO allow generalize to other architectures
+                                     'n_pretrain_epochs': epoch+1,
+                                     }
+                    if not os.path.exists(pretrain_full_path_mid):
+                        torch.save(pretrain_dict_mid, pretrain_full_path_mid)
+                        print("Saved intermediate pretrained model to:", pretrain_full_path_mid)
+                    else:
+                        print("Intermediate pretrained model not saved. Already exist:", pretrain_full_path_mid)
+
             pretrain_dict = {'agent':agent,
                              'algorithm':'cql',
                              'env':FLAGS.env,
@@ -244,7 +265,8 @@ def main(argv):
     agent_after_pretrain = deepcopy(agent)
 
     """offline stage"""
-    print("====OFFLINE STAGE STARTED!====")
+    print("============================ OFFLINE STAGE STARTED! ============================")
+
     best_agent = deepcopy(agent)
     agent_100k = None
     best_step, best_iter = 0, 0
