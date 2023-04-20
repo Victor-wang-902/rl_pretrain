@@ -1,4 +1,6 @@
 import os
+import sys
+
 # with new logger
 ld_library_path = os.environ.get('LD_LIBRARY_PATH', '')
 ld_library_path += ':/workspace/.mujoco/mujoco210/bin:/usr/local/nvidia/lib:/usr/lib/nvidia'
@@ -49,11 +51,11 @@ FLAGS_DEF = define_flags_with_default(
     policy_log_std_multiplier=1.0,
     policy_log_std_offset=-1.0,
 
-    n_epochs=2000,
+    n_epochs=200,
     bc_epochs=0,
-    n_train_step_per_epoch=1000,
-    eval_period=10,
-    eval_n_trajs=5,
+    n_train_step_per_epoch=5000,
+    eval_period=1,
+    eval_n_trajs=10,
 
     cql=ConservativeSAC.get_default_config(),
     logging=WandBLogger.get_default_config(),
@@ -125,6 +127,7 @@ def main(argv):
     sampler_policy = SamplerPolicy(policy, FLAGS.device)
 
     viskit_metrics = {}
+    st = time.time()
     for epoch in range(FLAGS.n_epochs):
         metrics = {'epoch': epoch}
 
@@ -143,7 +146,7 @@ def main(argv):
                 metrics['average_return'] = np.mean([np.sum(t['rewards']) for t in trajs])
                 metrics['average_traj_length'] = np.mean([len(t['rewards']) for t in trajs])
                 metrics['average_normalizd_return'] = np.mean(
-                    [eval_sampler.env.get_normalized_score(np.sum(t['rewards'])) for t in trajs]
+                    [eval_sampler.env.get_normalized_score(np.sum(t['rewards'])*100) for t in trajs]
                 )
                 if FLAGS.save_model:
                     save_data = {'sac': sac, 'variant': variant, 'epoch': epoch}
@@ -155,7 +158,26 @@ def main(argv):
         # wandb_logger.log(metrics)
         viskit_metrics.update(metrics)
         print(viskit_metrics)
-        quit()
+
+        things_to_log = ['sac/log_pi', 'sac/policy_loss', 'sac/qf1_loss', 'sac/qf2_loss', 'sac/alpha_loss', 'sac/alpha',
+                         'sac/average_qf1', 'sac/average_qf2', 'average_traj_length']
+        for m in things_to_log:
+            logger.log_tabular(m, viskit_metrics[m])
+
+        logger.log_tabular('sac/qf1_loss', viskit_metrics['sac/qf1_loss'])
+        logger.log_tabular('sac/qf2_loss', viskit_metrics['sac/qf2_loss'])
+        logger.log_tabular('sac/qf1_loss', viskit_metrics['sac/qf1_loss'])
+        logger.log_tabular('sac/qf1_loss', viskit_metrics['sac/qf1_loss'])
+
+        logger.log_tabular("TestEpRet", viskit_metrics['average_return'])
+        logger.log_tabular("TestEpNormRet", viskit_metrics['average_normalizd_return'])
+        logger.log_tabular("Iteration", epoch + 1)
+        logger.log_tabular("Steps", (epoch + 1) * FLAGS.n_train_step_per_epoch)
+        logger.log_tabular("total_time", time.time()-st)
+        logger.log_tabular("train_time", viskit_metrics["train_time"])
+        logger.log_tabular("eval_time", viskit_metrics["eval_time"])
+        logger.dump_tabular()
+        sys.stdout.flush()
         # logger_other.record_dict(viskit_metrics)
         # logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
 
