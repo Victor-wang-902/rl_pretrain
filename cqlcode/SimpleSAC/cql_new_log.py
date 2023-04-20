@@ -26,7 +26,7 @@ from SimpleSAC.model import TanhGaussianPolicy, FullyConnectedQFunction, Sampler
 from SimpleSAC.sampler import StepSampler, TrajSampler
 from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
 from SimpleSAC.utils import WandBLogger
-from viskit.logging import logger_other, setup_logger
+# from viskit.logging import logger_other, setup_logger
 from exp_scripts.grid_utils import *
 from logx import EpochLogger
 
@@ -64,14 +64,14 @@ def main(argv):
     FLAGS = absl.flags.FLAGS
 
     variant = get_user_flags(FLAGS, FLAGS_DEF) # variant is a dict
-    wandb_logger = WandBLogger(config=FLAGS.logging, variant=variant)
-    setup_logger(
-        variant=variant,
-        exp_id=wandb_logger.experiment_id,
-        seed=FLAGS.seed,
-        base_log_dir=FLAGS.logging.output_dir,
-        include_exp_prefix_sub_dir=False
-    )
+    # wandb_logger = WandBLogger(config=FLAGS.logging, variant=variant)
+    # setup_logger(
+    #     variant=variant,
+    #     exp_id=wandb_logger.experiment_id,
+    #     seed=FLAGS.seed,
+    #     base_log_dir=FLAGS.logging.output_dir,
+    #     include_exp_prefix_sub_dir=False
+    # )
 
     # new logger
     data_dir = '/checkpoints'
@@ -147,21 +147,21 @@ def main(argv):
                 )
                 if FLAGS.save_model:
                     save_data = {'sac': sac, 'variant': variant, 'epoch': epoch}
-                    wandb_logger.save_pickle(save_data, 'model.pkl')
+                    # wandb_logger.save_pickle(save_data, 'model.pkl')
 
         metrics['train_time'] = train_timer()
         metrics['eval_time'] = eval_timer()
         metrics['epoch_time'] = train_timer() + eval_timer()
-        wandb_logger.log(metrics)
+        # wandb_logger.log(metrics)
         viskit_metrics.update(metrics)
         print(viskit_metrics)
         quit()
-        logger_other.record_dict(viskit_metrics)
-        logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
+        # logger_other.record_dict(viskit_metrics)
+        # logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
 
     if FLAGS.save_model:
         save_data = {'sac': sac, 'variant': variant, 'epoch': epoch}
-        wandb_logger.save_pickle(save_data, 'model.pkl')
+        # wandb_logger.save_pickle(save_data, 'model.pkl')
 
 if __name__ == '__main__':
     absl.app.run(main)
