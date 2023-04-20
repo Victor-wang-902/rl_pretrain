@@ -32,12 +32,17 @@ from SimpleSAC.utils import WandBLogger
 from exp_scripts.grid_utils import *
 from logx import EpochLogger
 
+CUDA_AVAILABLE = torch.cuda.is_available()
+if CUDA_AVAILABLE:
+    DEVICE = 'cuda'
+else:
+    DEVICE = 'cpu'
 
 FLAGS_DEF = define_flags_with_default(
     env='halfcheetah-medium-v2',
     max_traj_length=1000,
     seed=42,
-    device='cuda',
+    device=DEVICE,
     save_model=False,
     batch_size=256,
 
