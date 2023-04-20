@@ -158,9 +158,9 @@ def main(argv):
             agent.qf1.load_state_dict(pretrain_dict['agent'].qf1.state_dict())
             agent.qf2.load_state_dict(pretrain_dict['agent'].qf2.state_dict())
             loaded = True
+            print("Pretrained model loaded from:", pretrain_full_path)
         except Exception as e:
-            print("No pretrained model, start pretraining.")
-            print(e)
+            print(e, "No pretrained model, start pretraining.")
             loaded = False
 
         if not loaded:
