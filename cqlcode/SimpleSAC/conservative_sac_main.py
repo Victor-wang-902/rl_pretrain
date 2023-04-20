@@ -26,7 +26,7 @@ from SimpleSAC.model import TanhGaussianPolicy, FullyConnectedQFunction, Sampler
 from SimpleSAC.sampler import StepSampler, TrajSampler
 from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
 from SimpleSAC.utils import WandBLogger
-from viskit.logging import logger, setup_logger
+from viskit.logging import logger_other, setup_logger
 
 
 FLAGS_DEF = define_flags_with_default(
@@ -141,8 +141,8 @@ def main(argv):
         metrics['epoch_time'] = train_timer() + eval_timer()
         wandb_logger.log(metrics)
         viskit_metrics.update(metrics)
-        logger.record_dict(viskit_metrics)
-        logger.dump_tabular(with_prefix=False, with_timestamp=False)
+        logger_other.record_dict(viskit_metrics)
+        logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
 
     if FLAGS.save_model:
         save_data = {'sac': sac, 'variant': variant, 'epoch': epoch}

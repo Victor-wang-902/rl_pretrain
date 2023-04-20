@@ -418,24 +418,24 @@ def setup_logger(
     )
 
     if variant is not None:
-        logger.log("Variant:")
-        logger.log(json.dumps(dict_to_safe_json(variant), indent=2))
+        logger_other.log("Variant:")
+        logger_other.log(json.dumps(dict_to_safe_json(variant), indent=2))
         variant_log_path = osp.join(log_dir, variant_log_file)
-        logger.log_variant(variant_log_path, variant)
+        logger_other.log_variant(variant_log_path, variant)
 
     tabular_log_path = osp.join(log_dir, tabular_log_file)
     text_log_path = osp.join(log_dir, text_log_file)
 
-    logger.add_text_output(text_log_path)
-    logger.add_tabular_output(tabular_log_path)
-    logger.set_snapshot_dir(log_dir)
-    logger.set_snapshot_mode(snapshot_mode)
-    logger.set_snapshot_gap(snapshot_gap)
-    logger.set_log_tabular_only(log_tabular_only)
+    logger_other.add_text_output(text_log_path)
+    logger_other.add_tabular_output(tabular_log_path)
+    logger_other.set_snapshot_dir(log_dir)
+    logger_other.set_snapshot_mode(snapshot_mode)
+    logger_other.set_snapshot_gap(snapshot_gap)
+    logger_other.set_log_tabular_only(log_tabular_only)
     exp_name = log_dir.split("/")[-1]
-    logger.push_prefix("[%s] " % exp_name)
+    logger_other.push_prefix("[%s] " % exp_name)
 
     return log_dir
 
 
-logger = Logger()
+logger_other = Logger()
