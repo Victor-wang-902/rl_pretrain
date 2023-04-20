@@ -160,6 +160,7 @@ def main(argv):
             loaded = True
         except Exception as e:
             print("No pretrained model, start pretraining.")
+            print(e)
             loaded = False
 
         if not loaded:
@@ -304,9 +305,6 @@ def main(argv):
         'weight_diff_100k':weight_diff_100k, # unique to cql due to more training updates
         'feature_diff_100k': feature_diff_100k,
     }
-    for key, value in extra_dict.items():
-        print(key)
-        print(type(value))
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
     if FLAGS.save_model:
