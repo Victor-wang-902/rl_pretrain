@@ -82,7 +82,7 @@ def main(argv):
     variant["outdir"] = logger_kwargs["output_dir"]
     variant["exp_name"] = logger_kwargs["exp_name"]
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
-    logger.save_config(locals())
+    logger.save_config(variant)
 
     set_random_seed(FLAGS.seed)
 
