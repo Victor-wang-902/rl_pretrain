@@ -171,6 +171,9 @@ def main(argv):
         logger.log_tabular("total_time", time.time()-st)
         logger.log_tabular("train_time", viskit_metrics["train_time"])
         logger.log_tabular("eval_time", viskit_metrics["eval_time"])
+
+        logger.log_tabular("est_total_hours", (FLAGS.n_epochs/(epoch + 1) * (time.time()-st))/3600)
+
         logger.dump_tabular()
         sys.stdout.flush()
         # logger_other.record_dict(viskit_metrics)
