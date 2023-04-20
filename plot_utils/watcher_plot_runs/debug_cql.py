@@ -12,19 +12,20 @@ envs = []
 
 for e in MUJOCO_3_ENVS:
     for dataset in MUJOCO_3_DATASETS:
-        envs.append('%s_%s' % (e, dataset))
+        # envs.append('%s_%s' % (e, dataset))
+        envs.append('%s-%s' % (e, dataset)) # TODO change back
 
 data_path = '../../code/checkpoints/'
 save_path = '../../figures/'
 
-standard_ys = ['TestEpRet', 'TestEpNormRet', 'total_time', 'AverageQ1Vals', 'LossQ']
+standard_ys = ['TestEpRet', 'TestEpNormRet', 'total_time']
 
 quick_plot( # labels, folder name prefix, envs
     [
         'cql',
     ],
     [
-        'rl_cql',
+        'cqlnew',
     ],
     envs=envs,
     save_name='debug_cql',

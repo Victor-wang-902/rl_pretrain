@@ -171,7 +171,7 @@ def flatten_config_dict(config, prefix=None):
 
 
 
-def prefix_metrics(metrics, prefix):
+def prefix_metrics(metrics, prefix, connector_string='/'):
     return {
-        '{}/{}'.format(prefix, key): value for key, value in metrics.items()
+        '{}{}{}'.format(prefix, connector_string, key): value for key, value in metrics.items()
     }

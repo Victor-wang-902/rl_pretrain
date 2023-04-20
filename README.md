@@ -191,13 +191,13 @@ singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/
 
 ```
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
-cd /cqlcode
+cd /cqlcode/SimpleSAC
 ```
 
 Send back files for plotting: 
 ```
 cd /scratch/$USER/sing/rl_pretrain/code
-rsync -av --exclude='*.pt' checkpoints/rl* sendbackrl/
+rsync -av --exclude='*.pt' checkpoints/cqlnew* sendbackrl/
 zip -r sendrl.zip sendbackrl/
 ```
 
@@ -205,4 +205,9 @@ zip -r sendrl.zip sendbackrl/
 background no log job test:
 ```
 python sth.py > /dev/null 2>&1 &
+```
+
+quick cql testing:
+```
+python run_cql.py --pretrain_mode q_sprime --n_pretrain_epochs 3 --n_train_step_per_epoch 10 --n_epochs 3
 ```

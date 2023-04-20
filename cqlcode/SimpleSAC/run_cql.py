@@ -24,13 +24,13 @@ import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
 from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset, subsample_batch
-from SimpleSAC.model import TanhGaussianPolicy, FullyConnectedQFunction, SamplerPolicy
+from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain
 from SimpleSAC.sampler import StepSampler, TrajSampler
 from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
 from SimpleSAC.utils import WandBLogger
 # from viskit.logging import logger_other, setup_logger
 from exp_scripts.grid_utils import *
-from logx import EpochLogger
+from redq.utils.logx import EpochLogger
 
 CUDA_AVAILABLE = torch.cuda.is_available()
 if CUDA_AVAILABLE:
@@ -59,14 +59,24 @@ FLAGS_DEF = define_flags_with_default(
 
     n_epochs=200,
     bc_epochs=0,
+    n_pretrain_epochs=200,
+    pretrain_mode='none',
     n_train_step_per_epoch=5000,
     eval_period=1,
     eval_n_trajs=10,
-
+    exp_prefix='cqltest',
     cql=ConservativeSAC.get_default_config(),
     logging=WandBLogger.get_default_config(),
 )
 
+def get_convergence_index(ret_list, threshold_gap=2):
+    best_value = max(ret_list)
+    convergence_threshold = best_value - threshold_gap
+    k_conv = len(ret_list) - 1
+    for k in range(len(ret_list) - 1, -1, -1):
+        if ret_list[k] >= convergence_threshold:
+            k_conv = k
+    return k_conv
 
 def main(argv):
     FLAGS = absl.flags.FLAGS
@@ -83,14 +93,15 @@ def main(argv):
 
     # new logger
     data_dir = '/checkpoints'
-    exp_prefix = 'cqlnew'
-    exp_suffix = '_%s-%s' % (FLAGS.env, FLAGS.dataset)
+    exp_prefix = FLAGS.exp_prefix
+    exp_suffix = '_%s_%s' % (FLAGS.env, FLAGS.dataset)
     exp_name_full = exp_prefix + exp_suffix
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, variant['seed'], data_dir)
     variant["outdir"] = logger_kwargs["output_dir"]
     variant["exp_name"] = logger_kwargs["exp_name"]
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
     logger.save_config(variant)
+    pretrain_logger = EpochLogger(variant["outdir"], 'pretrain_progress.csv', variant["exp_name"])
 
     set_random_seed(FLAGS.seed)
 
@@ -109,7 +120,7 @@ def main(argv):
         orthogonal_init=FLAGS.orthogonal_init,
     )
 
-    qf1 = FullyConnectedQFunction(
+    qf1 = FullyConnectedQFunctionPretrain(
         eval_sampler.env.observation_space.shape[0],
         eval_sampler.env.action_space.shape[0],
         arch=FLAGS.qf_arch,
@@ -117,7 +128,7 @@ def main(argv):
     )
     target_qf1 = deepcopy(qf1)
 
-    qf2 = FullyConnectedQFunction(
+    qf2 = FullyConnectedQFunctionPretrain(
         eval_sampler.env.observation_space.shape[0],
         eval_sampler.env.action_space.shape[0],
         arch=FLAGS.qf_arch,
@@ -128,11 +139,66 @@ def main(argv):
     if FLAGS.cql.target_entropy >= 0.0:
         FLAGS.cql.target_entropy = -np.prod(eval_sampler.env.action_space.shape).item()
 
-    sac = ConservativeSAC(FLAGS.cql, policy, qf1, qf2, target_qf1, target_qf2)
-    sac.torch_to_device(FLAGS.device)
+    agent = ConservativeSAC(FLAGS.cql, policy, qf1, qf2, target_qf1, target_qf2)
+    agent.torch_to_device(FLAGS.device)
 
     sampler_policy = SamplerPolicy(policy, FLAGS.device)
 
+    """pretrain stage"""
+    print("====PRETRAIN STAGE STARTED!====")
+    st = time.time()
+    if FLAGS.pretrain_mode != 'none':
+        # TODO check if can load pretrained model
+        pretrain_model_folder_path = '/cqlcode/pretrained_cql_models/'
+        pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % ('cql', FLAGS.env, FLAGS.dataset, FLAGS.pretrain_mode,
+                                                            2, 256, FLAGS.n_pretrain_epochs)
+        pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
+        try:
+            pretrain_dict = torch.load(pretrain_full_path)
+            agent.qf1.load_state_dict(pretrain_dict['agent'].qf1)
+            agent.qf2.load_state_dict(pretrain_dict['agent'].qf2)
+            loaded = True
+        except Exception as e:
+            print("No pretrained model, start pretraining.")
+            loaded = False
+
+        if not loaded:
+            for epoch in range(FLAGS.n_pretrain_epochs):
+                metrics = {'pretrain_epoch': epoch}
+                for i_pretrain in range(FLAGS.n_train_step_per_epoch):
+                    batch = subsample_batch(dataset, FLAGS.batch_size)
+                    batch = batch_to_torch(batch, FLAGS.device)
+                    metrics.update(agent.pretrain(batch, FLAGS.pretrain_mode))
+
+                pretrain_logger.log_tabular("pretrain_loss", metrics['pretrain_loss'])
+                pretrain_logger.log_tabular("total_pretrain_steps", metrics['total_pretrain_steps'])
+                pretrain_logger.log_tabular("current_hours", (time.time() - st) / 3600)
+                pretrain_logger.log_tabular("est_total_hours", (FLAGS.n_pretrain_epochs / (epoch + 1) * (time.time() - st)) / 3600)
+                pretrain_logger.dump_tabular()
+                sys.stdout.flush()
+            pretrain_dict = {'agent':agent,
+                             'algorithm':'cql',
+                             'env':FLAGS.env,
+                             'dataset':FLAGS.dataset,
+                             'pretrain_mode':FLAGS.pretrain_mode,
+                             'hidden_layer':2,
+                             'hidden_size':256, #TODO allow generalize to other architectures
+                             'n_pretrain_epochs':FLAGS.n_pretrain_epochs,
+                             }
+            if not os.path.exists(pretrain_full_path):
+                torch.save(pretrain_dict, pretrain_full_path)
+                print("Saved pretrained model to:", pretrain_full_path)
+            else:
+                print("Pretrained model not saved. Already exist:", pretrain_full_path)
+
+    agent_after_pretrain = deepcopy(agent)
+
+    """offline stage"""
+    print("====OFFLINE STAGE STARTED!====")
+    best_agent = deepcopy(agent)
+    best_step, best_iter = 0, 0
+    iter_list, step_list, ret_list, ret_normalized_list = [],[],[],[]
+    best_return, best_return_normalized = -np.inf, -np.inf
     viskit_metrics = {}
     st = time.time()
     for epoch in range(FLAGS.n_epochs):
@@ -142,7 +208,7 @@ def main(argv):
             for batch_idx in range(FLAGS.n_train_step_per_epoch):
                 batch = subsample_batch(dataset, FLAGS.batch_size)
                 batch = batch_to_torch(batch, FLAGS.device)
-                metrics.update(prefix_metrics(sac.train(batch, bc=epoch < FLAGS.bc_epochs), 'sac'))
+                metrics.update(prefix_metrics(agent.train(batch, bc=epoch < FLAGS.bc_epochs), 'sac', connector_string='_'))
 
         with Timer() as eval_timer:
             if epoch == 0 or (epoch + 1) % FLAGS.eval_period == 0:
@@ -156,8 +222,22 @@ def main(argv):
                     [eval_sampler.env.get_normalized_score(np.sum(t['rewards'])*100) for t in trajs]
                 )
                 if FLAGS.save_model:
-                    save_data = {'sac': sac, 'variant': variant, 'epoch': epoch}
+                    save_data = {'sac': agent, 'variant': variant, 'epoch': epoch}
                     # wandb_logger.save_pickle(save_data, 'model.pkl')
+
+                # record best return and other things
+                iter_list.append(epoch+1)
+                step_list.append((epoch+1) * FLAGS.n_train_step_per_epoch)
+                ret_normalized_list.append(metrics['average_normalizd_return'])
+                ret_list.append(metrics['average_return'])
+                if metrics['average_normalizd_return'] > best_return_normalized:
+                    best_return = metrics['average_return']
+                    best_return_normalized = metrics['average_normalizd_return']
+                    best_agent = deepcopy(agent)
+                    best_iter = epoch + 1
+                    best_step = (epoch+1) * FLAGS.n_train_step_per_epoch
+            if (epoch + 1) == 20:
+                agent_100k = deepcopy(agent)
 
         metrics['train_time'] = train_timer()
         metrics['eval_time'] = eval_timer()
@@ -165,8 +245,8 @@ def main(argv):
         # wandb_logger.log(metrics)
         viskit_metrics.update(metrics)
 
-        things_to_log = ['sac/log_pi', 'sac/policy_loss', 'sac/qf1_loss', 'sac/qf2_loss', 'sac/alpha_loss', 'sac/alpha',
-                         'sac/average_qf1', 'sac/average_qf2', 'average_traj_length']
+        things_to_log = ['sac_log_pi', 'sac_policy_loss', 'sac_qf1_loss', 'sac_qf2_loss', 'sac_alpha_loss', 'sac_alpha',
+                         'sac_average_qf1', 'sac_average_qf2', 'average_traj_length']
         for m in things_to_log:
             logger.log_tabular(m, viskit_metrics[m])
 
@@ -178,6 +258,7 @@ def main(argv):
         logger.log_tabular("train_time", viskit_metrics["train_time"])
         logger.log_tabular("eval_time", viskit_metrics["eval_time"])
 
+        logger.log_tabular("current_hours", (time.time()-st)/3600)
         logger.log_tabular("est_total_hours", (FLAGS.n_epochs/(epoch + 1) * (time.time()-st))/3600)
 
         logger.dump_tabular()
@@ -185,8 +266,43 @@ def main(argv):
         # logger_other.record_dict(viskit_metrics)
         # logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
 
+    """get extra dict"""
+    # get convergence steps
+    conv_k = get_convergence_index(ret_list)
+    convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
+    # get weight and feature diff
+    def get_weight_diff(a,b):
+        return 0
+    def get_feature_diff(a,b,c):
+        return 0
+    weight_diff_100k = get_weight_diff(agent, agent_100k)
+    feature_diff_100k = get_feature_diff(agent, agent_100k, agent)
+    final_weight_diff = get_weight_diff(agent, agent_after_pretrain)
+    final_feature_diff, _ = get_feature_diff(agent, agent_after_pretrain, agent)
+    best_weight_diff = get_weight_diff(agent, best_agent)
+    best_feature_diff, num_feature_timesteps = get_feature_diff(agent, best_agent, agent)# TODO need buffer
+    # save extra dict
+    extra_dict = {
+        'final_weight_diff':final_weight_diff,
+        'final_feature_diff':final_feature_diff,
+        'best_weight_diff': best_weight_diff,
+        'best_feature_diff': best_feature_diff,
+        'num_feature_timesteps':num_feature_timesteps,
+        'final_test_returns':ret_list[-1],
+        'final_test_normalized_returns': ret_normalized_list[-1],
+        'best_return': best_return,
+        'best_return_normalized':best_return_normalized,
+        'convergence_step':convergence_step,
+        'convergence_iter':convergence_iter,
+        'best_step':best_step,
+        'best_iter':best_iter,
+        'weight_diff_100k':weight_diff_100k, # unique to cql due to more training updates
+        'feature_diff_100k': feature_diff_100k,
+    }
+    logger.save_extra_dict_as_json(extra_dict, 'extra.json')
+
     if FLAGS.save_model:
-        save_data = {'sac': sac, 'variant': variant, 'epoch': epoch}
+        save_data = {'sac': agent, 'variant': variant, 'epoch': epoch}
         # wandb_logger.save_pickle(save_data, 'model.pkl')
 
 if __name__ == '__main__':

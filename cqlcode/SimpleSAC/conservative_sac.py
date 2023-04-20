@@ -81,6 +81,7 @@ class ConservativeSAC(object):
 
         self.update_target_network(1.0)
         self._total_steps = 0
+        self._total_pretrain_steps = 0
 
     def update_target_network(self, soft_target_update_rate):
         soft_target_update(self.qf1, self.target_qf1, soft_target_update_rate)
@@ -273,6 +274,37 @@ class ConservativeSAC(object):
 
         return metrics
 
+    def pretrain(self, batch, pretrain_mode):
+        # pretrain mode:  q_sprime, 4. q_mc
+        self._total_pretrain_steps += 1
+
+        observations = batch['observations']
+        actions = batch['actions']
+        rewards = batch['rewards']
+        next_observations = batch['next_observations']
+        dones = batch['dones']
+
+        # TODO work on it here
+        if pretrain_mode == 'q_sprime':
+            # here use both q networks to predict next obs
+            obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
+            obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
+            pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+            pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+            pretrain_loss = pretrain_loss1 + pretrain_loss2
+
+        self.qf_optimizer.zero_grad()
+        pretrain_loss.backward()
+        self.qf_optimizer.step()
+
+        # TODO when pretrain finished need to update target networks
+        metrics = dict(
+            pretrain_loss=pretrain_loss.item(),
+            total_pretrain_steps=self.total_pretrain_steps,
+        )
+
+        return metrics
+
     def torch_to_device(self, device):
         for module in self.modules:
             module.to(device)
@@ -289,3 +321,7 @@ class ConservativeSAC(object):
     @property
     def total_steps(self):
         return self._total_steps
+
+    @property
+    def total_pretrain_steps(self):
+        return self._total_pretrain_steps
