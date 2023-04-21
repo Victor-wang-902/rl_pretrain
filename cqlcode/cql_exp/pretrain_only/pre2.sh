@@ -25,7 +25,7 @@ echo "Job ID: ${SLURM_ARRAY_TASK_ID}"
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/rl_pretrain/cqlcode:/cqlcode -B /scratch/$USER/sing/cql-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/cql-sandbox bash -c "
 cd /cqlcode
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
-python SimpleSAC/run_cql.py --exp_prefix pre_only --do_pretrain_only True --env halfcheetah --dataset medium &
-python SimpleSAC/run_cql.py --exp_prefix pre_only --do_pretrain_only True --env halfcheetah --dataset medium-replay &
-python SimpleSAC/run_cql.py --exp_prefix pre_only --do_pretrain_only True --env halfcheetah --dataset medium-expert
+python SimpleSAC/run_cql.py --exp_prefix pre_only --pretrain_mode q_sprime --do_pretrain_only True --env halfcheetah --dataset medium &
+python SimpleSAC/run_cql.py --exp_prefix pre_only --pretrain_mode q_sprime --do_pretrain_only True --env halfcheetah --dataset medium-replay &
+python SimpleSAC/run_cql.py --exp_prefix pre_only --pretrain_mode q_sprime --do_pretrain_only True --env halfcheetah --dataset medium-expert
 "
