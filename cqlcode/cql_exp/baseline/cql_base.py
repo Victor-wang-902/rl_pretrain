@@ -87,7 +87,7 @@ def main(argv):
 
     """replace values"""
     for key, value in actual_setting.items():
-        FLAGS.__setitem__(key, value)
+        setattr(FLAGS, key, value)
     print(FLAGS.env)
     print(FLAGS.dataset)
     print(FLAGS.pretrain_mode)
