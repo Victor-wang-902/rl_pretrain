@@ -44,7 +44,7 @@ FLAGS_DEF = define_flags_with_default(
     max_traj_length=1000,
     seed=42,
     device=DEVICE,
-    save_model=False,
+    save_model=True,
     batch_size=256,
 
     reward_scale=1.0,
@@ -221,6 +221,8 @@ def main(argv):
                     batch = batch_to_torch(batch, FLAGS.device)
                     metrics.update(agent.pretrain(batch, FLAGS.pretrain_mode))
 
+                pretrain_logger.log_tabular("PretrainIteration", epoch + 1)
+                pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * FLAGS.n_train_step_per_epoch)
                 pretrain_logger.log_tabular("pretrain_loss", metrics['pretrain_loss'])
                 pretrain_logger.log_tabular("total_pretrain_steps", metrics['total_pretrain_steps'])
                 pretrain_logger.log_tabular("current_hours", (time.time() - st) / 3600)
@@ -297,9 +299,6 @@ def main(argv):
                 metrics['average_normalizd_return'] = np.mean(
                     [eval_sampler.env.get_normalized_score(np.sum(t['rewards'])*100) for t in trajs]
                 )
-                if FLAGS.save_model:
-                    save_data = {'sac': agent, 'variant': variant, 'epoch': epoch}
-                    # wandb_logger.save_pickle(save_data, 'model.pkl')
 
                 # record best return and other things
                 iter_list.append(epoch+1)
@@ -314,6 +313,10 @@ def main(argv):
                     best_step = (epoch+1) * FLAGS.n_train_step_per_epoch
             if (epoch + 1) == 20:
                 agent_100k = deepcopy(agent)
+            if FLAGS.save_model and (epoch + 1) in (1, 20, 200):
+                save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch+1}
+                logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
+                # wandb_logger.save_pickle(save_data, 'model.pkl')
 
         metrics['train_time'] = train_timer()
         metrics['eval_time'] = eval_timer()
@@ -348,15 +351,15 @@ def main(argv):
     convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
     # get weight and feature diff
     if agent_100k is not None:
-        weight_diff_100k = get_weight_diff(agent, agent_100k)
-        feature_diff_100k = get_feature_diff(agent, agent_100k, dataset, FLAGS.device)
+        weight_diff_100k = get_weight_diff(agent_100k, agent_after_pretrain)
+        feature_diff_100k = get_feature_diff(agent_100k, agent_after_pretrain, dataset, FLAGS.device)
     else:
         weight_diff_100k = -1
         feature_diff_100k = -1
     final_weight_diff = get_weight_diff(agent, agent_after_pretrain)
     final_feature_diff, _ = get_feature_diff(agent, agent_after_pretrain, dataset, FLAGS.device)
-    best_weight_diff = get_weight_diff(agent, best_agent)
-    best_feature_diff, num_feature_timesteps = get_feature_diff(agent, best_agent, dataset, FLAGS.device)
+    best_weight_diff = get_weight_diff(best_agent, agent_after_pretrain)
+    best_feature_diff, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, FLAGS.device)
     # save extra dict
     extra_dict = {
         'final_weight_diff':final_weight_diff,
