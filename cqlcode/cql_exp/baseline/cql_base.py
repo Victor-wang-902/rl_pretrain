@@ -88,10 +88,6 @@ def main(argv):
     """replace values"""
     for key, value in actual_setting.items():
         setattr(FLAGS, key, value)
-    print(FLAGS.env)
-    print(FLAGS.dataset)
-    print(FLAGS.pretrain_mode)
-    print("#######\n\n#######")
 
     ###########################################################
     variant = get_user_flags(FLAGS, FLAGS_DEF) # variant is a dict
