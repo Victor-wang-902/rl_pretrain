@@ -200,7 +200,7 @@ def run_single_exp(variant, FLAGS):
         # TODO check if can load pretrained model
         pretrain_model_folder_path = '/cqlcode/pretrained_cql_models/'
         pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % ('cql', FLAGS.env, FLAGS.dataset, FLAGS.pretrain_mode,
-                                                            2, 256, FLAGS.n_pretrain_epochs)
+                                                            FLAGS.qf_hidden_layer, 256, FLAGS.n_pretrain_epochs)
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         try:
             pretrain_dict = torch.load(pretrain_full_path)
@@ -232,14 +232,14 @@ def run_single_exp(variant, FLAGS):
                 if (epoch+1) in (2, 20):
                     pretrain_model_name_mid = '%s_%s_%s_%s_%d_%d_%s.pth' % (
                     'cql', FLAGS.env, FLAGS.dataset, FLAGS.pretrain_mode,
-                    2, 256, epoch+1)
+                    FLAGS.qf_hidden_layer, 256, epoch+1)
                     pretrain_full_path_mid = os.path.join(pretrain_model_folder_path, pretrain_model_name_mid)
                     pretrain_dict_mid = {'agent': agent,
                                      'algorithm': 'cql',
                                      'env': FLAGS.env,
                                      'dataset': FLAGS.dataset,
                                      'pretrain_mode': FLAGS.pretrain_mode,
-                                     'hidden_layer': 2,
+                                     'hidden_layer': FLAGS.qf_hidden_layer,
                                      'hidden_size': 256,  # TODO allow generalize to other architectures
                                      'n_pretrain_epochs': epoch+1,
                                      }
@@ -254,7 +254,7 @@ def run_single_exp(variant, FLAGS):
                              'env':FLAGS.env,
                              'dataset':FLAGS.dataset,
                              'pretrain_mode':FLAGS.pretrain_mode,
-                             'hidden_layer':2,
+                             'hidden_layer':FLAGS.qf_hidden_layer,
                              'hidden_size':256, #TODO allow generalize to other architectures
                              'n_pretrain_epochs':FLAGS.n_pretrain_epochs,
                              }
