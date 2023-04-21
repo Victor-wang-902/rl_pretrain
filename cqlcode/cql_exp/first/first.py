@@ -77,7 +77,7 @@ def main(argv):
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
-        'seed', '', [42, 666, 1024],
+        # 'seed', '', [42, 666, 1024],
     ]
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, FLAGS.setting)
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
