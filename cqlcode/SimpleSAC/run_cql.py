@@ -156,6 +156,7 @@ def run_single_exp(variant, FLAGS):
     env_full = '%s-%s-v2' % (FLAGS.env, FLAGS.dataset)
     eval_sampler = TrajSampler(gym.make(env_full).unwrapped, FLAGS.max_traj_length)
     dataset = get_d4rl_dataset(eval_sampler.env)
+    print("D4RL dataset loaded for", env_full)
     dataset['rewards'] = dataset['rewards'] * FLAGS.reward_scale + FLAGS.reward_bias
     dataset['actions'] = np.clip(dataset['actions'], -FLAGS.clip_action, FLAGS.clip_action)
 
