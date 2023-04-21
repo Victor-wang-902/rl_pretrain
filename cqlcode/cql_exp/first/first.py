@@ -25,6 +25,8 @@ import absl.flags
 from SimpleSAC.utils import get_user_flags, define_flags_with_default
 from exp_scripts.grid_utils import *
 from SimpleSAC.run_cql import run_single_exp
+from SimpleSAC.conservative_sac import ConservativeSAC
+from SimpleSAC.utils import WandBLogger
 
 CUDA_AVAILABLE = torch.cuda.is_available()
 if CUDA_AVAILABLE:
@@ -32,8 +34,45 @@ if CUDA_AVAILABLE:
 else:
     DEVICE = 'cpu'
 
+def define_default_grid_flags():
+    FLAGS_DEF = define_flags_with_default(
+        env='halfcheetah',
+        dataset='medium',
+        max_traj_length=1000,
+        seed=42,
+        device=DEVICE,
+        save_model=True,
+        batch_size=256,
+
+        reward_scale=1.0,
+        reward_bias=0.0,
+        clip_action=0.999,
+
+        policy_arch='256-256',
+        qf_arch='256-256',
+        orthogonal_init=False,
+        policy_log_std_multiplier=1.0,
+        policy_log_std_offset=-1.0,
+
+        n_epochs=200,
+        bc_epochs=0,
+        n_pretrain_epochs=200,
+        pretrain_mode='none', #
+        n_train_step_per_epoch=5000,
+        eval_period=1,
+        eval_n_trajs=10,
+        exp_prefix='cqltest',
+        cql=ConservativeSAC.get_default_config(),
+        logging=WandBLogger.get_default_config(),
+        do_pretrain_only=False,
+
+        setting=0,
+    )
+    return FLAGS_DEF
+
 def main(argv):
     FLAGS = absl.flags.FLAGS
+    FLAGS_DEF = define_default_grid_flags()
 
     ###########################################################
     exp_prefix = 'zzz'
@@ -46,7 +85,7 @@ def main(argv):
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
 
     print("YOOOOOO")
-    print(FLAG_DEF)
+    print(FLAGS_DEF)
     print(FLAGS.setting)
     print(actual_setting)
     print(exp_name_full)
