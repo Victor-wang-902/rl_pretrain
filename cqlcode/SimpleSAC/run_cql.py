@@ -67,6 +67,7 @@ FLAGS_DEF = define_flags_with_default(
     exp_prefix='cqltest',
     cql=ConservativeSAC.get_default_config(),
     logging=WandBLogger.get_default_config(),
+    do_pretrain_only=False,
 )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -262,6 +263,8 @@ def main(argv):
             else:
                 print("Pretrained model not saved. Already exist:", pretrain_full_path)
 
+    if FLAGS.do_pretrain_only:
+        return
     agent_after_pretrain = deepcopy(agent)
 
     """offline stage"""
