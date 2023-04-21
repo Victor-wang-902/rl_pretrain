@@ -22,15 +22,8 @@ import d4rl
 import absl.app
 import absl.flags
 
-from SimpleSAC.conservative_sac import ConservativeSAC
-from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset, subsample_batch, index_batch
-from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain
-from SimpleSAC.sampler import StepSampler, TrajSampler
-from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
-from SimpleSAC.utils import WandBLogger
-# from viskit.logging import logger_other, setup_logger
+from SimpleSAC.utils import get_user_flags
 from exp_scripts.grid_utils import *
-from redq.utils.logx import EpochLogger
 from SimpleSAC.run_cql import run_single_exp
 
 CUDA_AVAILABLE = torch.cuda.is_available()
@@ -38,40 +31,6 @@ if CUDA_AVAILABLE:
     DEVICE = 'cuda'
 else:
     DEVICE = 'cpu'
-
-FLAGS_DEF = define_flags_with_default(
-    env='halfcheetah',
-    dataset='medium',
-    max_traj_length=1000,
-    seed=42,
-    device=DEVICE,
-    save_model=True,
-    batch_size=256,
-
-    reward_scale=1.0,
-    reward_bias=0.0,
-    clip_action=0.999,
-
-    policy_arch='256-256',
-    qf_arch='256-256',
-    orthogonal_init=False,
-    policy_log_std_multiplier=1.0,
-    policy_log_std_offset=-1.0,
-
-    n_epochs=200,
-    bc_epochs=0,
-    n_pretrain_epochs=200,
-    pretrain_mode='none', #
-    n_train_step_per_epoch=5000,
-    eval_period=1,
-    eval_n_trajs=10,
-    exp_prefix='cqltest',
-    cql=ConservativeSAC.get_default_config(),
-    logging=WandBLogger.get_default_config(),
-    do_pretrain_only=False,
-    setting=0,
-)
-
 
 def main(argv):
     FLAGS = absl.flags.FLAGS
