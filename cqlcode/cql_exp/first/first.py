@@ -81,24 +81,12 @@ def main(argv):
     ]
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, FLAGS.setting)
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
-
-    print("YOOOOOO")
-    print(FLAGS.setting)
-    print(FLAGS.env)
-    FLAGS.env = 'QQQQQ'
-    print(FLAGS.env)
-    print(actual_setting)
-    print(exp_name_full)
-    quit()
+    # replace the values in FLAGS.sth with actual_setting['sth']
 
     ###########################################################
-
     variant = get_user_flags(FLAGS, FLAGS_DEF) # variant is a dict
     # new logger
     data_dir = '/checkpoints'
-    exp_prefix = FLAGS.exp_prefix
-    exp_suffix = '_%s_%s' % (FLAGS.env, FLAGS.dataset)
-    exp_name_full = exp_prefix + exp_suffix
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, variant['seed'], data_dir)
     variant["outdir"] = logger_kwargs["output_dir"]
     variant["exp_name"] = logger_kwargs["exp_name"]
