@@ -83,6 +83,10 @@ def main(argv):
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
     # replace the values in FLAGS.sth with actual_setting['sth']
 
+    """replace values"""
+    FLAGS.env = actual_setting['env']
+    FLAGS.dataset = actual_setting['dataset']
+
     ###########################################################
     variant = get_user_flags(FLAGS, FLAGS_DEF) # variant is a dict
     # new logger
