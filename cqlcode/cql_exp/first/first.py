@@ -83,11 +83,12 @@ def main(argv):
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
 
     print("YOOOOOO")
-    print(FLAGS_DEF)
     print(FLAGS.setting)
+    print(FLAGS.env)
+    FLAGS.env = 'QQQQQ'
+    print(FLAGS.env)
     print(actual_setting)
     print(exp_name_full)
-    print(FLAGS)
     quit()
 
     ###########################################################
