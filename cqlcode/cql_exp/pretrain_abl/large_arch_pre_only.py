@@ -75,8 +75,7 @@ def main(argv):
     FLAGS = absl.flags.FLAGS
 
     ###########################################################
-    exp_prefix = 'pretrain_only'
-    exp_prefix = 'zzzzz'
+    exp_prefix = 'large_arch_pre_only'
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
