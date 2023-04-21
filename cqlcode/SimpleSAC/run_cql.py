@@ -132,14 +132,6 @@ def main(argv):
     FLAGS = absl.flags.FLAGS
 
     variant = get_user_flags(FLAGS, FLAGS_DEF) # variant is a dict
-    # wandb_logger = WandBLogger(config=FLAGS.logging, variant=variant)
-    # setup_logger(
-    #     variant=variant,
-    #     exp_id=wandb_logger.experiment_id,
-    #     seed=FLAGS.seed,
-    #     base_log_dir=FLAGS.logging.output_dir,
-    #     include_exp_prefix_sub_dir=False
-    # )
 
     # new logger
     data_dir = '/checkpoints'
@@ -149,6 +141,9 @@ def main(argv):
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, variant['seed'], data_dir)
     variant["outdir"] = logger_kwargs["output_dir"]
     variant["exp_name"] = logger_kwargs["exp_name"]
+    run_single_exp(variant, FLAGS)
+
+def run_single_exp(variant, FLAGS):
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
     logger.save_config(variant)
     pretrain_logger = EpochLogger(variant["outdir"], 'pretrain_progress.csv', variant["exp_name"])
@@ -324,19 +319,20 @@ def main(argv):
         # wandb_logger.log(metrics)
         viskit_metrics.update(metrics)
 
+
+        logger.log_tabular("Iteration", epoch + 1)
+        logger.log_tabular("Steps", (epoch + 1) * FLAGS.n_train_step_per_epoch)
+        logger.log_tabular("TestEpRet", viskit_metrics['average_return'])
+        logger.log_tabular("TestEpNormRet", viskit_metrics['average_normalizd_return'])
+
         things_to_log = ['sac_log_pi', 'sac_policy_loss', 'sac_qf1_loss', 'sac_qf2_loss', 'sac_alpha_loss', 'sac_alpha',
                          'sac_average_qf1', 'sac_average_qf2', 'average_traj_length']
         for m in things_to_log:
             logger.log_tabular(m, viskit_metrics[m])
 
-        logger.log_tabular("TestEpRet", viskit_metrics['average_return'])
-        logger.log_tabular("TestEpNormRet", viskit_metrics['average_normalizd_return'])
-        logger.log_tabular("Iteration", epoch + 1)
-        logger.log_tabular("Steps", (epoch + 1) * FLAGS.n_train_step_per_epoch)
         logger.log_tabular("total_time", time.time()-st)
         logger.log_tabular("train_time", viskit_metrics["train_time"])
         logger.log_tabular("eval_time", viskit_metrics["eval_time"])
-
         logger.log_tabular("current_hours", (time.time()-st)/3600)
         logger.log_tabular("est_total_hours", (FLAGS.n_epochs/(epoch + 1) * (time.time()-st))/3600)
 
