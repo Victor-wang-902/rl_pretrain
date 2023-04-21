@@ -77,7 +77,7 @@ def main(argv):
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
-        # 'pretrain_mode', '', ['q_sprime',], # q_sprime
+        'pretrain_mode', 'pre', ['none', 'q_sprime'], # q_sprime
         # 'seed', '', [42, 666, 1024],
     ]
 
