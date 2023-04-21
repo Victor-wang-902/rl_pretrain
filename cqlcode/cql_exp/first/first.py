@@ -22,7 +22,7 @@ import d4rl
 import absl.app
 import absl.flags
 
-from SimpleSAC.utils import get_user_flags
+from SimpleSAC.utils import get_user_flags, define_flags_with_default
 from exp_scripts.grid_utils import *
 from SimpleSAC.run_cql import run_single_exp
 
@@ -46,6 +46,7 @@ def main(argv):
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
 
     print("YOOOOOO")
+    print(FLAG_DEF)
     print(FLAGS.setting)
     print(actual_setting)
     print(exp_name_full)
