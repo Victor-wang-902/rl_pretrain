@@ -73,12 +73,16 @@ def main(argv):
     FLAGS = absl.flags.FLAGS
 
     ###########################################################
-    exp_prefix = 'zzz'
+    exp_prefix = 'firstcheck'
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
+        'n_train_step_per_epoch','s',[2,],
+        'n_epochs','s',[3,],
+        'eval_n_trajs','s',[1,],
         # 'seed', '', [42, 666, 1024],
     ]
+
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, FLAGS.setting)
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
     # replace the values in FLAGS.sth with actual_setting['sth']
@@ -86,6 +90,9 @@ def main(argv):
     """replace values"""
     FLAGS.env = actual_setting['env']
     FLAGS.dataset = actual_setting['dataset']
+    FLAGS.n_train_step_per_epoch = actual_setting['n_train_step_per_epoch']
+    FLAGS.n_epochs = actual_setting['n_epochs']
+    FLAGS.eval_n_trajs = actual_setting['eval_n_trajs']
 
     ###########################################################
     variant = get_user_flags(FLAGS, FLAGS_DEF) # variant is a dict
