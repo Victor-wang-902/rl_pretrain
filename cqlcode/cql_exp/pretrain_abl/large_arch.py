@@ -75,7 +75,7 @@ def main(argv):
     FLAGS = absl.flags.FLAGS
 
     ###########################################################
-    exp_prefix = 'ttttttt'
+    exp_prefix = 'cql'
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
