@@ -49,6 +49,7 @@ FLAGS_DEF = define_flags_with_default(
 
     policy_arch='256-256',
     qf_arch='256-256',
+    qf_hidden_layer=2,
     orthogonal_init=False,
     policy_log_std_multiplier=1.0,
     policy_log_std_offset=-1.0,
