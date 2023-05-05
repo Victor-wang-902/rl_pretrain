@@ -28,7 +28,7 @@ from decision_transformer.evaluation.evaluate_episodes import (
 )
 from decision_transformer.models.decision_transformer import DecisionTransformer
 from decision_transformer.models.mlp_bc import MLPBCModel
-from decision_transformer.training.act_trainer import ActTrainer
+from decision_transformer.training.act_trainer_new import ActTrainer
 from decision_transformer.training.seq_trainer_new import SequenceTrainer
 
 from utils import get_optimizer, discount_cumsum
