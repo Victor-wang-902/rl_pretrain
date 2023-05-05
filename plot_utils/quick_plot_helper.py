@@ -113,3 +113,63 @@ def quick_plot(labels, data_folders, colors=DEFAULT_COLORS, linestyles=DEFAULT_L
             else:
                 plt.show()
 
+def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COLORS, linestyles=DEFAULT_LINESTYLES, base_data_folder_path=DEFAULT_BASE_PATH,
+               save_name='test_save_figure', save_folder_path=DEFAULT_SAVE_PATH, y_value=DEFAULT_Y_VALUE, verbose=True, ymin=None, ymax=None):
+    # this plots
+    label2seeds = OrderedDict()
+    for label, data_folder_full_name_list in zip(labels, data_folder_full_names):
+        seeds_all = []
+        if not isinstance(data_folder_full_name_list, list):
+            data_folder_full_name_list = [data_folder_full_name_list,]
+        for full_name in data_folder_full_name_list:
+            seeds = []
+            full_path = os.path.join(base_data_folder_path, full_name)
+            print("check data folder:", full_path)
+            try:
+                for subdir, dirs, files in os.walk(full_path):
+                    if 'progress.txt' in files:
+                        progress_file_path = os.path.join(subdir, 'progress.txt')
+                    elif 'progress.csv' in files:
+                        progress_file_path = os.path.join(subdir, 'progress.csv')
+                    else:
+                        continue
+                    # load progress file
+                    seeds.append(pd.read_table(progress_file_path))
+                if len(seeds) > 0:
+                    print("Loaded %d seeds from: %s" % (len(seeds), full_path))
+                else:
+                    print("No seed loaded from: %s" % full_path)
+            except Exception as e:
+                print("Failed to load data from:", full_path)
+                print(e)
+            seeds_all = seeds_all + seeds
+        label2seeds[label] = seeds_all
+
+    if not isinstance(y_value, list):
+        y_value = [y_value, ]
+
+    for y_to_plot in y_value:
+        for i, (label, seeds) in enumerate(label2seeds.items()):
+            x = combine_data_in_seeds(seeds, 'Steps')
+            y = combine_data_in_seeds(seeds, y_to_plot, smooth=DEFAULT_SMOOTH)
+            if y_to_plot == 'total_time':
+                y = y / 3600
+            ax = sns.lineplot(x=x, y=y, n_boot=20, label=label, color=colors[i], linestyle=linestyles[i], linewidth = 2)
+        plt.xlabel('Number of Data')
+        y_label = y_to_y_label[y_to_plot] if y_to_plot in y_to_y_label else y_to_plot
+        plt.ylabel(y_label)
+        ax.set_ylim([ymin, ymax])
+        plt.tight_layout()
+        plt.tight_layout()
+        save_folder_path_with_y = os.path.join(save_folder_path, y_to_plot)
+        if save_folder_path is not None:
+            if not os.path.isdir(save_folder_path_with_y):
+                path = Path(save_folder_path_with_y)
+                path.mkdir(parents=True)
+            save_path_full = os.path.join(save_folder_path_with_y, save_name + '_' + y_to_plot + '.png')
+            plt.savefig(save_path_full)
+            if verbose:
+                print(save_path_full)
+            plt.close()
+        else:
+            plt.show()
