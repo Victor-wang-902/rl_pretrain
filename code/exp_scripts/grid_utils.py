@@ -75,7 +75,9 @@ def get_setting_dt(settings, setting_number, random_setting_seed=0, random_order
 
     return indexes, actual_setting, max_job, hyper2logname
 
-def get_auto_exp_name(actual_setting, hyper2logname, exp_prefix=None, ):
+def get_auto_exp_name(actual_setting, hyper2logname, exp_prefix=None, suffix_before_env_dataset=''):
+    # suffix_before_env_dataset should be sth like _layer2
+    # if use this, make sure there is the underscore before
     exp_name_full = exp_prefix
     for hyper, value in actual_setting.items():
         if hyper not in ['env', 'dataset', 'seed']:
@@ -83,7 +85,7 @@ def get_auto_exp_name(actual_setting, hyper2logname, exp_prefix=None, ):
                 exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value))
             else:
                 exp_name_full = '%s' % (hyper2logname[hyper] + str(value))
-    exp_name_full = exp_name_full + '_%s_%s' % (actual_setting['env'], actual_setting['dataset'])
+    exp_name_full = exp_name_full + suffix_before_env_dataset + '_%s_%s' % (actual_setting['env'], actual_setting['dataset'])
     return exp_name_full
 
 def get_setting_and_exp_name_dt(settings, setting_number, exp_prefix=None, random_setting_seed=0, random_order=False):

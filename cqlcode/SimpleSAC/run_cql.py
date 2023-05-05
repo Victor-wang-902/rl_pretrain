@@ -352,7 +352,7 @@ def run_single_exp(variant, FLAGS):
     # get weight and feature diff
     if agent_100k is not None:
         weight_diff_100k = get_weight_diff(agent_100k, agent_after_pretrain)
-        feature_diff_100k = get_feature_diff(agent_100k, agent_after_pretrain, dataset, FLAGS.device)
+        feature_diff_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, FLAGS.device)
     else:
         weight_diff_100k = -1
         feature_diff_100k = -1
