@@ -380,7 +380,7 @@ def run_single_exp(variant):
                 print("Saved pretrained model to:", pretrain_full_path)
             else:
                 print("Pretrained model not saved. Already exist:", pretrain_full_path)
-
+    sys.stdout.flush()
     if variant['do_pretrain_only']:
         return
     agent_after_pretrain = deepcopy(agent)
