@@ -24,7 +24,7 @@ import absl.app
 import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
-from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset, subsample_batch, index_batch
+from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, index_batch
 from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain
 from SimpleSAC.sampler import StepSampler, TrajSampler
 from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
@@ -79,6 +79,7 @@ def get_default_variant_dict():
         cql=ConservativeSAC.get_default_config(),
         logging=WandBLogger.get_default_config(),
         do_pretrain_only=False,
+        offline_data_ratio=1,
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -262,7 +263,7 @@ def run_single_exp(variant):
 
     env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
     eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])
-    dataset = get_d4rl_dataset(eval_sampler.env)
+    dataset = get_d4rl_dataset_with_ratio(eval_sampler.env, variant['offline_data_ratio'])
     print("D4RL dataset loaded for", env_full)
     dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
     dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
@@ -321,6 +322,11 @@ def run_single_exp(variant):
             loaded = False
 
         if not loaded:
+            # TODO be careful not to get pretrainig messed
+            if variant['offline_data_ratio'] < 1:
+                print("warning offline data ratio in pretraining")
+                quit()
+
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch+1}
                 for i_pretrain in range(variant['n_train_step_per_epoch']):
