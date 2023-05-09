@@ -16,7 +16,7 @@ import torch
 import d4rl
 from SimpleSAC.utils import get_user_flags, define_flags_with_default
 from exp_scripts.grid_utils import *
-from SimpleSAC.run_cql_watcher_ds import run_single_exp, get_default_variant_dict
+from SimpleSAC.run_cql_watcher import run_single_exp, get_default_variant_dict
 from SimpleSAC.conservative_sac import ConservativeSAC
 from SimpleSAC.utils import WandBLogger
 import argparse

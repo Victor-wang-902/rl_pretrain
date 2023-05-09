@@ -112,7 +112,7 @@ def get_d4rl_dataset(env):
         dones=dataset['terminals'].astype(np.float32),
     )
 
-def get_d4rl_dataset_with_ratio(env, ratio, seed=0):
+def get_d4rl_dataset_with_ratio(env, ratio=1, seed=0):
     dataset = d4rl.qlearning_dataset(env)
     n_data = dataset['observations'].shape[0]
     use_size = int(n_data * ratio)

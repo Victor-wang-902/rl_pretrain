@@ -34,13 +34,13 @@ def main():
 
     variant = get_default_variant_dict() # this is a dictionary
     ###########################################################
-    exp_prefix = 'cqlnew'
+    exp_prefix = 'cqlr3'
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
-        'pretrain_mode', 'pre', ['none', 'q_sprime', ],
+        'pretrain_mode', 'pre', ['q_sprime', ],
         'qf_hidden_layer', 'l', [2,],
-        'offline_data_ratio','dr',[0.1, 0.25, 0.5, 0.75],
+        'n_pretrain_epochs', 'pe', [2, 20],
         'seed', '', [42, 666, 1024],
     ] #
 
@@ -56,6 +56,8 @@ def main():
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, variant['seed'], data_dir)
     variant["outdir"] = logger_kwargs["output_dir"]
     variant["exp_name"] = logger_kwargs["exp_name"]
+    # TODO for now we set this to 3 for faster experiments
+    variant['cql'].cql_n_actions = 3
     run_single_exp(variant)
 
 
