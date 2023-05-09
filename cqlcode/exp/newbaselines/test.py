@@ -37,7 +37,7 @@ def main():
         'batch_size','',[4,],
         'policy_hidden_unit','',[3,],
         'qf_hidden_unit','',[3,],
-        'n_epochs','',[2,],
+        'n_epochs','',[20,],
         'n_train_step_per_epoch','',[100],
         'max_traj_length','',[100],
         'seed', '', [42,],

@@ -206,10 +206,9 @@ def run_single_exp(variant):
     print("============================ PRETRAIN STAGE STARTED! ============================")
     st = time.time()
     if variant['pretrain_mode'] != 'none':
-        # TODO check if can load pretrained model
         pretrain_model_folder_path = '/cqlcode/pretrained_cql_models/'
         pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % ('cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
-                                                            variant['qf_hidden_layer'], 256, variant['n_pretrain_epochs'])
+                                                            variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         try:
             pretrain_dict = torch.load(pretrain_full_path)
@@ -241,7 +240,7 @@ def run_single_exp(variant):
                 if (epoch+1) in (2, 20):
                     pretrain_model_name_mid = '%s_%s_%s_%s_%d_%d_%s.pth' % (
                     'cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
-                    variant['qf_hidden_layer'], 256, epoch+1)
+                    variant['qf_hidden_layer'], variant['qf_hidden_unit'], epoch+1)
                     pretrain_full_path_mid = os.path.join(pretrain_model_folder_path, pretrain_model_name_mid)
                     pretrain_dict_mid = {'agent': agent,
                                      'algorithm': 'cql',
@@ -330,7 +329,7 @@ def run_single_exp(variant):
                 agent_100k = deepcopy(agent)
                 return_100k, return_normalized_100k = metrics['average_return'], metrics['average_normalizd_return']
 
-            if variant['save_model'] and (epoch + 1) in (1, 20, 200):
+            if variant['save_model'] and (epoch + 1) in (10, 20, 50, 100, 200):
                 save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch+1}
                 logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
                 # wandb_logger.save_pickle(save_data, 'model.pkl')
