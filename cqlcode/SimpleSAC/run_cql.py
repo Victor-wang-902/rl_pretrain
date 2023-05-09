@@ -121,8 +121,8 @@ def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
         batch = index_batch(dataset, idxs)
         batch = batch_to_torch(batch, device)
 
-        old_feature = agent1.features_from_batch(batch)
-        new_feature = agent2.features_from_batch(batch)
+        old_feature = agent1.features_from_batch_no_grad(batch)
+        new_feature = agent2.features_from_batch_no_grad(batch)
         feature_diff = old_feature - new_feature
 
         feature_l2_norm = torch.norm(feature_diff, p=2, dim=1, keepdim=True)

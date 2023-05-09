@@ -504,8 +504,8 @@ def get_feature_diff(agent1, agent2, replay_buffer, ratio=0.1, seed=0):
         idxs = idxs_all[i*1000:min((i+1)*1000, num_feature_timesteps)]
 
         batch = replay_buffer.sample_batch(batch_size, idxs)
-        old_feature = agent1.features_from_batch(batch)
-        new_feature = agent2.features_from_batch(batch)
+        old_feature = agent1.features_from_batch_no_grad(batch)
+        new_feature = agent2.features_from_batch_no_grad(batch)
         feature_diff = old_feature - new_feature
 
         feature_l2_norm = torch.norm(feature_diff, p=2, dim=1, keepdim=True)

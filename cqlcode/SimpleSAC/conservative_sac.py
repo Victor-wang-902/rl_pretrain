@@ -313,7 +313,7 @@ class ConservativeSAC(object):
             layer_list.append(layer)
         return layer_list
 
-    def features_from_batch(self, batch):
+    def features_from_batch_no_grad(self, batch):
         observations = batch['observations']
         actions = batch['actions']
         rewards = batch['rewards']

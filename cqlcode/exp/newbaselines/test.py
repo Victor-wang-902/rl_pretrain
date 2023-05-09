@@ -33,13 +33,14 @@ def main():
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
-        'pretrain_mode', 'pre', ['none'],
+        'pretrain_mode', 'pre', ['none',],
         'batch_size','',[4,],
         'policy_hidden_unit','',[3,],
         'qf_hidden_unit','',[3,],
-        'n_epochs','',[20,],
-        'n_train_step_per_epoch','',[100],
-        'max_traj_length','',[100],
+        'n_epochs','',[50,],
+        'n_train_step_per_epoch','',[100,],
+        'max_traj_length','',[100,],
+        'eval_n_trajs','',[1,],
         'seed', '', [42,],
     ] #
     setting = 0 # TODO fix this later

@@ -103,19 +103,18 @@ def get_weight_diff(agent1, agent2):
     # weight diff, agent class should have layers_for_weight_diff() func
     weights1 = concatenate_weights_of_model_list(agent1.layers_for_weight_diff())
     weights2 = concatenate_weights_of_model_list(agent2.layers_for_weight_diff())
-    print(weights1.shape)
-    weight_diff_l2 = torch.norm(weights1-weights2, p=2).item()
-    weight_diff_mse = torch.mean((weights1 - weights2) ** 2).item()
-    weight_diff_sim = F.cosine_similarity(weights1.reshape(1,-1), weights2.reshape(1,-1))
-    weight_diff_sim = F.cosine_similarity(weights1, weights2)
-    return weight_diff_l2, weight_diff_mse, weight_diff_sim
+    # weight_diff_l2 = torch.norm(weights1-weights2, p=2).item()
+    weight_diff = torch.mean((weights1 - weights2) ** 2).item()
+    weight_sim = F.cosine_similarity(weights1.reshape(1,-1), weights2.reshape(1,-1))
+    return weight_diff, weight_sim
 
 def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
     # feature diff: for each data point, get difference of feature from old and new network
     # compute l2 norm of this diff, average over a number of data points.
     # agent class should have features_from_batch() func
     n_total_data = dataset['observations'].shape[0]
-    average_feature_l2_norm_list = []
+    # average_feature_l2_norm_list = []
+    average_feature_sim_list = []
     average_feature_mse_list = []
     num_feature_timesteps = int(n_total_data * ratio)
     if num_feature_timesteps % 2 == 1: # avoid potential sampling issue
@@ -133,18 +132,21 @@ def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
         batch = index_batch(dataset, idxs)
         batch = batch_to_torch(batch, device)
 
-        old_feature = agent1.features_from_batch(batch)
-        new_feature = agent2.features_from_batch(batch)
+        old_feature = agent1.features_from_batch_no_grad(batch)
+        new_feature = agent2.features_from_batch_no_grad(batch)
         feature_diff = old_feature - new_feature
 
-        feature_l2_norm = torch.norm(feature_diff, p=2, dim=1, keepdim=True)
+        # feature_l2_norm = torch.norm(feature_diff, p=2, dim=1, keepdim=True)
+        # average_feature_l2_norm_list.append(feature_l2_norm.mean().item())
+
         feature_mse = torch.mean(feature_diff ** 2).item()
-        average_feature_l2_norm_list.append(feature_l2_norm.mean().item())
         average_feature_mse_list.append(feature_mse)
+
+        feature_sim = F.cosine_similarity(old_feature, new_feature)
+        average_feature_sim_list.append(feature_sim.mean().item())
         i += 1
         n_done += 1000
-
-    return np.mean(average_feature_l2_norm_list), np.mean(average_feature_mse_list), num_feature_timesteps
+    return np.mean(average_feature_mse_list), np.mean(average_feature_sim_list), num_feature_timesteps
 
 def main():
     variant = get_default_variant_dict() # this is a dictionary
@@ -168,40 +170,44 @@ def save_extra_dict(variant, logger, dataset,
     convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
     # get weight and feature diff
     if agent_100k is not None:
-        weight_diff_100k, weight_diff_MSE_100k = get_weight_diff(agent_100k, agent_after_pretrain)
-        feature_diff_100k, feature_diff_MSE_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
+        weight_diff_100k, weight_sim_100k = get_weight_diff(agent_100k, agent_after_pretrain)
+        feature_diff_100k, feature_sim_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
     else:
-        weight_diff_100k, weight_diff_MSE_100k = -1, -1
-        feature_diff_100k, feature_diff_MSE_100k = -1, -1
-    final_weight_diff, final_weight_diff_MSE = get_weight_diff(agent, agent_after_pretrain)
-    final_feature_diff, final_feature_diff_MSE, _ = get_feature_diff(agent, agent_after_pretrain, dataset, variant['device'])
-    best_weight_diff, best_weight_diff_MSE = get_weight_diff(best_agent, agent_after_pretrain)
-    best_feature_diff, best_feature_diff_MSE, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, variant['device'])
+        weight_diff_100k, weight_sim_100k = -1, -1
+        feature_diff_100k, feature_sim_100k = -1, -1
+    final_weight_diff, final_weight_sim = get_weight_diff(agent, agent_after_pretrain)
+    final_feature_diff, final_feature_sim, _ = get_feature_diff(agent, agent_after_pretrain, dataset, variant['device'])
+    best_weight_diff, best_weight_sim = get_weight_diff(best_agent, agent_after_pretrain)
+    best_feature_diff, best_feature_sim, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, variant['device'])
     # save extra dict
     extra_dict = {
         'final_weight_diff':final_weight_diff,
+        'final_weight_sim': final_weight_sim,
         'final_feature_diff':final_feature_diff,
+        'final_feature_sim': final_feature_sim,
+
         'best_weight_diff': best_weight_diff,
+        'best_weight_sim': best_weight_sim,
         'best_feature_diff': best_feature_diff,
-        'final_weight_diff_MSE': final_weight_diff_MSE,
-        'final_feature_diff_MSE': final_feature_diff_MSE,
-        'best_weight_diff_MSE': best_weight_diff_MSE,
-        'best_feature_diff_MSE': best_feature_diff_MSE,
-        'num_feature_timesteps':num_feature_timesteps,
+        'best_feature_sim': best_feature_sim,
+
+        'weight_diff_100k': weight_diff_100k,  # unique to cql due to more training updates
+        'weight_sim_100k': weight_sim_100k,
+        'feature_diff_100k': feature_diff_100k,
+        'feature_sim_100k': feature_sim_100k,
+
         'final_test_returns':float(ret_list[-1]),
         'final_test_normalized_returns': float(ret_normalized_list[-1]),
         'best_return': float(best_return),
         'best_return_normalized':float(best_return_normalized),
+        'test_returns_100k': return_100k,
+        'test_normalized_returns_100k': return_normalized_100k,
+
         'convergence_step':convergence_step,
         'convergence_iter':convergence_iter,
         'best_step':best_step,
         'best_iter':best_iter,
-        'weight_diff_100k':weight_diff_100k, # unique to cql due to more training updates
-        'feature_diff_100k': feature_diff_100k,
-        'weight_diff_MSE_100k': weight_diff_MSE_100k,
-        'feature_diff_MSE_100k': feature_diff_MSE_100k,
-        'test_returns_100k': return_100k,
-        'test_normalized_returns_100k': return_normalized_100k,
+        'num_feature_timesteps': num_feature_timesteps,
     }
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
@@ -386,6 +392,13 @@ def run_single_exp(variant):
                 logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
                 # wandb_logger.save_pickle(save_data, 'model.pkl')
 
+            if (epoch + 1) % 40 == 0:
+                save_extra_dict(variant, logger, dataset,
+                                ret_list, ret_normalized_list, iter_list, step_list,
+                                agent_after_pretrain, agent_100k, agent, best_agent,
+                                best_return, best_return_normalized, best_step, best_iter,
+                                return_100k, return_normalized_100k)
+
         metrics['train_time'] = train_timer()
         metrics['eval_time'] = eval_timer()
         metrics['epoch_time'] = train_timer() + eval_timer()
@@ -415,47 +428,54 @@ def run_single_exp(variant):
         # logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
 
     """get extra dict"""
-    # get convergence steps
-    conv_k = get_convergence_index(ret_list)
-    convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
-    # get weight and feature diff
-    if agent_100k is not None:
-        weight_diff_100k, weight_diff_MSE_100k, weight_sim_100k = get_weight_diff(agent_100k, agent_after_pretrain)
-        feature_diff_100k, feature_diff_MSE_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
-    else:
-        weight_diff_100k, weight_diff_MSE_100k = -1, -1
-        feature_diff_100k, feature_diff_MSE_100k = -1, -1
-    final_weight_diff, final_weight_diff_MSE, final_weight_sim_100k = get_weight_diff(agent, agent_after_pretrain)
-    final_feature_diff, final_feature_diff_MSE, _ = get_feature_diff(agent, agent_after_pretrain, dataset, variant['device'])
-    best_weight_diff, best_weight_diff_MSE, best_weight_sim_100k = get_weight_diff(best_agent, agent_after_pretrain)
-    best_feature_diff, best_feature_diff_MSE, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, variant['device'])
-    # save extra dict
-    extra_dict = {
-        'final_weight_diff':final_weight_diff,
-        'final_feature_diff':final_feature_diff,
-        'best_weight_diff': best_weight_diff,
-        'best_feature_diff': best_feature_diff,
-        'final_weight_diff_MSE': final_weight_diff_MSE,
-        'final_feature_diff_MSE': final_feature_diff_MSE,
-        'best_weight_diff_MSE': best_weight_diff_MSE,
-        'best_feature_diff_MSE': best_feature_diff_MSE,
-        'num_feature_timesteps':num_feature_timesteps,
-        'final_test_returns':float(ret_list[-1]),
-        'final_test_normalized_returns': float(ret_normalized_list[-1]),
-        'best_return': float(best_return),
-        'best_return_normalized':float(best_return_normalized),
-        'convergence_step':convergence_step,
-        'convergence_iter':convergence_iter,
-        'best_step':best_step,
-        'best_iter':best_iter,
-        'weight_diff_100k':weight_diff_100k, # unique to cql due to more training updates
-        'feature_diff_100k': feature_diff_100k,
-        'weight_diff_MSE_100k': weight_diff_MSE_100k,
-        'feature_diff_MSE_100k': feature_diff_MSE_100k,
-        'test_returns_100k': return_100k,
-        'test_normalized_returns_100k': return_normalized_100k,
-    }
-    logger.save_extra_dict_as_json(extra_dict, 'extra.json')
+    save_extra_dict(variant, logger, dataset,
+                    ret_list, ret_normalized_list, iter_list, step_list,
+                    agent_after_pretrain, agent_100k, agent, best_agent,
+                    best_return, best_return_normalized, best_step, best_iter,
+                    return_100k, return_normalized_100k)
+
+
+    # # get convergence steps
+    # conv_k = get_convergence_index(ret_list)
+    # convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
+    # # get weight and feature diff
+    # if agent_100k is not None:
+    #     weight_diff_100k, weight_diff_MSE_100k, weight_sim_100k = get_weight_diff(agent_100k, agent_after_pretrain)
+    #     feature_diff_100k, feature_diff_MSE_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
+    # else:
+    #     weight_diff_100k, weight_diff_MSE_100k = -1, -1
+    #     feature_diff_100k, feature_diff_MSE_100k = -1, -1
+    # final_weight_diff, final_weight_diff_MSE, final_weight_sim_100k = get_weight_diff(agent, agent_after_pretrain)
+    # final_feature_diff, final_feature_diff_MSE, _ = get_feature_diff(agent, agent_after_pretrain, dataset, variant['device'])
+    # best_weight_diff, best_weight_diff_MSE, best_weight_sim_100k = get_weight_diff(best_agent, agent_after_pretrain)
+    # best_feature_diff, best_feature_diff_MSE, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, variant['device'])
+    # # save extra dict
+    # extra_dict = {
+    #     'final_weight_diff':final_weight_diff,
+    #     'final_feature_diff':final_feature_diff,
+    #     'best_weight_diff': best_weight_diff,
+    #     'best_feature_diff': best_feature_diff,
+    #     'final_weight_diff_MSE': final_weight_diff_MSE,
+    #     'final_feature_diff_MSE': final_feature_diff_MSE,
+    #     'best_weight_diff_MSE': best_weight_diff_MSE,
+    #     'best_feature_diff_MSE': best_feature_diff_MSE,
+    #     'num_feature_timesteps':num_feature_timesteps,
+    #     'final_test_returns':float(ret_list[-1]),
+    #     'final_test_normalized_returns': float(ret_normalized_list[-1]),
+    #     'best_return': float(best_return),
+    #     'best_return_normalized':float(best_return_normalized),
+    #     'convergence_step':convergence_step,
+    #     'convergence_iter':convergence_iter,
+    #     'best_step':best_step,
+    #     'best_iter':best_iter,
+    #     'weight_diff_100k':weight_diff_100k, # unique to cql due to more training updates
+    #     'feature_diff_100k': feature_diff_100k,
+    #     'weight_diff_MSE_100k': weight_diff_MSE_100k,
+    #     'feature_diff_MSE_100k': feature_diff_MSE_100k,
+    #     'test_returns_100k': return_100k,
+    #     'test_normalized_returns_100k': return_normalized_100k,
+    # }
+    # logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
 if __name__ == '__main__':
     main()
