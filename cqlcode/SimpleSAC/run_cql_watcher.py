@@ -337,7 +337,7 @@ def run_single_exp(variant):
                 pretrain_logger.dump_tabular()
                 sys.stdout.flush()
 
-                if (epoch+1) in (2, 20, 100, 500, 1000):
+                if (epoch+1) in (2, 20, 100, 500, 1000, 1500, 2000):
                     pretrain_model_name_mid = '%s_%s_%s_%s_%d_%d_%s.pth' % (
                     'cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
                     variant['qf_hidden_layer'], variant['qf_hidden_unit'], epoch+1)
