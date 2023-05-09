@@ -2,7 +2,7 @@
 #SBATCH --verbose
 #SBATCH --time=48:00:00
 #SBATCH --nodes=1
-#SBATCH --mem=20GB
+#SBATCH --mem=8GB
 #SBATCH --mail-type=ALL # select which email types will be sent
 #SBATCH --mail-user=NETID@nyu.edu # NOTE: put your netid here if you want emails
 
