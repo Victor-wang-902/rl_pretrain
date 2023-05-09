@@ -99,23 +99,56 @@ def calculate_statistics(dir, fname="progress.csv"):
 
 @torch.no_grad()
 def calculate_weight_diff(dir, iter, init_model, weight_only=True):
+    cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
     model_state_dict = torch.load(os.path.join(dir, "model_" + str(iter) + ".pt"), map_location=torch.device("cpu"))
     layers = []
+    blocks = dict()
     for name, layer in model_state_dict.items():
         if "transformer" in name:
             if not weight_only or "weight" in name:
                 layers.append(layer.view(-1))
+                flag = False
+                block_no = None
+                for ln in name.split("."):
+                    if ln.isnumeric():
+                        flag = True
+                        block_no = int(ln)
+                if flag:
+                    try:
+                        blocks[str(block_no)].append(layer.view(-1))
+                    except:
+                        blocks[str(block_no)] = [layer.view(-1)]
     weights = torch.cat(layers)
+
     init_model.to("cpu")
     init_state_dict = init_model.state_dict()
-    layers = []
+    layers2 = []
+    blocks2 = dict()
     for name, layer in init_state_dict.items():
         if "transformer" in name:
             if not weight_only or "weight" in name:
-                layers.append(layer.view(-1))
-    init_weights = torch.cat(layers)
-    weight_diff = torch.norm(weights - init_weights, p=2).item()
-    return weight_diff
+                layers2.append(layer.view(-1))
+                flag = False
+                block_no = None
+                for ln in name.split("."):
+                    if ln.isnumeric():
+                        flag = True
+                        block_no = int(ln)
+                if flag:
+                    try:
+                        blocks2[str(block_no)].append(layer.view(-1))
+                    except:
+                        blocks2[str(block_no)] = [layer.view(-1)]
+    init_weights = torch.cat(layers2)
+    block_weight_diff = dict()
+    block_weight_sim = dict()
+    for b in blocks:
+        block_weight_diff[b] = torch.mean((torch.cat(blocks[b]) - torch.cat(blocks2[b]))**2).item()
+        block_weight_sim[b] = torch.mean(cos(torch.cat(blocks[b]), torch.cat(blocks2[b]))).item()
+    #weight_diff = torch.norm(weights - init_weights, p=2).item()
+    weight_diff = torch.mean((weights - init_weights)**2).item()
+    weight_sim = torch.mean(cos(weights, init_weights)).item()
+    return weight_diff, weight_sim, block_weight_diff, block_weight_sim
 
 @torch.no_grad()
 def calculate_feature_diff(
@@ -245,9 +278,12 @@ def calculate_feature_diff(
                     break
                 else:
                     start_pos += K
+    average_feature_sim_list = []
     average_feature_norm_list = []
     cur_model.to(variant["device"])
     init_model.to(variant["device"])
+    cos = torch.nn.CosineSimilarity(dim=2, eps=1e-6)
+
     for states, actions, rewards, dones, rtg, timesteps, attention_mask in yield_batch():        
         cur_feature = cur_model.get_feature(
             states,
@@ -269,11 +305,20 @@ def calculate_feature_diff(
         feature_diff = (init_feature - cur_feature).cpu()
         temp = attention_mask[:,:,None].to(torch.device("cpu"))
         masked_feature_diff = feature_diff * temp
+        masked_init_feature = init_feature * temp
+        masked_cur_feature = cur_feature * temp
+        cosim = cos(masked_init_feature, masked_cur_feature).reshape(batch_size * K)
+
         masked_feature_diff = masked_feature_diff.reshape(batch_size * K, -1)
-        feature_norm = torch.norm(masked_feature_diff, p=2, dim=1, keepdim=True)
-        average_feature_norm_list.append(feature_norm.mean().item())
+        #feature_norm = torch.norm(masked_feature_diff, p=2, dim=1, keepdim=True)
+        feature_norm = torch.mean(masked_feature_diff**2)
+        feature_sim = torch.mean(cosim)
+        average_feature_norm_list.append(feature_norm.item())
+        average_feature_sim_list.append(feature_sim.item())
+        #average_feature_norm_list.append(feature_norm.mean().item())
+
         #except Exception as err:
         #    raise Exception(err)
         #    break
 
-    return np.mean(average_feature_norm_list), len(traj_lens), num_timesteps
+    return np.mean(average_feature_norm_list), np.mean(average_feature_sim_list), len(traj_lens), num_timesteps
