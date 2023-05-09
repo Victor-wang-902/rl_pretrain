@@ -19,7 +19,7 @@ from exp_scripts.grid_utils import *
 from SimpleSAC.run_cql_watcher import run_single_exp, get_default_variant_dict
 from SimpleSAC.conservative_sac import ConservativeSAC
 from SimpleSAC.utils import WandBLogger
-
+import argparse
 CUDA_AVAILABLE = torch.cuda.is_available()
 if CUDA_AVAILABLE:
     DEVICE = 'cuda'
@@ -27,6 +27,11 @@ else:
     DEVICE = 'cpu'
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--setting', type=int, default=0)
+    args = parser.parse_args()
+    setting = args.setting
+
     variant = get_default_variant_dict() # this is a dictionary
     ###########################################################
     exp_prefix = 'test'
@@ -34,12 +39,15 @@ def main():
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['none',],
-        'n_epochs','',[200,],
-        'qf_hidden_layer','',[8,],
-        'n_train_step_per_epoch','',[50,],
+        'batch_size','',[3,],
+        'policy_hidden_unit','',[2,],
+        'qf_hidden_unit','',[2,],
+        'n_epochs','',[50,],
+        'n_train_step_per_epoch','',[5,],
+        'max_traj_length','',[30,],
+        'eval_n_trajs','',[1,],
         'seed', '', [42,],
     ] #
-    setting = 0 # TODO fix this later
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting)
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)
