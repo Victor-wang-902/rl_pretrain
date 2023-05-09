@@ -280,6 +280,7 @@ def experiment(
 
         print()
         print(final_weight_diff)
+        print(final_block_weight_diff)
         for d in final_block_weight_diff:
             print(d)
         quit()
