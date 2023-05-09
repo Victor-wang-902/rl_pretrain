@@ -209,6 +209,7 @@ def save_extra_dict(variant, logger, dataset,
         'best_iter':best_iter,
         'num_feature_timesteps': num_feature_timesteps,
     }
+    print(extra_dict)
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
 def run_single_exp(variant):
