@@ -189,6 +189,11 @@ singularity build --sandbox cql-sandbox docker://cwatcherw/cql:0.1
 srun --pty --cpus-per-task=1 --mem 8000 -t 0-06:00 bash
 ```
 
+Or GPU interactive job
+```
+srun --pty --gres=gpu:1 --cpus-per-task=1 --mem 8000 -t 0-03:00 bash
+```
+
 ```
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/rl_pretrain/cqlcode:/cqlcode -B /scratch/$USER/sing/cql-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/cql-sandbox bash
 ```
