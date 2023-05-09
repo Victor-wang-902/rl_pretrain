@@ -36,7 +36,7 @@ def main():
     ###########################################################
     exp_prefix = 'test4'
     settings = [
-        'env', '', MUJOCO_3_ENVS,
+        'env', '', ['halfcheetah',],
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['none',],
         'n_epochs','',[200,],
