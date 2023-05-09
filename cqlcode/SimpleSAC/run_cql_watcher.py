@@ -38,8 +38,15 @@ if CUDA_AVAILABLE:
 else:
     DEVICE = 'cpu'
 
-def define_default_flags_and_get_flags_def():
-    FLAGS_DEF = define_flags_with_default(
+def get_dictionary_from_kwargs(**kwargs):
+    d = {}
+    for key, val in kwargs.items():
+        d[key] = val
+    return d
+
+def get_default_variant_dict():
+    # returns a dictionary that contains all the default hyperparameters
+    return get_dictionary_from_kwargs(
         env='halfcheetah',
         dataset='medium',
         max_traj_length=1000,
@@ -52,8 +59,10 @@ def define_default_flags_and_get_flags_def():
         reward_bias=0.0,
         clip_action=0.999,
 
-        policy_arch='256-256',
-        qf_arch='256-256',
+        policy_hidden_layer=2,
+        policy_hidden_unit=256,
+        qf_hidden_layer=2,
+        qf_hidden_unit=256,
         orthogonal_init=False,
         policy_log_std_multiplier=1.0,
         policy_log_std_offset=-1.0,
@@ -70,7 +79,6 @@ def define_default_flags_and_get_flags_def():
         logging=WandBLogger.get_default_config(),
         do_pretrain_only=False,
     )
-    return FLAGS_DEF
 
 def get_convergence_index(ret_list, threshold_gap=2):
     best_value = max(ret_list)
@@ -134,77 +142,74 @@ def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
 
     return np.mean(average_feature_l2_norm_list), np.mean(average_feature_mse_list), num_feature_timesteps
 
-def main(argv):
-    FLAGS = absl.flags.FLAGS
+def main():
+    variant = get_default_variant_dict() # this is a dictionary
 
-    FLAGS_DEF = define_default_flags_and_get_flags_def()
-    variant = get_user_flags(FLAGS, FLAGS_DEF) # variant is a dict
-
-    # new logger
+    # for grid experiments, simply 1. get default params. 2. modify some of the params. 3. change exp name
+    exp_name_full = 'testonly'
     data_dir = '/checkpoints'
-    exp_prefix = FLAGS.exp_prefix
-    exp_suffix = '_%s_%s' % (FLAGS.env, FLAGS.dataset)
-    exp_name_full = exp_prefix + exp_suffix
     logger_kwargs = setup_logger_kwargs_dt(exp_name_full, variant['seed'], data_dir)
     variant["outdir"] = logger_kwargs["output_dir"]
     variant["exp_name"] = logger_kwargs["exp_name"]
-    run_single_exp(variant, FLAGS)
+    run_single_exp(variant)
 
-def run_single_exp(variant, FLAGS):
+def run_single_exp(variant):
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
     logger.save_config(variant)
     pretrain_logger = EpochLogger(variant["outdir"], 'pretrain_progress.csv', variant["exp_name"])
 
-    set_random_seed(FLAGS.seed)
+    set_random_seed(variant['seed'])
 
-    env_full = '%s-%s-v2' % (FLAGS.env, FLAGS.dataset)
-    eval_sampler = TrajSampler(gym.make(env_full).unwrapped, FLAGS.max_traj_length)
+    env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
+    eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])
     dataset = get_d4rl_dataset(eval_sampler.env)
     print("D4RL dataset loaded for", env_full)
-    dataset['rewards'] = dataset['rewards'] * FLAGS.reward_scale + FLAGS.reward_bias
-    dataset['actions'] = np.clip(dataset['actions'], -FLAGS.clip_action, FLAGS.clip_action)
+    dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
+    dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
 
+    policy_arch = '-'.join([str(variant['policy_hidden_unit']) for _ in range(variant['policy_hidden_layer'])])
     policy = TanhGaussianPolicy(
         eval_sampler.env.observation_space.shape[0],
         eval_sampler.env.action_space.shape[0],
-        arch=FLAGS.policy_arch,
-        log_std_multiplier=FLAGS.policy_log_std_multiplier,
-        log_std_offset=FLAGS.policy_log_std_offset,
-        orthogonal_init=FLAGS.orthogonal_init,
+        arch=policy_arch,
+        log_std_multiplier=variant['policy_log_std_multiplier'],
+        log_std_offset=variant['policy_log_std_offset'],
+        orthogonal_init=variant['orthogonal_init'],
     )
 
+    qf_arch = '-'.join([str(variant['qf_hidden_unit']) for _ in range(variant['qf_hidden_layer'])])
     qf1 = FullyConnectedQFunctionPretrain(
         eval_sampler.env.observation_space.shape[0],
         eval_sampler.env.action_space.shape[0],
-        arch=FLAGS.qf_arch,
-        orthogonal_init=FLAGS.orthogonal_init,
+        arch=qf_arch,
+        orthogonal_init=variant['orthogonal_init'],
     )
     target_qf1 = deepcopy(qf1)
 
     qf2 = FullyConnectedQFunctionPretrain(
         eval_sampler.env.observation_space.shape[0],
         eval_sampler.env.action_space.shape[0],
-        arch=FLAGS.qf_arch,
-        orthogonal_init=FLAGS.orthogonal_init,
+        arch=qf_arch,
+        orthogonal_init=variant['orthogonal_init'],
     )
     target_qf2 = deepcopy(qf2)
 
-    if FLAGS.cql.target_entropy >= 0.0:
-        FLAGS.cql.target_entropy = -np.prod(eval_sampler.env.action_space.shape).item()
+    if variant['cql'].target_entropy >= 0.0:
+        variant['cql'].target_entropy = -np.prod(eval_sampler.env.action_space.shape).item()
 
-    agent = ConservativeSAC(FLAGS.cql, policy, qf1, qf2, target_qf1, target_qf2)
-    agent.torch_to_device(FLAGS.device)
+    agent = ConservativeSAC(variant['cql'], policy, qf1, qf2, target_qf1, target_qf2)
+    agent.torch_to_device(variant['device'])
 
-    sampler_policy = SamplerPolicy(policy, FLAGS.device)
+    sampler_policy = SamplerPolicy(policy, variant['device'])
 
     """pretrain stage"""
     print("============================ PRETRAIN STAGE STARTED! ============================")
     st = time.time()
-    if FLAGS.pretrain_mode != 'none':
+    if variant['pretrain_mode'] != 'none':
         # TODO check if can load pretrained model
         pretrain_model_folder_path = '/cqlcode/pretrained_cql_models/'
-        pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % ('cql', FLAGS.env, FLAGS.dataset, FLAGS.pretrain_mode,
-                                                            FLAGS.qf_hidden_layer, 256, FLAGS.n_pretrain_epochs)
+        pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % ('cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
+                                                            variant['qf_hidden_layer'], 256, variant['n_pretrain_epochs'])
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         try:
             pretrain_dict = torch.load(pretrain_full_path)
@@ -217,34 +222,34 @@ def run_single_exp(variant, FLAGS):
             loaded = False
 
         if not loaded:
-            for epoch in range(FLAGS.n_pretrain_epochs):
+            for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch+1}
-                for i_pretrain in range(FLAGS.n_train_step_per_epoch):
-                    batch = subsample_batch(dataset, FLAGS.batch_size)
-                    batch = batch_to_torch(batch, FLAGS.device)
-                    metrics.update(agent.pretrain(batch, FLAGS.pretrain_mode))
+                for i_pretrain in range(variant['n_train_step_per_epoch']):
+                    batch = subsample_batch(dataset, variant['batch_size'])
+                    batch = batch_to_torch(batch, variant['device'])
+                    metrics.update(agent.pretrain(batch, variant['pretrain_mode']))
 
                 pretrain_logger.log_tabular("PretrainIteration", epoch + 1)
-                pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * FLAGS.n_train_step_per_epoch)
+                pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * variant['n_train_step_per_epoch'])
                 pretrain_logger.log_tabular("pretrain_loss", metrics['pretrain_loss'])
                 pretrain_logger.log_tabular("total_pretrain_steps", metrics['total_pretrain_steps'])
                 pretrain_logger.log_tabular("current_hours", (time.time() - st) / 3600)
-                pretrain_logger.log_tabular("est_total_hours", (FLAGS.n_pretrain_epochs / (epoch + 1) * (time.time() - st)) / 3600)
+                pretrain_logger.log_tabular("est_total_hours", (variant['n_pretrain_epochs'] / (epoch + 1) * (time.time() - st)) / 3600)
                 pretrain_logger.dump_tabular()
                 sys.stdout.flush()
 
                 if (epoch+1) in (2, 20):
                     pretrain_model_name_mid = '%s_%s_%s_%s_%d_%d_%s.pth' % (
-                    'cql', FLAGS.env, FLAGS.dataset, FLAGS.pretrain_mode,
-                    FLAGS.qf_hidden_layer, 256, epoch+1)
+                    'cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
+                    variant['qf_hidden_layer'], 256, epoch+1)
                     pretrain_full_path_mid = os.path.join(pretrain_model_folder_path, pretrain_model_name_mid)
                     pretrain_dict_mid = {'agent': agent,
                                      'algorithm': 'cql',
-                                     'env': FLAGS.env,
-                                     'dataset': FLAGS.dataset,
-                                     'pretrain_mode': FLAGS.pretrain_mode,
-                                     'hidden_layer': FLAGS.qf_hidden_layer,
-                                     'hidden_size': 256,  # TODO allow generalize to other architectures
+                                     'env': variant['env'],
+                                     'dataset': variant['dataset'],
+                                     'pretrain_mode': variant['pretrain_mode'],
+                                     'hidden_layer': variant['qf_hidden_layer'],
+                                     'hidden_size': variant['qf_hidden_unit'],
                                      'n_pretrain_epochs': epoch+1,
                                      }
                     if not os.path.exists(pretrain_full_path_mid):
@@ -255,12 +260,12 @@ def run_single_exp(variant, FLAGS):
 
             pretrain_dict = {'agent':agent,
                              'algorithm':'cql',
-                             'env':FLAGS.env,
-                             'dataset':FLAGS.dataset,
-                             'pretrain_mode':FLAGS.pretrain_mode,
-                             'hidden_layer':FLAGS.qf_hidden_layer,
-                             'hidden_size':256, #TODO allow generalize to other architectures
-                             'n_pretrain_epochs':FLAGS.n_pretrain_epochs,
+                             'env':variant['env'],
+                             'dataset':variant['dataset'],
+                             'pretrain_mode':variant['pretrain_mode'],
+                             'hidden_layer':variant['qf_hidden_layer'],
+                             'hidden_size':variant['qf_hidden_unit'],
+                             'n_pretrain_epochs':variant['n_pretrain_epochs'],
                              }
             if not os.path.exists(pretrain_full_path):
                 torch.save(pretrain_dict, pretrain_full_path)
@@ -268,10 +273,10 @@ def run_single_exp(variant, FLAGS):
             else:
                 print("Pretrained model not saved. Already exist:", pretrain_full_path)
 
-    if FLAGS.do_pretrain_only:
+    if variant['do_pretrain_only']:
         return
     agent_after_pretrain = deepcopy(agent)
-    if FLAGS.save_model:
+    if variant['save_model']:
         save_dict = {'agent': agent_after_pretrain, 'variant': variant, 'epoch': 0}
         logger.save_dict(save_dict, 'agent_init.pth')
 
@@ -285,19 +290,19 @@ def run_single_exp(variant, FLAGS):
     best_return, best_return_normalized = -np.inf, -np.inf
     viskit_metrics = {}
     st = time.time()
-    for epoch in range(FLAGS.n_epochs):
+    for epoch in range(variant['n_epochs']):
         metrics = {'epoch': epoch}
 
         with Timer() as train_timer:
-            for batch_idx in range(FLAGS.n_train_step_per_epoch):
-                batch = subsample_batch(dataset, FLAGS.batch_size)
-                batch = batch_to_torch(batch, FLAGS.device)
-                metrics.update(prefix_metrics(agent.train(batch, bc=epoch < FLAGS.bc_epochs), 'sac', connector_string='_'))
+            for batch_idx in range(variant['n_train_step_per_epoch']):
+                batch = subsample_batch(dataset, variant['batch_size'])
+                batch = batch_to_torch(batch, variant['device'])
+                metrics.update(prefix_metrics(agent.train(batch, bc=epoch < variant['bc_epochs']), 'sac', connector_string='_'))
 
         with Timer() as eval_timer:
-            if epoch == 0 or (epoch + 1) % FLAGS.eval_period == 0:
+            if epoch == 0 or (epoch + 1) % variant['eval_period'] == 0:
                 trajs = eval_sampler.sample(
-                    sampler_policy, FLAGS.eval_n_trajs, deterministic=True
+                    sampler_policy, variant['eval_n_trajs'], deterministic=True
                 )
 
                 metrics['average_return'] = np.mean([np.sum(t['rewards']) for t in trajs])
@@ -308,7 +313,7 @@ def run_single_exp(variant, FLAGS):
 
                 # record best return and other things
                 iter_list.append(epoch+1)
-                step_list.append((epoch+1) * FLAGS.n_train_step_per_epoch)
+                step_list.append((epoch+1) * variant['n_train_step_per_epoch'])
                 ret_normalized_list.append(metrics['average_normalizd_return'])
                 ret_list.append(metrics['average_return'])
                 if metrics['average_normalizd_return'] > best_return_normalized:
@@ -316,8 +321,8 @@ def run_single_exp(variant, FLAGS):
                     best_return_normalized = metrics['average_normalizd_return']
                     best_agent = deepcopy(agent)
                     best_iter = epoch + 1
-                    best_step = (epoch+1) * FLAGS.n_train_step_per_epoch
-                    if FLAGS.save_model:
+                    best_step = (epoch+1) * variant['n_train_step_per_epoch']
+                    if variant['save_model']:
                         save_dict = {'agent': best_agent, 'variant': variant, 'epoch': best_iter}
                         logger.save_dict(save_dict, 'agent_best.pth')
 
@@ -325,7 +330,7 @@ def run_single_exp(variant, FLAGS):
                 agent_100k = deepcopy(agent)
                 return_100k, return_normalized_100k = metrics['average_return'], metrics['average_normalizd_return']
 
-            if FLAGS.save_model and (epoch + 1) in (1, 20, 200):
+            if variant['save_model'] and (epoch + 1) in (1, 20, 200):
                 save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch+1}
                 logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
                 # wandb_logger.save_pickle(save_data, 'model.pkl')
@@ -338,7 +343,7 @@ def run_single_exp(variant, FLAGS):
 
 
         logger.log_tabular("Iteration", epoch + 1)
-        logger.log_tabular("Steps", (epoch + 1) * FLAGS.n_train_step_per_epoch)
+        logger.log_tabular("Steps", (epoch + 1) * variant['n_train_step_per_epoch'])
         logger.log_tabular("TestEpRet", viskit_metrics['average_return'])
         logger.log_tabular("TestEpNormRet", viskit_metrics['average_normalizd_return'])
 
@@ -351,7 +356,7 @@ def run_single_exp(variant, FLAGS):
         logger.log_tabular("train_time", viskit_metrics["train_time"])
         logger.log_tabular("eval_time", viskit_metrics["eval_time"])
         logger.log_tabular("current_hours", (time.time()-st)/3600)
-        logger.log_tabular("est_total_hours", (FLAGS.n_epochs/(epoch + 1) * (time.time()-st))/3600)
+        logger.log_tabular("est_total_hours", (variant['n_epochs']/(epoch + 1) * (time.time()-st))/3600)
 
         logger.dump_tabular()
         sys.stdout.flush()
@@ -365,14 +370,14 @@ def run_single_exp(variant, FLAGS):
     # get weight and feature diff
     if agent_100k is not None:
         weight_diff_100k, weight_diff_MSE_100k = get_weight_diff(agent_100k, agent_after_pretrain)
-        feature_diff_100k, feature_diff_MSE_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, FLAGS.device)
+        feature_diff_100k, feature_diff_MSE_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
     else:
         weight_diff_100k, weight_diff_MSE_100k = -1, -1
         feature_diff_100k, feature_diff_MSE_100k = -1, -1
     final_weight_diff, final_weight_diff_MSE = get_weight_diff(agent, agent_after_pretrain)
-    final_feature_diff, final_feature_diff_MSE, _ = get_feature_diff(agent, agent_after_pretrain, dataset, FLAGS.device)
+    final_feature_diff, final_feature_diff_MSE, _ = get_feature_diff(agent, agent_after_pretrain, dataset, variant['device'])
     best_weight_diff, best_weight_diff_MSE = get_weight_diff(best_agent, agent_after_pretrain)
-    best_feature_diff, best_feature_diff_MSE, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, FLAGS.device)
+    best_feature_diff, best_feature_diff_MSE, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, variant['device'])
     # save extra dict
     extra_dict = {
         'final_weight_diff':final_weight_diff,
@@ -401,8 +406,8 @@ def run_single_exp(variant, FLAGS):
     }
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
-    if FLAGS.save_model: # here also save best agent
-        if FLAGS.save_model and (epoch + 1) in (1, 20, 200):
+    if variant['save_model']: # here also save best agent
+        if variant['save_model'] and (epoch + 1) in (1, 20, 200):
             save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch + 1}
             logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
             # wandb_logger.save_pickle(save_data, 'model.pkl')
@@ -413,4 +418,4 @@ def run_single_exp(variant, FLAGS):
         # wandb_logger.save_pickle(save_data, 'model.pkl')
 
 if __name__ == '__main__':
-    absl.app.run(main)
+    main()
