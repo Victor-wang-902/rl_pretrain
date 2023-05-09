@@ -105,7 +105,7 @@ def get_weight_diff(agent1, agent2):
     weights2 = concatenate_weights_of_model_list(agent2.layers_for_weight_diff())
     # weight_diff_l2 = torch.norm(weights1-weights2, p=2).item()
     weight_diff = torch.mean((weights1 - weights2) ** 2).item()
-    weight_sim = F.cosine_similarity(weights1.reshape(1,-1), weights2.reshape(1,-1)).item()
+    weight_sim = float(F.cosine_similarity(weights1.reshape(1,-1), weights2.reshape(1,-1)).item())
     return weight_diff, weight_sim
 
 def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
@@ -142,8 +142,8 @@ def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
         feature_mse = torch.mean(feature_diff ** 2).item()
         average_feature_mse_list.append(feature_mse)
 
-        feature_sim = F.cosine_similarity(old_feature, new_feature)
-        average_feature_sim_list.append(feature_sim.mean().item())
+        feature_sim = float(F.cosine_similarity(old_feature, new_feature).mean().item())
+        average_feature_sim_list.append(feature_sim)
         i += 1
         n_done += 1000
     return np.mean(average_feature_mse_list), np.mean(average_feature_sim_list), num_feature_timesteps
@@ -209,9 +209,9 @@ def save_extra_dict(variant, logger, dataset,
         'best_iter':best_iter,
         'num_feature_timesteps': num_feature_timesteps,
     }
-    print()
-    for key, val in extra_dict.items():
-        print(key, val, type(val))
+    # print()
+    # for key, val in extra_dict.items():
+    #     print(key, val, type(val))
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
 def run_single_exp(variant):
