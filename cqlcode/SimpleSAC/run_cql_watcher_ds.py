@@ -312,7 +312,10 @@ def run_single_exp(variant):
                                                             variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         try:
-            pretrain_dict = torch.load(pretrain_full_path)
+            if not torch.cuda.is_available():
+                pretrain_dict = torch.load(pretrain_full_path, map_location=torch.device('cpu'))
+            else:
+                pretrain_dict = torch.load(pretrain_full_path)
             agent.qf1.load_state_dict(pretrain_dict['agent'].qf1.state_dict())
             agent.qf2.load_state_dict(pretrain_dict['agent'].qf2.state_dict())
             loaded = True
