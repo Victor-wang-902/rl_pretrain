@@ -200,8 +200,8 @@ def save_extra_dict(variant, logger, dataset,
         'final_test_normalized_returns': float(ret_normalized_list[-1]),
         'best_return': float(best_return),
         'best_return_normalized':float(best_return_normalized),
-        'test_returns_100k': return_100k,
-        'test_normalized_returns_100k': return_normalized_100k,
+        'test_returns_100k': float(return_100k),
+        'test_normalized_returns_100k': float(return_normalized_100k),
 
         'convergence_step':convergence_step,
         'convergence_iter':convergence_iter,
@@ -209,9 +209,9 @@ def save_extra_dict(variant, logger, dataset,
         'best_iter':best_iter,
         'num_feature_timesteps': num_feature_timesteps,
     }
-    # print()
-    # for key, val in extra_dict.items():
-    #     print(key, val, type(val))
+    print()
+    for key, val in extra_dict.items():
+        print(key, val, type(val))
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
 def run_single_exp(variant):
