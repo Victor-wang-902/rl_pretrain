@@ -105,7 +105,7 @@ def get_weight_diff(agent1, agent2):
     weights2 = concatenate_weights_of_model_list(agent2.layers_for_weight_diff())
     # weight_diff_l2 = torch.norm(weights1-weights2, p=2).item()
     weight_diff = torch.mean((weights1 - weights2) ** 2).item()
-    weight_sim = F.cosine_similarity(weights1.reshape(1,-1), weights2.reshape(1,-1))
+    weight_sim = F.cosine_similarity(weights1.reshape(1,-1), weights2.reshape(1,-1)).item()
     return weight_diff, weight_sim
 
 def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
