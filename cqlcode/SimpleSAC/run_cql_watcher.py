@@ -99,14 +99,31 @@ def concatenate_weights_of_model_list(model_list, weight_only=True):
     return torch.cat(concatenated_weights)
 
 # when compute weight diff, just provide list of important layers...from
+def get_diff_sim_from_layers(layersA, layersB):
+    weights_A = concatenate_weights_of_model_list(layersA)
+    weights_B = concatenate_weights_of_model_list(layersB)
+    weight_diff = torch.mean((weights_A - weights_B) ** 2).item()
+    weight_sim = float(F.cosine_similarity(weights_A.reshape(1,-1), weights_B.reshape(1,-1)).item())
+    return weight_diff, weight_sim
+
 def get_weight_diff(agent1, agent2):
     # weight diff, agent class should have layers_for_weight_diff() func
-    weights1 = concatenate_weights_of_model_list(agent1.layers_for_weight_diff())
-    weights2 = concatenate_weights_of_model_list(agent2.layers_for_weight_diff())
-    # weight_diff_l2 = torch.norm(weights1-weights2, p=2).item()
-    weight_diff = torch.mean((weights1 - weights2) ** 2).item()
-    weight_sim = float(F.cosine_similarity(weights1.reshape(1,-1), weights2.reshape(1,-1)).item())
-    return weight_diff, weight_sim
+
+    # weights_A = concatenate_weights_of_model_list(agent1.layers_for_weight_diff())
+    # weights_B = concatenate_weights_of_model_list(agent2.layers_for_weight_diff())
+    # # weight_diff_l2 = torch.norm(weights1-weights2, p=2).item()
+    # weight_diff = torch.mean((weights_A - weights_B) ** 2).item()
+    # weight_sim = float(F.cosine_similarity(weights_A.reshape(1,-1), weights_B.reshape(1,-1)).item())
+
+    weight_diff, weight_sim = get_diff_sim_from_layers(agent1.layers_for_weight_diff(), agent2.layers_for_weight_diff())
+
+    layers_A1, layers_A2, layers_Afc = agent1.layers_for_weight_diff_extra()
+    layers_B1, layers_B2, layers_Bfc = agent2.layers_for_weight_diff_extra()
+    weight_diff1, weight_sim1 = get_diff_sim_from_layers(layers_A1, layers_B1)
+    weight_diff2, weight_sim2 = get_diff_sim_from_layers(layers_A2, layers_B2)
+    weight_difffc, weight_simfc = get_diff_sim_from_layers(layers_Afc, layers_Bfc)
+
+    return weight_diff, weight_sim, weight_diff1, weight_sim1, weight_diff2, weight_sim2, weight_difffc, weight_simfc
 
 def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
     # feature diff: for each data point, get difference of feature from old and new network
@@ -170,14 +187,15 @@ def save_extra_dict(variant, logger, dataset,
     convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
     # get weight and feature diff
     if agent_100k is not None:
-        weight_diff_100k, weight_sim_100k = get_weight_diff(agent_100k, agent_after_pretrain)
-        feature_diff_100k, feature_sim_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
+        e20_weight_diff, e20_weight_sim, wd0_e20, ws0_e20, wd1_e20, ws1_e20, wdfc_e20, wsfc_e20 = get_weight_diff(agent_100k, agent_after_pretrain)
+        e20_feature_diff, e20_feature_sim, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
     else:
-        weight_diff_100k, weight_sim_100k = -1, -1
-        feature_diff_100k, feature_sim_100k = -1, -1
-    final_weight_diff, final_weight_sim = get_weight_diff(agent, agent_after_pretrain)
+        e20_weight_diff, e20_weight_sim = -1, -1
+        e20_feature_diff, e20_feature_sim = -1, -1
+        wd0_e20, ws0_e20, wd1_e20, ws1_e20, wdfc_e20, wsfc_e20 = -1, -1, -1, -1,-1, -1,
+    final_weight_diff, final_weight_sim, wd0_fin, ws0_fin, wd1_fin, ws1_fin, wdfc_fin, wsfc_fin = get_weight_diff(agent, agent_after_pretrain)
     final_feature_diff, final_feature_sim, _ = get_feature_diff(agent, agent_after_pretrain, dataset, variant['device'])
-    best_weight_diff, best_weight_sim = get_weight_diff(best_agent, agent_after_pretrain)
+    best_weight_diff, best_weight_sim, wd0_best, ws0_best, wd1_best, ws1_best, wdfc_best, wsfc_best = get_weight_diff(best_agent, agent_after_pretrain)
     best_feature_diff, best_feature_sim, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, variant['device'])
     # save extra dict
     extra_dict = {
@@ -186,15 +204,36 @@ def save_extra_dict(variant, logger, dataset,
         'final_feature_diff':final_feature_diff,
         'final_feature_sim': final_feature_sim,
 
+        "final_0_weight_diff": wd0_fin,
+        "final_1_weight_diff": wd1_fin,
+        "final_fc_weight_diff": wdfc_fin,
+        "final_0_weight_sim": ws0_fin,
+        "final_1_weight_sim": ws1_fin,
+        "final_fc_weight_sim": wsfc_fin,
+
         'best_weight_diff': best_weight_diff,
         'best_weight_sim': best_weight_sim,
         'best_feature_diff': best_feature_diff,
         'best_feature_sim': best_feature_sim,
 
-        'weight_diff_100k': weight_diff_100k,  # unique to cql due to more training updates
-        'weight_sim_100k': weight_sim_100k,
-        'feature_diff_100k': feature_diff_100k,
-        'feature_sim_100k': feature_sim_100k,
+        "best_0_weight_diff": wd0_best,
+        "best_1_weight_diff": wd1_best,
+        "best_fc_weight_diff": wdfc_best,
+        "best_0_weight_sim": ws0_best,
+        "best_1_weight_sim": ws1_best,
+        "best_fc_weight_sim": wsfc_best,
+
+        'e20_weight_diff': e20_weight_diff,  # unique to cql due to more training updates
+        'e20_weight_sim': e20_weight_sim,
+        'e20_feature_diff': e20_feature_diff,
+        'e20_feature_sim': e20_feature_sim,
+
+        "e20_0_weight_diff": wd0_e20,
+        "e20_1_weight_diff": wd1_e20,
+        "e20_fc_weight_diff": wdfc_e20,
+        "e20_0_weight_sim": ws0_e20,
+        "e20_1_weight_sim": ws1_e20,
+        "e20_fc_weight_sim": wsfc_e20,
 
         'final_test_returns':float(ret_list[-1]),
         'final_test_normalized_returns': float(ret_normalized_list[-1]),
@@ -209,9 +248,9 @@ def save_extra_dict(variant, logger, dataset,
         'best_iter':best_iter,
         'num_feature_timesteps': num_feature_timesteps,
     }
-    print()
-    for key, val in extra_dict.items():
-        print(key, val, type(val))
+    # print()
+    # for key, val in extra_dict.items():
+    #     print(key, val, type(val))
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
 def run_single_exp(variant):
@@ -426,7 +465,7 @@ def run_single_exp(variant):
         logger.log_tabular("est_total_hours", (variant['n_epochs']/(epoch + 1) * (time.time()-st))/3600)
 
         logger.dump_tabular()
-        sys.stdout.flush()
+        sys.stdout.flush() # flush at end of each epoch for results to show up in hpc
         # logger_other.record_dict(viskit_metrics)
         # logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
 

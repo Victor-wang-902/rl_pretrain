@@ -313,6 +313,12 @@ class ConservativeSAC(object):
             layer_list.append(layer)
         return layer_list
 
+    def layers_for_weight_diff_extra(self):
+        layer1 = [self.qf1.hidden_layers[0], self.qf2.hidden_layers[0]]
+        layer2 = [self.qf1.hidden_layers[1], self.qf2.hidden_layers[1]]
+        layer_fc = [self.qf1.last_fc_layer, self.qf2.last_fc_layer]
+        return layer1, layer2, layer_fc
+
     def features_from_batch_no_grad(self, batch):
         observations = batch['observations']
         actions = batch['actions']
