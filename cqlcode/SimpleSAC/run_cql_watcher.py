@@ -178,17 +178,17 @@ def main():
 
 def save_extra_dict(variant, logger, dataset,
                     ret_list, ret_normalized_list, iter_list, step_list,
-                    agent_after_pretrain, agent_100k, agent, best_agent,
+                    agent_after_pretrain, agent_e20, agent, best_agent,
                     best_return, best_return_normalized, best_step, best_iter,
-                    return_100k, return_normalized_100k):
+                    return_e20, return_normalized_e20):
     """get extra dict"""
     # get convergence steps
     conv_k = get_convergence_index(ret_list)
     convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
     # get weight and feature diff
-    if agent_100k is not None:
-        e20_weight_diff, e20_weight_sim, wd0_e20, ws0_e20, wd1_e20, ws1_e20, wdfc_e20, wsfc_e20 = get_weight_diff(agent_100k, agent_after_pretrain)
-        e20_feature_diff, e20_feature_sim, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
+    if agent_e20 is not None:
+        e20_weight_diff, e20_weight_sim, wd0_e20, ws0_e20, wd1_e20, ws1_e20, wdfc_e20, wsfc_e20 = get_weight_diff(agent_e20, agent_after_pretrain)
+        e20_feature_diff, e20_feature_sim, _ = get_feature_diff(agent_e20, agent_after_pretrain, dataset, variant['device'])
     else:
         e20_weight_diff, e20_weight_sim = -1, -1
         e20_feature_diff, e20_feature_sim = -1, -1
@@ -239,8 +239,8 @@ def save_extra_dict(variant, logger, dataset,
         'final_test_normalized_returns': float(ret_normalized_list[-1]),
         'best_return': float(best_return),
         'best_return_normalized':float(best_return_normalized),
-        'test_returns_100k': float(return_100k),
-        'test_normalized_returns_100k': float(return_normalized_100k),
+        'test_returns_e20': float(return_e20),
+        'test_normalized_returns_e20': float(return_normalized_e20),
 
         'convergence_step':convergence_step,
         'convergence_iter':convergence_iter,
@@ -383,7 +383,7 @@ def run_single_exp(variant):
     print("============================ OFFLINE STAGE STARTED! ============================")
 
     best_agent = deepcopy(agent)
-    agent_100k, return_100k, return_normalized_100k = None, 0, 0
+    agent_e20, return_e20, return_normalized_e20 = None, 0, 0
     best_step, best_iter = 0, 0
     iter_list, step_list, ret_list, ret_normalized_list = [],[],[],[]
     best_return, best_return_normalized = -np.inf, -np.inf
@@ -426,8 +426,8 @@ def run_single_exp(variant):
                         logger.save_dict(save_dict, 'agent_best.pth')
 
             if (epoch + 1) == 20:
-                agent_100k = deepcopy(agent)
-                return_100k, return_normalized_100k = metrics['average_return'], metrics['average_normalizd_return']
+                agent_e20 = deepcopy(agent)
+                return_e20, return_normalized_e20 = metrics['average_return'], metrics['average_normalizd_return']
 
             if variant['save_model'] and (epoch + 1) in (10, 20, 50, 100, 200):
                 save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch+1}
@@ -437,9 +437,9 @@ def run_single_exp(variant):
             if (epoch + 1) % 40 == 0:
                 save_extra_dict(variant, logger, dataset,
                                 ret_list, ret_normalized_list, iter_list, step_list,
-                                agent_after_pretrain, agent_100k, agent, best_agent,
+                                agent_after_pretrain, agent_e20, agent, best_agent,
                                 best_return, best_return_normalized, best_step, best_iter,
-                                return_100k, return_normalized_100k)
+                                return_e20, return_normalized_e20)
 
         metrics['train_time'] = train_timer()
         metrics['eval_time'] = eval_timer()
@@ -472,52 +472,10 @@ def run_single_exp(variant):
     """get extra dict"""
     save_extra_dict(variant, logger, dataset,
                     ret_list, ret_normalized_list, iter_list, step_list,
-                    agent_after_pretrain, agent_100k, agent, best_agent,
+                    agent_after_pretrain, agent_e20, agent, best_agent,
                     best_return, best_return_normalized, best_step, best_iter,
-                    return_100k, return_normalized_100k)
+                    return_e20, return_normalized_e20)
 
-
-    # # get convergence steps
-    # conv_k = get_convergence_index(ret_list)
-    # convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
-    # # get weight and feature diff
-    # if agent_100k is not None:
-    #     weight_diff_100k, weight_diff_MSE_100k, weight_sim_100k = get_weight_diff(agent_100k, agent_after_pretrain)
-    #     feature_diff_100k, feature_diff_MSE_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
-    # else:
-    #     weight_diff_100k, weight_diff_MSE_100k = -1, -1
-    #     feature_diff_100k, feature_diff_MSE_100k = -1, -1
-    # final_weight_diff, final_weight_diff_MSE, final_weight_sim_100k = get_weight_diff(agent, agent_after_pretrain)
-    # final_feature_diff, final_feature_diff_MSE, _ = get_feature_diff(agent, agent_after_pretrain, dataset, variant['device'])
-    # best_weight_diff, best_weight_diff_MSE, best_weight_sim_100k = get_weight_diff(best_agent, agent_after_pretrain)
-    # best_feature_diff, best_feature_diff_MSE, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, variant['device'])
-    # # save extra dict
-    # extra_dict = {
-    #     'final_weight_diff':final_weight_diff,
-    #     'final_feature_diff':final_feature_diff,
-    #     'best_weight_diff': best_weight_diff,
-    #     'best_feature_diff': best_feature_diff,
-    #     'final_weight_diff_MSE': final_weight_diff_MSE,
-    #     'final_feature_diff_MSE': final_feature_diff_MSE,
-    #     'best_weight_diff_MSE': best_weight_diff_MSE,
-    #     'best_feature_diff_MSE': best_feature_diff_MSE,
-    #     'num_feature_timesteps':num_feature_timesteps,
-    #     'final_test_returns':float(ret_list[-1]),
-    #     'final_test_normalized_returns': float(ret_normalized_list[-1]),
-    #     'best_return': float(best_return),
-    #     'best_return_normalized':float(best_return_normalized),
-    #     'convergence_step':convergence_step,
-    #     'convergence_iter':convergence_iter,
-    #     'best_step':best_step,
-    #     'best_iter':best_iter,
-    #     'weight_diff_100k':weight_diff_100k, # unique to cql due to more training updates
-    #     'feature_diff_100k': feature_diff_100k,
-    #     'weight_diff_MSE_100k': weight_diff_MSE_100k,
-    #     'feature_diff_MSE_100k': feature_diff_MSE_100k,
-    #     'test_returns_100k': return_100k,
-    #     'test_normalized_returns_100k': return_normalized_100k,
-    # }
-    # logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
 if __name__ == '__main__':
     main()
