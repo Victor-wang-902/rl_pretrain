@@ -277,6 +277,12 @@ def experiment(
             final_block_weight_diff, 
             final_block_weight_sim 
             ) = calculate_weight_diff(variant["outdir"], variant["max_iters"], init_model)
+
+        print()
+        print(final_weight_diff)
+        for d in final_block_weight_diff:
+            print(d)
+        quit()
         (
             final_feature_diff, 
             final_feature_sim,
