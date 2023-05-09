@@ -1,5 +1,6 @@
 import os
 import sys
+import torch.nn.functional as F
 
 # with new logger
 ld_library_path = os.environ.get('LD_LIBRARY_PATH', '')
@@ -102,9 +103,12 @@ def get_weight_diff(agent1, agent2):
     # weight diff, agent class should have layers_for_weight_diff() func
     weights1 = concatenate_weights_of_model_list(agent1.layers_for_weight_diff())
     weights2 = concatenate_weights_of_model_list(agent2.layers_for_weight_diff())
+    print(weights1.shape)
     weight_diff_l2 = torch.norm(weights1-weights2, p=2).item()
     weight_diff_mse = torch.mean((weights1 - weights2) ** 2).item()
-    return weight_diff_l2, weight_diff_mse
+    weight_diff_sim = F.cosine_similarity(weights1.reshape(1,-1), weights2.reshape(1,-1))
+    weight_diff_sim = F.cosine_similarity(weights1, weights2)
+    return weight_diff_l2, weight_diff_mse, weight_diff_sim
 
 def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
     # feature diff: for each data point, get difference of feature from old and new network
@@ -152,6 +156,54 @@ def main():
     variant["outdir"] = logger_kwargs["output_dir"]
     variant["exp_name"] = logger_kwargs["exp_name"]
     run_single_exp(variant)
+
+def save_extra_dict(variant, logger, dataset,
+                    ret_list, ret_normalized_list, iter_list, step_list,
+                    agent_after_pretrain, agent_100k, agent, best_agent,
+                    best_return, best_return_normalized, best_step, best_iter,
+                    return_100k, return_normalized_100k):
+    """get extra dict"""
+    # get convergence steps
+    conv_k = get_convergence_index(ret_list)
+    convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
+    # get weight and feature diff
+    if agent_100k is not None:
+        weight_diff_100k, weight_diff_MSE_100k = get_weight_diff(agent_100k, agent_after_pretrain)
+        feature_diff_100k, feature_diff_MSE_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
+    else:
+        weight_diff_100k, weight_diff_MSE_100k = -1, -1
+        feature_diff_100k, feature_diff_MSE_100k = -1, -1
+    final_weight_diff, final_weight_diff_MSE = get_weight_diff(agent, agent_after_pretrain)
+    final_feature_diff, final_feature_diff_MSE, _ = get_feature_diff(agent, agent_after_pretrain, dataset, variant['device'])
+    best_weight_diff, best_weight_diff_MSE = get_weight_diff(best_agent, agent_after_pretrain)
+    best_feature_diff, best_feature_diff_MSE, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, variant['device'])
+    # save extra dict
+    extra_dict = {
+        'final_weight_diff':final_weight_diff,
+        'final_feature_diff':final_feature_diff,
+        'best_weight_diff': best_weight_diff,
+        'best_feature_diff': best_feature_diff,
+        'final_weight_diff_MSE': final_weight_diff_MSE,
+        'final_feature_diff_MSE': final_feature_diff_MSE,
+        'best_weight_diff_MSE': best_weight_diff_MSE,
+        'best_feature_diff_MSE': best_feature_diff_MSE,
+        'num_feature_timesteps':num_feature_timesteps,
+        'final_test_returns':float(ret_list[-1]),
+        'final_test_normalized_returns': float(ret_normalized_list[-1]),
+        'best_return': float(best_return),
+        'best_return_normalized':float(best_return_normalized),
+        'convergence_step':convergence_step,
+        'convergence_iter':convergence_iter,
+        'best_step':best_step,
+        'best_iter':best_iter,
+        'weight_diff_100k':weight_diff_100k, # unique to cql due to more training updates
+        'feature_diff_100k': feature_diff_100k,
+        'weight_diff_MSE_100k': weight_diff_MSE_100k,
+        'feature_diff_MSE_100k': feature_diff_MSE_100k,
+        'test_returns_100k': return_100k,
+        'test_normalized_returns_100k': return_normalized_100k,
+    }
+    logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
 def run_single_exp(variant):
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
@@ -368,14 +420,14 @@ def run_single_exp(variant):
     convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
     # get weight and feature diff
     if agent_100k is not None:
-        weight_diff_100k, weight_diff_MSE_100k = get_weight_diff(agent_100k, agent_after_pretrain)
+        weight_diff_100k, weight_diff_MSE_100k, weight_sim_100k = get_weight_diff(agent_100k, agent_after_pretrain)
         feature_diff_100k, feature_diff_MSE_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, variant['device'])
     else:
         weight_diff_100k, weight_diff_MSE_100k = -1, -1
         feature_diff_100k, feature_diff_MSE_100k = -1, -1
-    final_weight_diff, final_weight_diff_MSE = get_weight_diff(agent, agent_after_pretrain)
+    final_weight_diff, final_weight_diff_MSE, final_weight_sim_100k = get_weight_diff(agent, agent_after_pretrain)
     final_feature_diff, final_feature_diff_MSE, _ = get_feature_diff(agent, agent_after_pretrain, dataset, variant['device'])
-    best_weight_diff, best_weight_diff_MSE = get_weight_diff(best_agent, agent_after_pretrain)
+    best_weight_diff, best_weight_diff_MSE, best_weight_sim_100k = get_weight_diff(best_agent, agent_after_pretrain)
     best_feature_diff, best_feature_diff_MSE, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, variant['device'])
     # save extra dict
     extra_dict = {
@@ -404,17 +456,6 @@ def run_single_exp(variant):
         'test_normalized_returns_100k': return_normalized_100k,
     }
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
-
-    if variant['save_model']: # here also save best agent
-        if variant['save_model'] and (epoch + 1) in (1, 20, 200):
-            save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch + 1}
-            logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
-            # wandb_logger.save_pickle(save_data, 'model.pkl')
-
-        save_dict = {'agent': best_agent, 'variant': variant, 'epoch': best_iter}
-
-        save_data = {'sac': agent, 'variant': variant, 'epoch': epoch}
-        # wandb_logger.save_pickle(save_data, 'model.pkl')
 
 if __name__ == '__main__':
     main()

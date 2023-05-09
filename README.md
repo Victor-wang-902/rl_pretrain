@@ -195,7 +195,7 @@ singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/
 
 ```
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
-cd /cqlcode/SimpleSAC
+cd /cqlcode/exp/
 ```
 
 quick cql + pretrain testing:
