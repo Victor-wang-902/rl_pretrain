@@ -39,7 +39,327 @@ def experiment(
     exp_prefix,
     variant,
 ):
+    if variant["calculate_extra"]:
 
+        torch.manual_seed(variant["seed"])
+        os.makedirs(variant["outdir"], exist_ok=True)
+        device = variant.get("device", "cuda")
+        log_to_wandb = variant.get("log_to_wandb", False)
+        seed = variant["seed"]
+        env_name, dataset = variant["env"], variant["dataset"]
+        model_type = variant["model_type"]
+        group_name = f"{exp_prefix}-{env_name}-{dataset}"
+        exp_prefix = f"{group_name}-{random.randint(int(1e5), int(1e6) - 1)}"
+
+        if env_name == "hopper":
+            env = gym.make("Hopper-v3")
+            max_ep_len = 1000
+            env_targets = [3600, 1800]  # evaluation conditioning targets
+            scale = 1000.0  # normalization for rewards/returns
+            final_target = 3600
+        elif env_name == "halfcheetah":
+            env = gym.make("HalfCheetah-v3")
+            max_ep_len = 1000
+            env_targets = [12000, 6000]
+            scale = 1000.0
+            final_target = 6000
+        elif env_name == "walker2d":
+            env = gym.make("Walker2d-v3")
+            max_ep_len = 1000
+            env_targets = [5000, 2500]
+            scale = 1000.0
+            final_target = 5000
+        elif env_name == "reacher2d":
+            from decision_transformer.envs.reacher_2d import Reacher2dEnv
+
+            env = Reacher2dEnv()
+            max_ep_len = 100
+            env_targets = [76, 40]
+            scale = 10.0
+        else:
+            raise NotImplementedError
+
+        if model_type == "bc":
+            env_targets = env_targets[
+                :1
+            ]  # since BC ignores target, no need for different evaluations
+
+        state_dim = env.observation_space.shape[0]
+        act_dim = env.action_space.shape[0]
+
+        dataset_path = f"data/{env_name}-{dataset}-v2.pkl"
+        with open(dataset_path, "rb") as f:
+            trajectories = pickle.load(f)
+
+        np.random.seed(0) # for data size
+        num_traj = len(trajectories)
+        if variant["data_size"] != 1.0:
+            idx = np.random.choice(np.arange(num_traj, dtype=int), size=int(num_traj * variant["data_size"]), replace=False)
+            new_trajectories = []
+            for t_id in idx:
+                new_trajectories.append(trajectories[t_id])
+            trajectories = new_trajectories[:]
+            del new_trajectories
+
+        # save all path information into separate lists
+        mode = variant.get("mode", "normal")
+        states, traj_lens, returns = [], [], []
+        for path in trajectories:
+            if mode == "delayed":  # delayed: all rewards moved to end of trajectory
+                path["rewards"][-1] = path["rewards"].sum()
+                path["rewards"][:-1] = 0.0
+            states.append(path["observations"])
+            traj_lens.append(len(path["observations"]))
+            returns.append(path["rewards"].sum())
+        traj_lens, returns = np.array(traj_lens), np.array(returns)
+
+        # used for input normalization
+        states = np.concatenate(states, axis=0)
+        state_mean, state_std = np.mean(states, axis=0), np.std(states, axis=0) + 1e-6
+
+        num_timesteps = sum(traj_lens)
+
+        print("=" * 50)
+        print(f"Starting new experiment: {env_name} {dataset}")
+        print(f"{len(traj_lens)} trajectories, {num_timesteps} timesteps found")
+        print(f"Average return: {np.mean(returns):.2f}, std: {np.std(returns):.2f}")
+        print(f"Max return: {np.max(returns):.2f}, min: {np.min(returns):.2f}")
+        print("=" * 50)
+
+        K = variant["K"]
+        batch_size = variant["batch_size"]
+        num_eval_episodes = variant["num_eval_episodes"]
+        pct_traj = variant.get("pct_traj", 1.0)
+
+        # only train on top pct_traj trajectories (for %BC experiment)
+        num_timesteps = max(int(pct_traj * num_timesteps), 1)
+        sorted_inds = np.argsort(returns)  # lowest to highest
+        num_trajectories = 1
+        timesteps = traj_lens[sorted_inds[-1]]
+        ind = len(trajectories) - 2
+        while ind >= 0 and timesteps + traj_lens[sorted_inds[ind]] < num_timesteps:
+            timesteps += traj_lens[sorted_inds[ind]]
+            num_trajectories += 1
+            ind -= 1
+        sorted_inds = sorted_inds[-num_trajectories:]
+
+        # used to reweight sampling so we sample according to timesteps instead of trajectories
+        p_sample = traj_lens[sorted_inds] / sum(traj_lens[sorted_inds])
+
+        def get_batch(batch_size=256, max_len=K):
+            batch_inds = np.random.choice(
+                np.arange(num_trajectories),
+                size=batch_size,
+                replace=True,
+                p=p_sample,  # reweights so we sample according to timesteps
+            )
+
+            s, a, r, d, rtg, timesteps, mask = [], [], [], [], [], [], []
+            for i in range(batch_size):
+                traj = trajectories[int(sorted_inds[batch_inds[i]])]
+                si = random.randint(0, traj["rewards"].shape[0] - 1)
+                # get sequences from dataset
+                s.append(traj["observations"][si : si + max_len].reshape(1, -1, state_dim))
+                a.append(traj["actions"][si : si + max_len].reshape(1, -1, act_dim))
+                r.append(traj["rewards"][si : si + max_len].reshape(1, -1, 1))
+                if "terminals" in traj:
+                    d.append(traj["terminals"][si : si + max_len].reshape(1, -1))
+                else:
+                    d.append(traj["dones"][si : si + max_len].reshape(1, -1))
+                timesteps.append(np.arange(si, si + s[-1].shape[1]).reshape(1, -1))
+                timesteps[-1][timesteps[-1] >= max_ep_len] = (
+                    max_ep_len - 1
+                )  # padding cutoff
+                rtg.append(
+                    discount_cumsum(traj["rewards"][si:], gamma=1.0)[
+                        : s[-1].shape[1] + 1
+                    ].reshape(1, -1, 1)
+                )
+                if rtg[-1].shape[1] <= s[-1].shape[1]:
+                    rtg[-1] = np.concatenate([rtg[-1], np.zeros((1, 1, 1))], axis=1)
+
+                # padding and state + reward normalization
+                tlen = s[-1].shape[1]
+                s[-1] = np.concatenate(
+                    [np.zeros((1, max_len - tlen, state_dim)), s[-1]], axis=1
+                )
+                s[-1] = (s[-1] - state_mean) / state_std
+                a[-1] = np.concatenate(
+                    [np.ones((1, max_len - tlen, act_dim)) * -10.0, a[-1]], axis=1
+                )
+                r[-1] = np.concatenate([np.zeros((1, max_len - tlen, 1)), r[-1]], axis=1)
+                d[-1] = np.concatenate([np.ones((1, max_len - tlen)) * 2, d[-1]], axis=1)
+                rtg[-1] = (
+                    np.concatenate([np.zeros((1, max_len - tlen, 1)), rtg[-1]], axis=1)
+                    / scale
+                )
+                timesteps[-1] = np.concatenate(
+                    [np.zeros((1, max_len - tlen)), timesteps[-1]], axis=1
+                )
+                mask.append(
+                    np.concatenate(
+                        [np.zeros((1, max_len - tlen)), np.ones((1, tlen))], axis=1
+                    )
+                )
+
+            s = torch.from_numpy(np.concatenate(s, axis=0)).to(
+                dtype=torch.float32, device=device
+            )
+            a = torch.from_numpy(np.concatenate(a, axis=0)).to(
+                dtype=torch.float32, device=device
+            )
+            r = torch.from_numpy(np.concatenate(r, axis=0)).to(
+                dtype=torch.float32, device=device
+            )
+            d = torch.from_numpy(np.concatenate(d, axis=0)).to(
+                dtype=torch.long, device=device
+            )
+            rtg = torch.from_numpy(np.concatenate(rtg, axis=0)).to(
+                dtype=torch.float32, device=device
+            )
+            timesteps = torch.from_numpy(np.concatenate(timesteps, axis=0)).to(
+                dtype=torch.long, device=device
+            )
+            mask = torch.from_numpy(np.concatenate(mask, axis=0)).to(device=device)
+
+            return s, a, r, d, rtg, timesteps, mask
+
+
+        if model_type == "dt":
+            model = DecisionTransformer(
+                args=variant,
+                state_dim=state_dim,
+                act_dim=act_dim,
+                max_length=K,
+                max_ep_len=max_ep_len,
+                hidden_size=variant["embed_dim"],
+                n_layer=variant["n_layer"],
+                n_head=variant["n_head"],
+                n_inner=4 * variant["embed_dim"],
+                activation_function=variant["activation_function"],
+                n_positions=1024,
+                resid_pdrop=variant["dropout"],
+                attn_pdrop=0.1,
+            )
+            if variant["load_checkpoint"]:
+                state_dict = torch.load(variant["load_checkpoint"])
+                model.load_state_dict(state_dict)
+                print(f"Loaded from {variant['load_checkpoint']}")
+        elif model_type == "bc":
+            model = MLPBCModel(
+                state_dim=state_dim,
+                act_dim=act_dim,
+                max_length=K,
+                hidden_size=variant["embed_dim"],
+                n_layer=variant["n_layer"],
+            )
+        else:
+            raise NotImplementedError
+        init_model = copy.deepcopy(model)
+
+        model = model.to(device=device)
+
+
+        (
+            final_test_returns,
+            final_test_normalized_returns,
+            best_return,
+            best_return_normalized,
+            convergence_step,
+            convergence_iter,
+            best_step,
+            best_iter
+        ) = calculate_statistics(variant["outdir"])
+
+        (
+            final_weight_diff, 
+            final_weight_sim, 
+            final_block_weight_diff, 
+            final_block_weight_sim 
+            ) = calculate_weight_diff(variant["outdir"], variant["max_iters"], init_model)
+        (
+            final_feature_diff, 
+            final_feature_sim,
+            num_feature_traj, 
+            num_feature_timesteps
+            ) = calculate_feature_diff(
+                variant,
+                variant["outdir"],
+                variant["max_iters"],
+                init_model,
+                trajectories,
+                state_mean,
+                state_std,
+                max_ep_len,
+                scale,
+                state_dim,
+                act_dim
+                )
+        (
+            best_weight_diff, 
+            best_weight_sim, 
+            best_block_weight_diff, 
+            best_block_weight_sim 
+            ) = calculate_weight_diff(variant["outdir"], best_iter, init_model)
+        (
+            best_feature_diff,
+            best_feature_sim, 
+            num_feature_traj, 
+            num_feature_timesteps
+            ) = calculate_feature_diff(
+                variant,
+                variant["outdir"],
+                best_iter,
+                init_model,
+                trajectories,
+                state_mean,
+                state_std,
+                max_ep_len,
+                scale,
+                state_dim,
+                act_dim
+                )
+        new_final_block_weight_diff = dict()
+        for item in final_block_weight_diff:
+            new_final_block_weight_diff["final_"+ item+"_weight_diff"] = final_block_weight_diff[item]
+        new_final_block_weight_sim = dict()
+        for item in final_block_weight_sim:
+            new_final_block_weight_sim["final_" + item+"_weight_sim"] = final_block_weight_sim[item]
+        new_best_block_weight_diff = dict()
+        for item in best_block_weight_diff:
+            new_best_block_weight_diff["best_" + item+"_weight_diff"] = best_block_weight_diff[item]
+        new_best_block_weight_sim = dict()
+        for item in best_block_weight_sim:
+            new_best_block_weight_sim["best_" + item+"_weight_sim"] = best_block_weight_sim[item]
+        extra_dict = {
+            "final_weight_diff": final_weight_diff,
+            "final_weight_sim": final_weight_sim,
+            "final_feature_diff": final_feature_diff,
+            "final_feature_sim": final_feature_sim,
+            **new_final_block_weight_diff,
+            **new_final_block_weight_sim,
+            "best_weight_diff": best_weight_diff,
+            "best_weight_sim": best_weight_sim,
+            "best_feature_diff": best_feature_diff,
+            "best_feature_sim": best_feature_sim,
+            **new_best_block_weight_diff,
+            **new_best_block_weight_sim,
+            "num_feature_traj": num_feature_traj,
+            "num_feature_timesteps": num_feature_timesteps,
+            "final_test_returns": final_test_returns,
+            "final_test_normalized_returns": final_test_normalized_returns,
+            "best_return": best_return,
+            "best_return_normalized": best_return_normalized,
+            "convergence_step": convergence_step,
+            "convergence_iter": convergence_iter,
+            "best_step": best_step,
+            "best_iter": best_iter
+            }
+
+        with open(os.path.join(variant["outdir"], "extra_new.json"), "w") as f:
+            extra_dict = convert_json(extra_dict)
+            json.dump(extra_dict, f, indent=4)
+        return
     logger = EpochLogger(variant["outdir"], variant["output_fname"], variant["exp_name"])
     logger.save_config(locals())
 
@@ -438,9 +758,15 @@ def experiment(
         best_iter
     ) = calculate_statistics(variant["outdir"])
 
-    final_weight_diff = calculate_weight_diff(variant["outdir"], variant["max_iters"], init_model)
+    (
+        final_weight_diff, 
+        final_weight_sim, 
+        final_block_weight_diff, 
+        final_block_weight_sim 
+        ) = calculate_weight_diff(variant["outdir"], variant["max_iters"], init_model)
     (
         final_feature_diff, 
+        final_feature_sim,
         num_feature_traj, 
         num_feature_timesteps
         ) = calculate_feature_diff(
@@ -456,9 +782,15 @@ def experiment(
             state_dim,
             act_dim
             )
-    best_weight_diff = calculate_weight_diff(variant["outdir"], best_iter, init_model)
     (
-        best_feature_diff, 
+        best_weight_diff, 
+        best_weight_sim, 
+        best_block_weight_diff, 
+        best_block_weight_sim 
+        ) = calculate_weight_diff(variant["outdir"], best_iter, init_model)
+    (
+        best_feature_diff,
+        best_feature_sim, 
         num_feature_traj, 
         num_feature_timesteps
         ) = calculate_feature_diff(
@@ -474,12 +806,31 @@ def experiment(
             state_dim,
             act_dim
             )
-
+    new_final_block_weight_diff = dict()
+    for item in final_block_weight_diff:
+        new_final_block_weight_diff["final_"+ item+"_weight_diff"] = final_block_weight_diff[item]
+    new_final_block_weight_sim = dict()
+    for item in final_block_weight_sim:
+        new_final_block_weight_sim["final_" + item+"_weight_sim"] = final_block_weight_sim[item]
+    new_best_block_weight_diff = dict()
+    for item in best_block_weight_diff:
+        new_best_block_weight_diff["best_" + item+"_weight_diff"] = best_block_weight_diff[item]
+    new_best_block_weight_sim = dict()
+    for item in best_block_weight_sim:
+        new_best_block_weight_sim["best_" + item+"_weight_sim"] = best_block_weight_sim[item]
     extra_dict = {
         "final_weight_diff": final_weight_diff,
+        "final_weight_sim": final_weight_sim,
         "final_feature_diff": final_feature_diff,
+        "final_feature_sim": final_feature_sim,
+        **new_final_block_weight_diff,
+        **new_final_block_weight_sim,
         "best_weight_diff": best_weight_diff,
+        "best_weight_sim": best_weight_sim,
         "best_feature_diff": best_feature_diff,
+        "best_feature_sim": best_feature_sim,
+        **new_best_block_weight_diff,
+        **new_best_block_weight_sim,
         "num_feature_traj": num_feature_traj,
         "num_feature_timesteps": num_feature_timesteps,
         "final_test_returns": final_test_returns,
@@ -559,6 +910,7 @@ def set_dt_args(args_to_parse=None):
     parser.add_argument("--perturb_absolute", type=float, default=None)
 
     parser.add_argument("--data_size", type=float, default=1.0)
+    parser.add_argument("--calculate_extra", action="store_true", default=False)
 
     if args_to_parse is not None:
         args = parser.parse_args(args_to_parse)
