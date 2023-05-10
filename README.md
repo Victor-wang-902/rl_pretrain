@@ -211,7 +211,7 @@ python run_cql.py --pretrain_mode q_sprime --n_pretrain_epochs 3 --n_train_step_
 Send back files for plotting: 
 ```
 cd /scratch/$USER/sing/rl_pretrain/code
-rsync -av --exclude='*.pt*' checkpoints/cql* sendbackcql/
+rsync -av --exclude='*.pt*' checkpoints/cqlr3* sendbackcql/
 zip -r sendcql.zip sendbackcql/
 ```
 
