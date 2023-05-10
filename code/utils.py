@@ -203,9 +203,17 @@ def calculate_weight_diff_debug(dir, iter, init_model, weight_only=True):
     weight_sim = torch.mean(cos(weights, init_weights)).item()
 
     print("===============")
+    print(len(layers))
     for l in layers:
         print(l.shape)
-    print(layers)
+    print("===============")
+    for b in blocks:
+        print("-----------")
+        print("b:",b)
+        print(len(blocks[b]))
+        for l in blocks[b]:
+            print(l.shape)
+
 
     return weight_diff, weight_sim, block_weight_diff, block_weight_sim
 
