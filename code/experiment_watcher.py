@@ -405,6 +405,7 @@ def experiment(
         env_targets = env_targets[
             :1
         ]  # since BC ignores target, no need for different evaluations
+        final_target = 1
 
     state_dim = env.observation_space.shape[0]
     act_dim = env.action_space.shape[0]
@@ -734,10 +735,11 @@ def experiment(
         logger.log_tabular("current_itr_eval_" + str(env_targets[0]) + "_return_std", outputs["evaluation/target_" + str(env_targets[0]) + "_return_std"])
         logger.log_tabular("current_itr_eval_" + str(env_targets[0]) + "_length_mean", outputs["evaluation/target_" + str(env_targets[0]) + "_length_mean"])
         logger.log_tabular("current_itr_eval_" + str(env_targets[0]) + "_length_std", outputs["evaluation/target_" + str(env_targets[0]) + "_length_std"])
-        logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_return_mean", outputs["evaluation/target_" + str(env_targets[1]) + "_return_mean"])
-        logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_return_std", outputs["evaluation/target_" + str(env_targets[1]) + "_return_std"])
-        logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_length_mean", outputs["evaluation/target_" + str(env_targets[1]) + "_length_mean"])
-        logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_length_std", outputs["evaluation/target_" + str(env_targets[1]) + "_length_std"])
+        if len(env_targets) > 1:
+            logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_return_mean", outputs["evaluation/target_" + str(env_targets[1]) + "_return_mean"])
+            logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_return_std", outputs["evaluation/target_" + str(env_targets[1]) + "_return_std"])
+            logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_length_mean", outputs["evaluation/target_" + str(env_targets[1]) + "_length_mean"])
+            logger.log_tabular("current_itr_eval_" + str(env_targets[1]) + "_length_std", outputs["evaluation/target_" + str(env_targets[1]) + "_length_std"])
         logger.log_tabular("TestEpRet", outputs["evaluation/target_" + str(final_target) + "_return_mean"])
         logger.log_tabular("TestEpNormRet", get_normalized_score(env_name, outputs["evaluation/target_" + str(final_target) + "_return_mean"]))
         logger.log_tabular("Iteration", iter + 1)
