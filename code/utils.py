@@ -151,6 +151,60 @@ def calculate_weight_diff(dir, iter, init_model, weight_only=True):
     return weight_diff, weight_sim, block_weight_diff, block_weight_sim
 
 @torch.no_grad()
+def calculate_weight_diff_debug(dir, iter, init_model, weight_only=True):
+    cos = torch.nn.CosineSimilarity(dim=0, eps=1e-6)
+    model_state_dict = torch.load(os.path.join(dir, "model_" + str(iter) + ".pt"), map_location=torch.device("cpu"))
+    layers = []
+    blocks = dict()
+    for name, layer in model_state_dict.items():
+        if "transformer" in name:
+            if not weight_only or "weight" in name:
+                layers.append(layer.view(-1))
+                flag = False
+                block_no = None
+                for ln in name.split("."):
+                    if ln.isnumeric():
+                        flag = True
+                        block_no = int(ln)
+                if flag:
+                    try:
+                        blocks[str(block_no)].append(layer.view(-1))
+                    except:
+                        blocks[str(block_no)] = [layer.view(-1)]
+    weights = torch.cat(layers)
+
+    init_model.to("cpu")
+    init_state_dict = init_model.state_dict()
+    layers2 = []
+    blocks2 = dict()
+    for name, layer in init_state_dict.items():
+        if "transformer" in name:
+            if not weight_only or "weight" in name:
+                layers2.append(layer.view(-1))
+                flag = False
+                block_no = None
+                for ln in name.split("."):
+                    if ln.isnumeric():
+                        flag = True
+                        block_no = int(ln)
+                if flag:
+                    try:
+                        blocks2[str(block_no)].append(layer.view(-1))
+                    except:
+                        blocks2[str(block_no)] = [layer.view(-1)]
+    init_weights = torch.cat(layers2)
+    block_weight_diff = dict()
+    block_weight_sim = dict()
+    for b in blocks:
+        block_weight_diff[b] = torch.mean((torch.cat(blocks[b]) - torch.cat(blocks2[b]))**2).item()
+        block_weight_sim[b] = torch.mean(cos(torch.cat(blocks[b]), torch.cat(blocks2[b]))).item()
+    #weight_diff = torch.norm(weights - init_weights, p=2).item()
+    weight_diff = torch.mean((weights - init_weights)**2).item()
+    weight_sim = torch.mean(cos(weights, init_weights)).item()
+    return weight_diff, weight_sim, block_weight_diff, block_weight_sim
+
+
+@torch.no_grad()
 def calculate_feature_diff(
     variant, 
     dir, 

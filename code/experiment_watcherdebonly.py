@@ -15,7 +15,7 @@ import pickle
 import random
 import sys
 from utils import get_normalized_score
-from utils import calculate_feature_diff, calculate_statistics, calculate_weight_diff
+from utils import calculate_feature_diff, calculate_statistics, calculate_weight_diff, calculate_weight_diff_debug
 import copy
 from exp_scripts.grid_utils import *
 import time
@@ -276,7 +276,7 @@ def experiment(
             final_weight_sim, 
             final_block_weight_diff, 
             final_block_weight_sim 
-            ) = calculate_weight_diff(variant["outdir"], variant["max_iters"], init_model)
+            ) = calculate_weight_diff_debug(variant["outdir"], variant["max_iters"], init_model)
 
         print()
         print(final_weight_diff)
