@@ -405,7 +405,6 @@ def experiment(
         env_targets = env_targets[
             :1
         ]  # since BC ignores target, no need for different evaluations
-        final_target = 1
 
     state_dim = env.observation_space.shape[0]
     act_dim = env.action_space.shape[0]
