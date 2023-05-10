@@ -157,6 +157,7 @@ def calculate_weight_diff_debug(dir, iter, init_model, weight_only=True):
     layers = []
     blocks = dict()
     for name, layer in model_state_dict.items():
+        print(name)
         if "transformer" in name:
             if not weight_only or "weight" in name:
                 layers.append(layer.view(-1))
