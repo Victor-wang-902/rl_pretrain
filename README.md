@@ -180,19 +180,38 @@ Put data under `code/checkpoints/` (For example, you should see a folder here: `
 Run `plot_dt_test.py` and `pretrain_paper_table.py` to generate figures and latex table. 
 
 ## Offline RL experiments
+
 ```
-singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/dt-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/dt-sandbox bash
+singularity build --sandbox cql-sandbox docker://cwatcherw/cql:0.1
 ```
 
 ```
-export PYTHONPATH=$PYTHONPATH:/code
-export PYTHONPATH=$PYTHONPATH:/rlcode
-cd /rlcode
+srun --pty --cpus-per-task=1 --mem 8000 -t 0-06:00 bash
+```
+
+```
+singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/rl_pretrain/cqlcode:/cqlcode -B /scratch/$USER/sing/cql-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/cql-sandbox bash
+```
+
+```
+export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
+cd /cqlcode/SimpleSAC
+```
+
+quick cql + pretrain testing:
+```
+python run_cql.py --pretrain_mode q_sprime --n_pretrain_epochs 3 --n_train_step_per_epoch 2 --n_epochs 22 --eval_n_trajs 1
 ```
 
 Send back files for plotting: 
 ```
 cd /scratch/$USER/sing/rl_pretrain/code
-rsync -av --exclude='*.pt' checkpoints/rl* sendbackrl/
-zip -r sendrl.zip sendbackrl/
+rsync -av --exclude='*.pt*' checkpoints/cql* sendbackcql/
+zip -r sendcql.zip sendbackcql/
+```
+
+### others
+background no log job test:
+```
+python sth.py > /dev/null 2>&1 &
 ```

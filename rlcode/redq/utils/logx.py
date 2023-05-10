@@ -9,6 +9,7 @@ import numpy as np
 import os.path as osp, time, atexit, os
 from redq.utils.serialization_utils import convert_json
 import json
+import torch
 
 color2num = dict(
     gray=30,
@@ -182,6 +183,13 @@ class Logger:
             json.dump(dictionary, file)
         if verbose>0:
             print("extra dict saved to:", full_save_path)
+
+    def save_dict(self, dictionary, save_name, verbose=1):
+        # save_name can be e.g. sth.pt
+        save_path = os.path.join(self.output_dir, save_name)
+        torch.save(dictionary, save_path)
+        if verbose > 0:
+            print("Saved to", save_path)
 
 
 def get_statistics_scalar(x, with_min_and_max=False):

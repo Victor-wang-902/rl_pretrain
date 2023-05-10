@@ -1,10 +1,11 @@
 checkpoints
 wandb
 .idea/
-code/exp_scripts/logs/*.out
-code/exp_scripts/logs/*.err
+*.out
+*.err
 figures/
 *.zip
+trials/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
