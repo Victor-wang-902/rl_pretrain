@@ -220,3 +220,9 @@ background no log job test:
 ```
 python sth.py > /dev/null 2>&1 &
 ```
+
+### new dt debug watcher
+```
+python experiment_watcherdebonly.py --env hopper --dataset medium --model_type dt --seed 666 --outdir "/checkpoints/ZZZdebug" --device cpu --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4 --calculate_extra
+
+```
