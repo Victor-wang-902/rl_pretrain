@@ -269,12 +269,15 @@ def run_single_exp(variant):
     print(ready_agent_output_dir, ready_agent_output_dir_exp_name)
     # TODO load the ready agent here
     ready_agent_full_path = os.path.join(ready_agent_output_dir, 'agent_best.pth')
+    print("ready agent full path", ready_agent_full_path)
     if not torch.cuda.is_available():
         ready_agent_dict = torch.load(ready_agent_full_path, map_location=torch.device('cpu'))
     else:
         ready_agent_dict = torch.load(ready_agent_full_path)
     print(ready_agent_dict.keys())
     ready_agent = ready_agent_dict['agent']
+    print(ready_agent_dict['epoch'])
+    print(ready_agent_dict['variant'])
     quit()
 
     env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
