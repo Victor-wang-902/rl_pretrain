@@ -481,7 +481,8 @@ def run_single_exp(variant):
         logger.log_tabular("TestEpNormRet", viskit_metrics['average_normalizd_return'])
 
         things_to_log = ['sac_log_pi', 'sac_policy_loss', 'sac_qf1_loss', 'sac_qf2_loss', 'sac_alpha_loss', 'sac_alpha',
-                         'sac_average_qf1', 'sac_average_qf2', 'average_traj_length', 'qf1_distill_loss', 'qf2_distill_loss']
+                         'sac_average_qf1', 'sac_average_qf2', 'average_traj_length',
+                         'sac_qf1_distill_loss', 'sac_qf2_distill_loss']
         for m in things_to_log:
             logger.log_tabular(m, viskit_metrics[m])
 

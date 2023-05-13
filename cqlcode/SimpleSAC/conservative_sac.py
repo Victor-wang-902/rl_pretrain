@@ -264,8 +264,6 @@ class ConservativeSAC(object):
             qf1_distill_loss=qf1_distill_loss.item(),
             qf2_distill_loss=qf2_distill_loss.item(),
         )
-        print(metrics)
-        quit()
 
         if self.config.use_cql:
             metrics.update(prefix_metrics(dict(
