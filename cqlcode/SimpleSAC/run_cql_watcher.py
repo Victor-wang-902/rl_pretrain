@@ -254,6 +254,18 @@ def save_extra_dict(variant, logger, dataset,
     #     print(key, val, type(val))
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
+def get_cqlr3_baseline_ready_agent_dict(env, dataset, seed):
+    ready_agent_exp_name_full = 'cqlr3_prenone_l2' + '_%s_%s' % (env, dataset)
+    ready_agent_logger_kwargs = setup_logger_kwargs_dt(ready_agent_exp_name_full, seed, '/checkpoints')
+    ready_agent_output_dir = ready_agent_logger_kwargs["output_dir"]
+    ready_agent_full_path = os.path.join(ready_agent_output_dir, 'agent_best.pth')
+    if not torch.cuda.is_available():
+        ready_agent_dict = torch.load(ready_agent_full_path, map_location=torch.device('cpu'))
+    else:
+        ready_agent_dict = torch.load(ready_agent_full_path)
+    print("Ready agent loaded from:", ready_agent_full_path)
+    return ready_agent_dict
+
 def run_single_exp(variant):
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
     logger.save_config(variant)
@@ -261,24 +273,7 @@ def run_single_exp(variant):
 
     set_random_seed(variant['seed'])
 
-    # TODO here we can load a fully pretrained agent for distillation experiments
-    ready_agent_exp_name_full = 'cqlr3_prenone_l2' + '_%s_%s' % (variant['env'], variant['dataset'])
-    ready_agent_logger_kwargs = setup_logger_kwargs_dt(ready_agent_exp_name_full, variant['seed'], '/checkpoints')
-    ready_agent_output_dir = ready_agent_logger_kwargs["output_dir"]
-    ready_agent_output_dir_exp_name = ready_agent_logger_kwargs["exp_name"]
-    print(ready_agent_output_dir, ready_agent_output_dir_exp_name)
-    # TODO load the ready agent here
-    ready_agent_full_path = os.path.join(ready_agent_output_dir, 'agent_best.pth')
-    print("ready agent full path", ready_agent_full_path)
-    if not torch.cuda.is_available():
-        ready_agent_dict = torch.load(ready_agent_full_path, map_location=torch.device('cpu'))
-    else:
-        ready_agent_dict = torch.load(ready_agent_full_path)
-    print(ready_agent_dict.keys())
-    ready_agent = ready_agent_dict['agent']
-    print(ready_agent_dict['epoch'])
-    print(ready_agent_dict['variant'])
-    quit()
+    ready_agent = get_cqlr3_baseline_ready_agent_dict(variant['env'], variant['dataset'], variant['seed'])['agent']
 
     env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
     eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])

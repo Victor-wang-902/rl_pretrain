@@ -87,7 +87,7 @@ class ConservativeSAC(object):
         soft_target_update(self.qf1, self.target_qf1, soft_target_update_rate)
         soft_target_update(self.qf2, self.target_qf2, soft_target_update_rate)
 
-    def train(self, batch, bc=False):
+    def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0):
         self._total_steps += 1
 
         observations = batch['observations']
@@ -218,8 +218,17 @@ class ConservativeSAC(object):
                 alpha_prime_loss = observations.new_tensor(0.0)
                 alpha_prime = observations.new_tensor(0.0)
 
+            if q_distill_weight > 0:
+                with torch.no_grad():
+                    q1_ready = ready_agent.qf1(observations, actions)
+                    q2_ready = ready_agent.qf2(observations, actions)
+                qf1_distill_loss = F.mse_loss(q1_pred, q1_ready)
+                qf2_distill_loss = F.mse_loss(q2_pred, q2_ready)
+            else:
+                device = q1_pred.device
+                qf1_distill_loss, qf2_distill_loss = torch.zeros(1).to(device), torch.zeros(1).to(device)
 
-            qf_loss = qf1_loss + qf2_loss + cql_min_qf1_loss + cql_min_qf2_loss
+            qf_loss = qf1_loss + qf2_loss + cql_min_qf1_loss + cql_min_qf2_loss + qf1_distill_loss + qf2_distill_loss
 
 
         if self.config.use_automatic_entropy_tuning:
@@ -270,6 +279,8 @@ class ConservativeSAC(object):
                 cql_q2_next_actions=cql_q2_next_actions.mean().item(),
                 alpha_prime_loss=alpha_prime_loss.item(),
                 alpha_prime=alpha_prime.item(),
+                qf1_distill_loss=qf1_distill_loss.item(),
+                qf2_distill_loss=qf2_distill_loss.item(),
             ), 'cql'))
 
         return metrics
