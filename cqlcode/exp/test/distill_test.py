@@ -42,6 +42,9 @@ def main():
         'qf_hidden_layer', 'l', [2],
         'seed', '', [42],
         'q_distill_weight', 'qdw', [0],
+        'n_train_step_per_epoch', '', [2],
+        'n_epochs','',[22],
+        'eval_n_trajs','',[1],
     ] #
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting)
