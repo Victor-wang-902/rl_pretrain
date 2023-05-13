@@ -261,6 +261,8 @@ class ConservativeSAC(object):
             average_qf2=q2_pred.mean().item(),
             average_target_q=target_q_values.mean().item(),
             total_steps=self.total_steps,
+            qf1_distill_loss=qf1_distill_loss.item(),
+            qf2_distill_loss=qf2_distill_loss.item(),
         )
 
         if self.config.use_cql:
@@ -279,8 +281,6 @@ class ConservativeSAC(object):
                 cql_q2_next_actions=cql_q2_next_actions.mean().item(),
                 alpha_prime_loss=alpha_prime_loss.item(),
                 alpha_prime=alpha_prime.item(),
-                qf1_distill_loss=qf1_distill_loss.item(),
-                qf2_distill_loss=qf2_distill_loss.item(),
             ), 'cql'))
 
         return metrics
