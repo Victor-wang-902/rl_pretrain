@@ -30,6 +30,13 @@ caption_list = ['CQL with different forward dynamics pretraining epochs.',
                 'DT with pretraining, and different perturbation noise std into the pretrained mdoel. ',
                 ]
 
+prefix_list = [
+               'dt_modelsize',
+]
+caption_list = [
+    'DT with different model sizes.',
+                ]
+
 
 def print_figures_latex(prefix, caption='', ref_label=''):
     # 9 subfigures, each for one plot measure

@@ -50,8 +50,12 @@ def get_extra_dict_multiple_seeds(datafolder_path):
     aggregate_dict['feature_diff_100k'] = []
 
     for subdir, dirs, files in os.walk(datafolder_path):
-        if 'extra.json' in files:
-            extra_dict_file_path = os.path.join(subdir, 'extra.json')
+        if 'extra_new.json' in files or 'extra.json' in files:
+            if 'extra_new.json' in files:
+                extra_dict_file_path = os.path.join(subdir, 'extra_new.json')
+            else:
+                extra_dict_file_path = os.path.join(subdir, 'extra.json')
+
             with open(extra_dict_file_path, 'r') as file:
                 extra_dict = json.load(file)
                 for measure in measures:
@@ -84,7 +88,9 @@ for e in MUJOCO_3_ENVS:
 # final table: for each variant name, for each measure, compute relevant values
 alg_dataset_dict = {}
 algs = [ # 'dt', 'chibiT',
-         'cqlr3_prenone_l2', 'cqlr3_preq_sprime_l2',]
+         'cqlr3_prenone_l2', 'cqlr3_preq_sprime_l2', 'dt-rerun-data_size_dt_1.0',
+   'chibiT-rerun'
+]
 
 # load extra dict for all alg, all envs, all seeds
 for alg in algs:
@@ -170,12 +176,12 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
                     if row_name in ['Best Score', 'Best Std over Seeds', 'Convergence Iter']:
                         row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
                     else:
-                        row_string += (' & \\textbf{%.2f} $\pm$ %.2f' % (mean, std))
+                        row_string += (' & \\textbf{%.4f} $\pm$ %.4f' % (mean, std))
                 else:
                     if row_name in ['Best Score', 'Best Std over Seeds', 'Convergence Iter']:
                         row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
                     else:
-                        row_string += (' & %.2f $\pm$ %.2f' % (mean, std))
+                        row_string += (' & %.4f $\pm$ %.4f' % (mean, std))
         row_string += '\\\\'
         print(row_string)
 

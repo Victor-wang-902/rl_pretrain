@@ -49,8 +49,11 @@ def get_extra_dict_multiple_seeds(datafolder_path):
         aggregate_dict[measure] = []
 
     for subdir, dirs, files in os.walk(datafolder_path):
-        if 'extra.json' in files:
-            extra_dict_file_path = os.path.join(subdir, 'extra.json')
+        if 'extra_new.json' in files or 'extra.json' in files:
+            if 'extra_new.json' in files:
+                extra_dict_file_path = os.path.join(subdir, 'extra_new.json')
+            else:
+                extra_dict_file_path = os.path.join(subdir, 'extra.json')
             with open(extra_dict_file_path, 'r') as file:
                 extra_dict = json.load(file)
                 for measure in measures:
@@ -194,12 +197,19 @@ def plot_rl_datasize(): # TODO currently only cql, later add dt
 
 def plot_dt_rl_datasize(): # TODO currently only DTx2, later add other variants
     save_name_prefix = 'dt_rl_datasize'
-    labels = ['DT', 'ChibiT']
+    labels = ['DT',
+              #'ChibiT'
+              ]
     algs_list = [
-        ['dt_data_size0.1', 'dt_data_size0.25', 'dt_data_size0.5', 'dt_data_size0.75', 'dt',],
-        ['chibiT_data_size0.1', 'chibiT_data_size0.25', 'chibiT_data_size0.5', 'chibiT_data_size0.75', 'chibiT'],
-                 ]
-    colors =  ['tab:blue', 'tab:orange']
+        ['dt-rerun-data_size_dt_0.1', 'dt-rerun-data_size_dt_0.25',
+         'dt-rerun-data_size_dt_0.5', 'dt-rerun-data_size_dt_0.75','dt-rerun-data_size_dt_1.0',],
+        # ['dt-rerun-data_size_dt_0.1', 'dt-rerun-data_size_dt_0.25',
+        #  'dt-rerun-data_size_dt_0.5', 'dt-rerun-data_size_dt_0.75', 'dt-rerun-data_size_dt_1.0', ],
+        # ['chibiT-rerun_data_size0.75', 'chibiT-rerun_data_size0.75',
+        #  'chibiT-rerun_data_size0.75', 'chibiT-rerun_data_size0.75', 'chibiT-rerun_data_size0.75', ],
+    ] # chibiT-rerun_data_size0.75_hopper_medium
+    colors =  ['tab:blue',
+               'tab:orange']
     envs = get_all_mujoco_env_datasets()
     x_ticks = ['10%', '25%', '50%', '75%', '100%']
     x_label = 'RL Data Ratio'
@@ -209,9 +219,12 @@ def plot_dt_rl_datasize(): # TODO currently only DTx2, later add other variants
 
 def plot_dt_modelsize(): # TODO currently only DT with no pretrain # TODO also might want to compute num of parameters
     save_name_prefix = 'dt_modelsize'
-    labels = ['DT',]
+    labels = ['DT', 'ChibiT']
     algs_list = [
-        ['dt', 'dt_embed_dim256_n_layer4_n_head4', 'dt_embed_dim512_n_layer6_n_head8', 'dt_embed_dim768_n_layer12_n_head12',],
+        ['dt-rerun-data_size_dt_1.0', 'dt_embed_dim256_n_layer4_n_head4',
+         'dt_embed_dim512_n_layer6_n_head8', 'dt_embed_dim768_n_layer12_n_head12',],
+        ['chibiT-rerun-data_size_dt_1.0', 'dt_embed_dim256_n_layer4_n_head4',
+         'dt_embed_dim512_n_layer6_n_head8', 'dt_embed_dim768_n_layer12_n_head12', ],
                  ]
     colors =  ['tab:blue',]
     envs = get_all_mujoco_env_datasets()
@@ -241,7 +254,8 @@ save_folder_path = '../../figures/'
 
 # plot_cql_pretrain_epochs()
 # plot_cql_compare_layers() # TODO nope... not enough gpus to run
-plot_rl_datasize()
-# plot_dt_modelsize()
+# plot_rl_datasize() #
 # plot_dt_perturb()
 
+# plot_dt_rl_datasize()
+plot_dt_modelsize()
