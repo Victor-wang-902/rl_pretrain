@@ -80,6 +80,7 @@ def get_default_variant_dict():
         logging=WandBLogger.get_default_config(),
         do_pretrain_only=False,
         offline_data_ratio=1,
+        q_distill_weight=0,
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -419,7 +420,10 @@ def run_single_exp(variant):
             for batch_idx in range(variant['n_train_step_per_epoch']):
                 batch = subsample_batch(dataset, variant['batch_size'])
                 batch = batch_to_torch(batch, variant['device'])
-                metrics.update(prefix_metrics(agent.train(batch, bc=epoch < variant['bc_epochs']), 'sac', connector_string='_'))
+                metrics.update(prefix_metrics(agent.train(batch, bc=epoch < variant['bc_epochs'],
+                                                          ready_agent=ready_agent,
+                                                          q_distill_weight=variant['q_distill_weight'],
+                                                          ), 'sac', connector_string='_'))
 
         with Timer() as eval_timer:
             if epoch == 0 or (epoch + 1) % variant['eval_period'] == 0:
