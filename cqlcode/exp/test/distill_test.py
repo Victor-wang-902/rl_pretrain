@@ -41,7 +41,7 @@ def main():
         'pretrain_mode', 'pre', ['none',],
         'qf_hidden_layer', 'l', [2],
         'seed', '', [42],
-        'q_distill_weight', 'qdw', [0],
+        'q_distill_weight', 'qdw', [1],
         'n_train_step_per_epoch', '', [2],
         'n_epochs','',[22],
         'eval_n_trajs','',[1],
