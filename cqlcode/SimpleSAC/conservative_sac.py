@@ -87,6 +87,25 @@ class ConservativeSAC(object):
         soft_target_update(self.qf1, self.target_qf1, soft_target_update_rate)
         soft_target_update(self.qf2, self.target_qf2, soft_target_update_rate)
 
+    def q_distill_only(self, batch, ready_agent, q_distill_weight):
+        observations = batch['observations']
+        actions = batch['actions']
+        rewards = batch['rewards']
+        next_observations = batch['next_observations']
+        dones = batch['dones']
+        q1_pred = self.qf1(observations, actions)
+        q2_pred = self.qf2(observations, actions)
+        with torch.no_grad():
+            q1_ready = ready_agent.qf1(observations, actions)
+            q2_ready = ready_agent.qf2(observations, actions)
+        qf1_distill_loss = F.mse_loss(q1_pred, q1_ready) * q_distill_weight
+        qf2_distill_loss = F.mse_loss(q2_pred, q2_ready) * q_distill_weight
+        qf_loss = qf1_distill_loss + qf2_distill_loss
+
+        self.qf_optimizer.zero_grad()
+        qf_loss.backward()
+        self.qf_optimizer.step()
+
     def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0):
         self._total_steps += 1
 

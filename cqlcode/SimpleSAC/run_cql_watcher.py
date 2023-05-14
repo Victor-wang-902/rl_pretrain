@@ -81,6 +81,7 @@ def get_default_variant_dict():
         do_pretrain_only=False,
         offline_data_ratio=1,
         q_distill_weight=0,
+        q_distill_pretrain_steps=0, # will not use the q distill weight defined here
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -413,6 +414,14 @@ def run_single_exp(variant):
     best_return, best_return_normalized = -np.inf, -np.inf
     viskit_metrics = {}
     st = time.time()
+
+    if variant['q_distill_pretrain_steps'] > 0:
+        for _ in range(variant['q_distill_pretrain_steps']):
+            batch = subsample_batch(dataset, variant['batch_size'])
+            batch = batch_to_torch(batch, variant['device'])
+            agent.q_distill_only(batch, ready_agent, 1)
+        agent.update_target_network(1)
+
     for epoch in range(variant['n_epochs']):
         metrics = {'epoch': epoch}
 
