@@ -222,8 +222,8 @@ class ConservativeSAC(object):
                 with torch.no_grad():
                     q1_ready = ready_agent.qf1(observations, actions)
                     q2_ready = ready_agent.qf2(observations, actions)
-                qf1_distill_loss = F.mse_loss(q1_pred, q1_ready)
-                qf2_distill_loss = F.mse_loss(q2_pred, q2_ready)
+                qf1_distill_loss = F.mse_loss(q1_pred, q1_ready) * q_distill_weight
+                qf2_distill_loss = F.mse_loss(q2_pred, q2_ready) * q_distill_weight
             else:
                 device = q1_pred.device
                 qf1_distill_loss, qf2_distill_loss = torch.zeros(1).to(device), torch.zeros(1).to(device)
