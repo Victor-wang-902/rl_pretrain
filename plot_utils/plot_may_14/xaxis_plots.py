@@ -57,6 +57,7 @@ def get_extra_dict_multiple_seeds(datafolder_path):
             with open(extra_dict_file_path, 'r') as file:
                 extra_dict = json.load(file)
                 for measure in measures:
+                    # print(datafolder_path)
                     aggregate_dict[measure].append(float(extra_dict[measure]))
     for measure in measures:
         aggregate_dict[measure] = [np.mean(aggregate_dict[measure]), np.std(aggregate_dict[measure])]
@@ -198,13 +199,13 @@ def plot_rl_datasize(): # TODO currently only cql, later add dt
 def plot_dt_rl_datasize(): # TODO currently only DTx2, later add other variants
     save_name_prefix = 'dt_rl_datasize'
     labels = ['DT',
-              'ChibiT'
+              #'ChibiT'
               ]
     algs_list = [
         ['dt-rerun-data_size_dt_0.1', 'dt-rerun-data_size_dt_0.25',
          'dt-rerun-data_size_dt_0.5', 'dt-rerun-data_size_dt_0.75','dt-rerun-data_size_dt_1.0',],
-        ['chibiT-rerun_data_size0.1' , 'chibiT-rerun_data_size0.25' ,
-         'chibiT-rerun_data_size0.5' , 'chibiT-rerun_data_size0.75' , 'chibiT-rerun', ],
+        # ['dt-rerun-data_size_dt_0.1', 'dt-rerun-data_size_dt_0.25',
+        #  'dt-rerun-data_size_dt_0.5', 'dt-rerun-data_size_dt_0.75', 'dt-rerun-data_size_dt_1.0', ],
         # ['chibiT-rerun_data_size0.75', 'chibiT-rerun_data_size0.75',
         #  'chibiT-rerun_data_size0.75', 'chibiT-rerun_data_size0.75', 'chibiT-rerun_data_size0.75', ],
     ] # chibiT-rerun_data_size0.75_hopper_medium
@@ -223,12 +224,10 @@ def plot_dt_modelsize(): # TODO currently only DT with no pretrain # TODO also m
     algs_list = [
         ['dt-rerun-data_size_dt_1.0', 'dt_embed_dim256_n_layer4_n_head4',
          'dt_embed_dim512_n_layer6_n_head8', 'dt_embed_dim768_n_layer12_n_head12',],
-        # ['chibiT-rerun', 'chibiT-rerun_embed_dim256_n_layer4_n_head4',
-        #  'chibiT-rerun_embed_dim512_n_layer6_n_head8', 'chibiT-rerun_embed_dim768_n_layer12_n_head12', ],
+        ['chibiT-rerun-data_size_dt_1.0', 'dt_embed_dim256_n_layer4_n_head4',
+         'dt_embed_dim512_n_layer6_n_head8', 'dt_embed_dim768_n_layer12_n_head12', ],
                  ]
-    colors =  ['tab:blue',
-               #'tab:orange'
-               ]
+    colors =  ['tab:blue',]
     envs = get_all_mujoco_env_datasets()
     x_ticks = ['3L 128D', '4L 256D', '6L 512D', '12L 768D', ]
     x_label = 'DT Model Size'
@@ -236,12 +235,12 @@ def plot_dt_modelsize(): # TODO currently only DT with no pretrain # TODO also m
     y_label_list = plot_y_labels
     get_xaxis_variants_figure(labels, algs_list, colors, envs, x_ticks, x_label, y_list, y_label_list, save_name_prefix)
 
-def plot_dt_perturb():
+def plot_dt_perturb(): # TODO currently only DT later add other variants?
     save_name_prefix = 'dt_pretrain_perturb'
     labels = ['ChibiT',]
     algs_list = [
-        ['chibiT-rerun', 'chibiT-rerun_perturb_per_layer1e-1', 'chibiT-rerun_perturb_per_layer1e0',
-         'chibiT-rerun_perturb_per_layer2e0','chibiT-rerun_perturb_per_layer4e0', 'chibiT-rerun_perturb_per_layer8e0'],
+        ['chibiT','chibiT_perturb_per_layer1e-1', 'chibiT_perturb_per_layer1e0',
+         'chibiT_perturb_per_layer2e0','chibiT_perturb_per_layer4e0', 'chibiT_perturb_per_layer8e0'],
     ]
     colors =  ['tab:blue',]
     envs = get_all_mujoco_env_datasets()
@@ -251,14 +250,54 @@ def plot_dt_perturb():
     y_label_list = plot_y_labels
     get_xaxis_variants_figure(labels, algs_list, colors, envs, x_ticks, x_label, y_list, y_label_list, save_name_prefix)
 
+def plot_q_distill_weight():
+    save_name_prefix = 'cql_q_distill_weight'
+    labels = ['CQL']
+    algs_list = [
+        ['cqlr3_prenone_l2', 'cqlr3_prenone_l2_qdw0.001','cqlr3_prenone_l2_qdw0.01',
+         'cqlr3_prenone_l2_qdw0.1','cqlr3_prenone_l2_qdw1','cqlr3_prenone_l2_qdw10',],
+    ]
+
+    colors =  ['tab:blue',]
+    envs = get_all_mujoco_env_datasets()
+    x_ticks = ['0', '0.001', '0.01',
+               '0.1', '1', '10']
+    x_label = 'Q Distill Weight'
+    y_list = plot_measures
+    y_label_list = plot_y_labels
+    get_xaxis_variants_figure(labels, algs_list, colors, envs, x_ticks, x_label, y_list, y_label_list, save_name_prefix)
+
+def plot_q_distill_pretrain_epoch():
+    save_name_prefix = 'cql_q_distill_pre_epoch'
+    labels = ['CQL']
+    algs_list = [
+        ['cqlr3_prenone_l2', 'cqlr3_prenone_l2_qdpre100', 'cqlr3_prenone_l2_qdpre1000',
+         'cqlr3_prenone_l2_qdpre10000', 'cqlr3_prenone_l2_qdpre100000',
+         ],
+    ]
+
+    colors =  ['tab:blue',]
+    envs = get_all_mujoco_env_datasets()
+    x_ticks = ['0', '100','1000','10000','100000',]
+    x_label = 'Q Distill Pretrain Ep'
+    y_list = plot_measures
+    y_label_list = plot_y_labels
+    get_xaxis_variants_figure(labels, algs_list, colors, envs, x_ticks, x_label, y_list, y_label_list, save_name_prefix)
+
+
+
 data_path = '../../code/checkpoints/'
 save_folder_path = '../../figures/'
 
 # plot_cql_pretrain_epochs()
 # plot_cql_compare_layers() # TODO nope... not enough gpus to run
 # plot_rl_datasize() #
-plot_dt_perturb()
+# plot_dt_perturb()
 
 # plot_dt_rl_datasize()
 # plot_dt_modelsize()
+
+
+plot_q_distill_weight()
+plot_q_distill_pretrain_epoch()
 
