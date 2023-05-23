@@ -12,10 +12,18 @@ With different y-axis values:
 - x-axis: DT model size (2 curves, pretrain one still running)
 - x-axis: DT perturb noise (later might want to add CQL perturb here?)
 
+Things to add:
+- the MSE measure
+- cosine similarity measure
+- per layer difference? (we might want to add more in the future, so better make sure we will save everything we can)
+
 Things to run: 
 - CQL, pretrain with forward dynamics, perturb noise
 - CQL, different RL data sizes (0.1, 0.25, 0.5, 0.75)
+- CQL with even further pretraining? CQL with pretraining with different regularization to see if higher performance is possible 
 - IL with DT codebase, a full set 
+
+
 
 Why don't we get the figures out first, and then work on the new experiments? 
 

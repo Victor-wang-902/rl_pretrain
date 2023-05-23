@@ -112,6 +112,21 @@ def get_d4rl_dataset(env):
         dones=dataset['terminals'].astype(np.float32),
     )
 
+def get_d4rl_dataset_with_ratio(env, ratio=1, seed=0):
+    dataset = d4rl.qlearning_dataset(env)
+    n_data = dataset['observations'].shape[0]
+    use_size = int(n_data * ratio)
+    np.random.seed(seed)
+    idxs = np.random.choice(n_data, use_size, replace=False)
+
+    return dict(
+        observations=dataset['observations'][idxs],
+        actions=dataset['actions'][idxs],
+        next_observations=dataset['next_observations'][idxs],
+        rewards=dataset['rewards'][idxs],
+        dones=dataset['terminals'][idxs].astype(np.float32),
+    )
+
 
 def index_batch(batch, indices):
     indexed = {}

@@ -87,7 +87,26 @@ class ConservativeSAC(object):
         soft_target_update(self.qf1, self.target_qf1, soft_target_update_rate)
         soft_target_update(self.qf2, self.target_qf2, soft_target_update_rate)
 
-    def train(self, batch, bc=False):
+    def q_distill_only(self, batch, ready_agent, q_distill_weight):
+        observations = batch['observations']
+        actions = batch['actions']
+        rewards = batch['rewards']
+        next_observations = batch['next_observations']
+        dones = batch['dones']
+        q1_pred = self.qf1(observations, actions)
+        q2_pred = self.qf2(observations, actions)
+        with torch.no_grad():
+            q1_ready = ready_agent.qf1(observations, actions)
+            q2_ready = ready_agent.qf2(observations, actions)
+        qf1_distill_loss = F.mse_loss(q1_pred, q1_ready) * q_distill_weight
+        qf2_distill_loss = F.mse_loss(q2_pred, q2_ready) * q_distill_weight
+        qf_loss = qf1_distill_loss + qf2_distill_loss
+
+        self.qf_optimizer.zero_grad()
+        qf_loss.backward()
+        self.qf_optimizer.step()
+
+    def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0):
         self._total_steps += 1
 
         observations = batch['observations']
@@ -218,8 +237,17 @@ class ConservativeSAC(object):
                 alpha_prime_loss = observations.new_tensor(0.0)
                 alpha_prime = observations.new_tensor(0.0)
 
+            if q_distill_weight > 0:
+                with torch.no_grad():
+                    q1_ready = ready_agent.qf1(observations, actions)
+                    q2_ready = ready_agent.qf2(observations, actions)
+                qf1_distill_loss = F.mse_loss(q1_pred, q1_ready) * q_distill_weight
+                qf2_distill_loss = F.mse_loss(q2_pred, q2_ready) * q_distill_weight
+            else:
+                device = q1_pred.device
+                qf1_distill_loss, qf2_distill_loss = torch.zeros(1).to(device), torch.zeros(1).to(device)
 
-            qf_loss = qf1_loss + qf2_loss + cql_min_qf1_loss + cql_min_qf2_loss
+            qf_loss = qf1_loss + qf2_loss + cql_min_qf1_loss + cql_min_qf2_loss + qf1_distill_loss + qf2_distill_loss
 
 
         if self.config.use_automatic_entropy_tuning:
@@ -252,6 +280,8 @@ class ConservativeSAC(object):
             average_qf2=q2_pred.mean().item(),
             average_target_q=target_q_values.mean().item(),
             total_steps=self.total_steps,
+            qf1_distill_loss=qf1_distill_loss.item(),
+            qf2_distill_loss=qf2_distill_loss.item(),
         )
 
         if self.config.use_cql:
@@ -313,7 +343,13 @@ class ConservativeSAC(object):
             layer_list.append(layer)
         return layer_list
 
-    def features_from_batch(self, batch):
+    def layers_for_weight_diff_extra(self):
+        layer1 = [self.qf1.hidden_layers[0], self.qf2.hidden_layers[0]]
+        layer2 = [self.qf1.hidden_layers[1], self.qf2.hidden_layers[1]]
+        layer_fc = [self.qf1.last_fc_layer, self.qf2.last_fc_layer]
+        return layer1, layer2, layer_fc
+
+    def features_from_batch_no_grad(self, batch):
         observations = batch['observations']
         actions = batch['actions']
         rewards = batch['rewards']

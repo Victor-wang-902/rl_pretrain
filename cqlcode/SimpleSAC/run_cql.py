@@ -94,8 +94,9 @@ def get_weight_diff(agent1, agent2):
     # weight diff, agent class should have layers_for_weight_diff() func
     weights1 = concatenate_weights_of_model_list(agent1.layers_for_weight_diff())
     weights2 = concatenate_weights_of_model_list(agent2.layers_for_weight_diff())
-    weight_diff = torch.norm(weights1-weights2, p=2).item()
-    return weight_diff
+    weight_diff_l2 = torch.norm(weights1-weights2, p=2).item()
+    weight_diff_mse = torch.mean((weights1 - weights2) ** 2).item()
+    return weight_diff_l2, weight_diff_mse
 
 def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
     # feature diff: for each data point, get difference of feature from old and new network
@@ -103,6 +104,7 @@ def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
     # agent class should have features_from_batch() func
     n_total_data = dataset['observations'].shape[0]
     average_feature_l2_norm_list = []
+    average_feature_mse_list = []
     num_feature_timesteps = int(n_total_data * ratio)
     if num_feature_timesteps % 2 == 1: # avoid potential sampling issue
         num_feature_timesteps = num_feature_timesteps + 1
@@ -119,16 +121,18 @@ def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
         batch = index_batch(dataset, idxs)
         batch = batch_to_torch(batch, device)
 
-        old_feature = agent1.features_from_batch(batch)
-        new_feature = agent2.features_from_batch(batch)
+        old_feature = agent1.features_from_batch_no_grad(batch)
+        new_feature = agent2.features_from_batch_no_grad(batch)
         feature_diff = old_feature - new_feature
 
         feature_l2_norm = torch.norm(feature_diff, p=2, dim=1, keepdim=True)
+        feature_mse = torch.mean(feature_diff ** 2).item()
         average_feature_l2_norm_list.append(feature_l2_norm.mean().item())
+        average_feature_mse_list.append(feature_mse)
         i += 1
         n_done += 1000
 
-    return np.mean(average_feature_l2_norm_list), num_feature_timesteps
+    return np.mean(average_feature_l2_norm_list), np.mean(average_feature_mse_list), num_feature_timesteps
 
 def main(argv):
     FLAGS = absl.flags.FLAGS
@@ -267,12 +271,15 @@ def run_single_exp(variant, FLAGS):
     if FLAGS.do_pretrain_only:
         return
     agent_after_pretrain = deepcopy(agent)
+    if FLAGS.save_model:
+        save_dict = {'agent': agent_after_pretrain, 'variant': variant, 'epoch': 0}
+        logger.save_dict(save_dict, 'agent_init.pth')
 
     """offline stage"""
     print("============================ OFFLINE STAGE STARTED! ============================")
 
     best_agent = deepcopy(agent)
-    agent_100k = None
+    agent_100k, return_100k, return_normalized_100k = None, 0, 0
     best_step, best_iter = 0, 0
     iter_list, step_list, ret_list, ret_normalized_list = [],[],[],[]
     best_return, best_return_normalized = -np.inf, -np.inf
@@ -310,8 +317,14 @@ def run_single_exp(variant, FLAGS):
                     best_agent = deepcopy(agent)
                     best_iter = epoch + 1
                     best_step = (epoch+1) * FLAGS.n_train_step_per_epoch
+                    if FLAGS.save_model:
+                        save_dict = {'agent': best_agent, 'variant': variant, 'epoch': best_iter}
+                        logger.save_dict(save_dict, 'agent_best.pth')
+
             if (epoch + 1) == 20:
                 agent_100k = deepcopy(agent)
+                return_100k, return_normalized_100k = metrics['average_return'], metrics['average_normalizd_return']
+
             if FLAGS.save_model and (epoch + 1) in (1, 20, 200):
                 save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch+1}
                 logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
@@ -351,21 +364,25 @@ def run_single_exp(variant, FLAGS):
     convergence_iter, convergence_step = iter_list[conv_k], step_list[conv_k]
     # get weight and feature diff
     if agent_100k is not None:
-        weight_diff_100k = get_weight_diff(agent_100k, agent_after_pretrain)
-        feature_diff_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, FLAGS.device)
+        weight_diff_100k, weight_diff_MSE_100k = get_weight_diff(agent_100k, agent_after_pretrain)
+        feature_diff_100k, feature_diff_MSE_100k, _ = get_feature_diff(agent_100k, agent_after_pretrain, dataset, FLAGS.device)
     else:
-        weight_diff_100k = -1
-        feature_diff_100k = -1
-    final_weight_diff = get_weight_diff(agent, agent_after_pretrain)
-    final_feature_diff, _ = get_feature_diff(agent, agent_after_pretrain, dataset, FLAGS.device)
-    best_weight_diff = get_weight_diff(best_agent, agent_after_pretrain)
-    best_feature_diff, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, FLAGS.device)
+        weight_diff_100k, weight_diff_MSE_100k = -1, -1
+        feature_diff_100k, feature_diff_MSE_100k = -1, -1
+    final_weight_diff, final_weight_diff_MSE = get_weight_diff(agent, agent_after_pretrain)
+    final_feature_diff, final_feature_diff_MSE, _ = get_feature_diff(agent, agent_after_pretrain, dataset, FLAGS.device)
+    best_weight_diff, best_weight_diff_MSE = get_weight_diff(best_agent, agent_after_pretrain)
+    best_feature_diff, best_feature_diff_MSE, num_feature_timesteps = get_feature_diff(best_agent, agent_after_pretrain, dataset, FLAGS.device)
     # save extra dict
     extra_dict = {
         'final_weight_diff':final_weight_diff,
         'final_feature_diff':final_feature_diff,
         'best_weight_diff': best_weight_diff,
         'best_feature_diff': best_feature_diff,
+        'final_weight_diff_MSE': final_weight_diff_MSE,
+        'final_feature_diff_MSE': final_feature_diff_MSE,
+        'best_weight_diff_MSE': best_weight_diff_MSE,
+        'best_feature_diff_MSE': best_feature_diff_MSE,
         'num_feature_timesteps':num_feature_timesteps,
         'final_test_returns':float(ret_list[-1]),
         'final_test_normalized_returns': float(ret_normalized_list[-1]),
@@ -377,10 +394,21 @@ def run_single_exp(variant, FLAGS):
         'best_iter':best_iter,
         'weight_diff_100k':weight_diff_100k, # unique to cql due to more training updates
         'feature_diff_100k': feature_diff_100k,
+        'weight_diff_MSE_100k': weight_diff_MSE_100k,
+        'feature_diff_MSE_100k': feature_diff_MSE_100k,
+        'test_returns_100k': return_100k,
+        'test_normalized_returns_100k': return_normalized_100k,
     }
     logger.save_extra_dict_as_json(extra_dict, 'extra.json')
 
-    if FLAGS.save_model:
+    if FLAGS.save_model: # here also save best agent
+        if FLAGS.save_model and (epoch + 1) in (1, 20, 200):
+            save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch + 1}
+            logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
+            # wandb_logger.save_pickle(save_data, 'model.pkl')
+
+        save_dict = {'agent': best_agent, 'variant': variant, 'epoch': best_iter}
+
         save_data = {'sac': agent, 'variant': variant, 'epoch': epoch}
         # wandb_logger.save_pickle(save_data, 'model.pkl')
 

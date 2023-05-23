@@ -179,34 +179,45 @@ Put data under `code/checkpoints/` (For example, you should see a folder here: `
 
 Run `plot_dt_test.py` and `pretrain_paper_table.py` to generate figures and latex table. 
 
-## Offline RL experiments
-
+## Offline RL experiments (CQL code)
+Set up singularity:
 ```
 singularity build --sandbox cql-sandbox docker://cwatcherw/cql:0.1
 ```
-
+Run a CPU interactive job
 ```
-srun --pty --cpus-per-task=1 --mem 8000 -t 0-06:00 bash
+srun --pty --cpus-per-task=1 --mem 8000 -t 0-04:00 bash
 ```
 
+Or GPU interactive job
+```
+srun --pty --gres=gpu:1 --cpus-per-task=1 --mem 8000 -t 0-03:00 bash
+```
+Test with interactive job:
 ```
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/rl_pretrain/cqlcode:/cqlcode -B /scratch/$USER/sing/cql-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/cql-sandbox bash
 ```
-
+After singulairty starts, run this to make path correct:
 ```
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
-cd /cqlcode/SimpleSAC
+cd /cqlcode/exp/
 ```
 
-quick cql + pretrain testing:
+quick cql testing:
 ```
-python run_cql.py --pretrain_mode q_sprime --n_pretrain_epochs 3 --n_train_step_per_epoch 2 --n_epochs 22 --eval_n_trajs 1
+python run_cql_watcher.py --n_train_step_per_epoch 2 --n_epochs 22 --eval_n_trajs 1
 ```
+quick cql testing with pretrain
+```
+python run_cql_watcher.py --pretrain_mode q_sprime --n_pretrain_epochs 3 --n_train_step_per_epoch 2 --n_epochs 22 --eval_n_trajs 1
+```
+
+For HPC grid jobs, for example, see `cqlcode/exp/cqlr3`. Here `cqlr3_base.py` and `cqlr3_base.sh` are used to run CQL baselines with and without pretraining, with random action = 3. 
 
 Send back files for plotting: 
 ```
 cd /scratch/$USER/sing/rl_pretrain/code
-rsync -av --exclude='*.pt*' checkpoints/cql* sendbackcql/
+rsync -av --exclude='*.pt*' checkpoints/cqlr3* sendbackcql/
 zip -r sendcql.zip sendbackcql/
 ```
 
@@ -214,4 +225,10 @@ zip -r sendcql.zip sendbackcql/
 background no log job test:
 ```
 python sth.py > /dev/null 2>&1 &
+```
+
+### new dt debug watcher
+```
+python experiment_watcherdebonly.py --env hopper --dataset medium --model_type dt --seed 666 --outdir "/checkpoints/ZZZdebug" --device cpu --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4 --calculate_extra
+
 ```
