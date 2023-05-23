@@ -14,19 +14,21 @@ import argparse
 import os
 
 ##########simple one GPU pretraining#########
-
+os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 @torch.no_grad()
-def eval(args, dataloader, model):
+def eval(args, dataloader, model, device):
     model.eval()
     cumulative_loss = 0.
+    total_rows = 0
     for step, batch in tqdm(enumerate(dataloader)):
-        inputs = batch['input_ids']
-        labels = batch["input_ids"].detach().clone().long()
-        attn_msk = batch["attention_mask"]
+        total_rows += batch["input_ids"].shape[0]
+        inputs = batch['input_ids'].to(device)
+        labels = batch["input_ids"].detach().clone().long().to(device)
+        attn_msk = batch["attention_mask"].to(device)
         outputs = model(inputs, attention_mask=attn_msk, labels=labels)  # fix here
         loss = outputs.loss
         cumulative_loss += loss.detach().cpu().item()
-    return cumulative_loss
+    return cumulative_loss / total_rows
     
 
 def main(args):  # add argparser
@@ -40,6 +42,8 @@ def main(args):  # add argparser
         activation_function=args.activation_function,
         n_positions=1024,
         resid_pdrop=args.dropout,
+        use_cache=not args.grad_checkpoint,
+        gradient_checkpointing=args.grad_checkpoint
     )
 
     model = GPT2LMHeadModel(config)
@@ -57,7 +61,7 @@ def main(args):  # add argparser
     valid_dataset = GPT2Dataset(valid_data, tokenizer, split="valid")
     test_dataset = GPT2Dataset(test_data, tokenizer, split="test")
 
-    collator = GPT2Collator(device)
+    collator = GPT2Collator()
 
     batch_size = args.batch_size // 1024
     num_steps = args.num_steps
@@ -113,21 +117,27 @@ def main(args):  # add argparser
         cur_start_time = time.time()
         cumulative_loss = 0.
         for step, batch in tqdm(enumerate(train_data_loader), total=num_steps):
-            inputs = batch['input_ids']
-            labels = batch["input_ids"].detach().clone().long()
-            attn_msk = batch["attention_mask"]
             model.train()
-            outputs = model(inputs, attention_mask=attn_msk, labels=labels)  # fix here
+            labels = batch["input_ids"].detach().clone().long()
+            print(labels.shape)
+            print(labels)
+            outputs = model(
+                batch['input_ids'].to(device), 
+                attention_mask=batch["attention_mask"].to(device), 
+                labels=batch["input_ids"].detach().clone().long().to(device)
+                )  # fix here
             optimizer.zero_grad()  
             loss = outputs.loss
+            print(loss)
             loss.backward()
             cumulative_loss += loss.detach().cpu().item()
             optimizer.step()
             scheduler.step()
             if (step + 1) % args.num_steps_per_save == 0:
-                train_ppl = math.exp(cumulative_loss)
+                torch.cuda.empty_cache()
+                train_ppl = math.exp(cumulative_loss / args.num_steps_per_save)
                 cur_train_end_time = time.time()
-                valid_loss = eval(args, valid_data_loader, model)
+                valid_loss = eval(args, valid_data_loader, model, device)
                 valid_ppl = math.exp(valid_loss)
                 cur_eval_end_time = time.time()
                 print(f'Step {step + 1}/{num_steps}, train loss = {cumulative_loss}, train ppl = {train_ppl}, valid ppl = {valid_ppl}')
@@ -142,8 +152,9 @@ def main(args):  # add argparser
                     writer.writerow([cur_train_end_time - cur_start_time, cur_eval_end_time - cur_train_end_time, cur_total_time - total_start_time, step + 1, cumulative_loss, train_ppl, valid_ppl])
                 cur_start_time = time.time()
                 cumulative_loss = 0.
+                torch.cuda.empty_cache()
     test_start_time = time.time()
-    test_loss = eval(args, test_data_loader, model)
+    test_loss = eval(args, test_data_loader, model, device)
     test_ppl = math.exp(test_loss)
     test_end_time = time.time()
     print(f'Training complete, final test ppl = {test_ppl}')
@@ -188,7 +199,7 @@ def set_dt_args(args_to_parse=None):
     parser.add_argument("--seed", type=int, default=666)
     parser.add_argument("--outdir", type=str, default=None)
     parser.add_argument("--output_fname", type=str, default="progress.csv")
-
+    parser.add_argument("--grad_checkpoint", action="store_true", default=False)
     parser.add_argument("--data_size", type=float, default=1.0)
 
     if args_to_parse is not None:

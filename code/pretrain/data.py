@@ -1,6 +1,5 @@
 import torch
 from torch.utils.data import IterableDataset, DataLoader, get_worker_info
-from datasets import load_dataset
 import tqdm
 import random
 import math
@@ -28,8 +27,8 @@ class GPT2Dataset(IterableDataset):
             if line["text"] == "":
                 continue
             temp = self.tokenizer(line["text"], padding=False, truncation=False)
-            input_ids = [self.bos_token_id] + temp["input_ids"] + [self.eos_token_id]
-            attention_mask = [1] + temp["attention_mask"] + [1]
+            input_ids =  temp["input_ids"] + [self.eos_token_id]
+            attention_mask = temp["attention_mask"] + [1]
             self.tokenized.append({"input_ids": input_ids, "attention_mask": attention_mask})
         print("processed %s entries in the tokenized dataset" % str(len(self.tokenized)))
         self.start = 0
@@ -39,21 +38,23 @@ class GPT2Dataset(IterableDataset):
         attention_mask_list = []
         for i, sent in enumerate(self.tokenized[self.start:self.end]):
             #print(self.start + i, "\n")
+            #print(i)
             input_ids = sent["input_ids"]
             attention_mask = sent["attention_mask"]
+
             while len(input_ids) > 0:
+                init_input_ids_list_len = len(input_ids_list)
+                init_attention_mask_list_len = len(attention_mask_list)
                 input_ids_list += input_ids[:self.n_tokens - len(input_ids_list)]
                 attention_mask_list += attention_mask[:self.n_tokens - len(attention_mask_list)]
-                input_ids = input_ids[self.n_tokens - len(input_ids_list):]
-                attention_mask = attention_mask[self.n_tokens - len(attention_mask_list):]
+                input_ids = input_ids[self.n_tokens - init_input_ids_list_len:]
+                attention_mask = attention_mask[self.n_tokens - init_attention_mask_list_len:]
                 if len(input_ids_list) >= self.n_tokens:
                     yield {"input_ids": input_ids_list, "attention_mask": attention_mask_list}
                     input_ids_list = []
                     attention_mask_list = []
 
 class GPT2Collator:
-    def __init__(self, device):
-        self.device = device
 
     def __call__(self, batch):
         input_ids_list = []
@@ -63,7 +64,7 @@ class GPT2Collator:
             attention_mask =item["attention_mask"]
             input_ids_list.append(torch.tensor(input_ids, dtype=torch.int))
             attention_mask_list.append(torch.tensor(attention_mask, dtype=torch.int))
-        return {"input_ids": torch.stack(input_ids_list).to(self.device), "attention_mask": torch.stack(attention_mask_list).to(self.device)}
+        return {"input_ids": torch.stack(input_ids_list), "attention_mask": torch.stack(attention_mask_list)}
 
 def worker_init_fn(worker_id):
     worker_info = get_worker_info()
@@ -78,3 +79,6 @@ def worker_init_fn(worker_id):
 
 def get_dataloader(dataset, collator, batch_size, worker_init_fn=None, num_workers=0, drop_last=True):
     return DataLoader(dataset, collate_fn=collator, batch_size=batch_size, num_workers=num_workers, worker_init_fn=worker_init_fn, drop_last=drop_last)
+
+
+

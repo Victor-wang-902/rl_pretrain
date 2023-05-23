@@ -10,8 +10,8 @@
 ##SBATCH --mail-user=zw2374@nyu.edu
 #SBATCH --time=48:00:00
 ##SBATCH --dependency=singleton
-#SBATCH --output=pt_%j_wiki103_size_3.out
-#SBATCH --error=pt_%j_wiki103_size_3.err
+#SBATCH --output=pt_%j_wiki103_size_1.out
+#SBATCH --error=pt_%j_wiki103_size_1.err
 ##python pretrain/pretrain.py --embed_dim 512 --n_layer 6 --n_head 8 --outdir "chibiT_embed_dim512_n_layer6_n_head8"
 ##python pretrain/pretrain.py --embed_dim 256 --n_layer 4 --n_head 4 --outdir "chibiT_embed_dim256_n_layer4_n_head4"
 
@@ -22,8 +22,8 @@ source /ext3/env.sh
 conda activate rblm
 export PYTHONPATH=$PYTHONPATH:/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/code
 nvidia-smi
-echo $PATH
+echo $PYTHONPATH
 echo $LD_LIBRARY_PATH
-python pretrain/pretrain.py --embed_dim 768 --n_layer 12 --n_head 12 --outdir "chibiT_embed_dim768_n_layer12_n_head12"
+python pretrain/pretrain.py --batch_size 65536 --embed_dim 512 --n_layer 6 --n_head 8 --outdir "chibiT_embed_dim512_n_layer6_n_head8" --grad_checkpoint
 "
 
