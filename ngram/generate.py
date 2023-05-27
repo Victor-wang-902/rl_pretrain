@@ -19,6 +19,7 @@ if __name__ == "__main__":
     parser.add_argument("--num_workers", type=int, default=16)
     args = parser.parse_args()
     os.makedirs(args.outdir, exist_ok=True)
+    args.batch_size = args.batch_size * args.num_workers
     if args.online:
         gen = NGramGeneratorOnline(ngram=args.ngram, nvocab=args.nvocab, seed=args.seed, temperature=args.temperature, num_workers=args.num_workers)
     else:

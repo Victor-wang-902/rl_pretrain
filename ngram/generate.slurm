@@ -3,12 +3,12 @@
 ##SBATCH --gres=gpu:1
 ##SBATCH --exclude=gm[001-024],gv[013-018]
 ##SBATCH --partition=aquila
-#SBATCH --cpus-per-task=2
-#SBATCH --mem=10GB
+#SBATCH --cpus-per-task=32
+#SBATCH --mem=20GB
 #SBATCH --job-name=hopper_train
 #SBATCH --mail-type=END
 ##SBATCH --mail-user=zw2374@nyu.edu
-#SBATCH --time=48:00:00
+#SBATCH --time=72:00:00
 ##SBATCH --dependency=singleton
 #SBATCH --output=logs/generate_data_%j.out
 #SBATCH --error=logs/generate_data_%j.err
@@ -18,8 +18,5 @@ export PYTHONPATH=$PYTHONPATH:/code
 nvidia-smi
 echo $PATH
 echo $LD_LIBRARY_PATH
-python generate.py --nvocab 10 --ngram 1 --raw --outdir data_online_new --num_workers 2 --online
-python generate.py --nvocab 100 --ngram 1 --raw --outdir data_online_new --num_workers 2 --online
-python generate.py --nvocab 1000 --ngram 1 --raw --outdir data_online_new --num_workers 2 --online
-python generate.py --nvocab 10000 --ngram 1 --raw --outdir data_online_new --num_workers 2 --online
+python generate.py --nvocab 1000000 --ngram 1 --raw --outdir data_online_new_mil --num_workers 32 --online
 "
