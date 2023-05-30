@@ -42,7 +42,22 @@ def main():
         'qf_hidden_layer', 'l', [2,],
         'distill_only', 'dis', [True,],
         'seed', '', [42, 666, 1024],
+        'n_train_step_per_epoch', '', [2],
+        'n_epochs', '', [22],
+        'eval_n_trajs', '', [1],
+        'batch_size', '', [4],
+        'eval_n_trajs', '', [1],
+        'eval_n_trajs', '', [1],
     ] #
+
+    # [
+    #     'n_train_step_per_epoch', '', [2],
+    #     'n_epochs', '', [22],
+    #     'eval_n_trajs', '', [1],
+    #     'batch_size', '', [4],
+    #     'eval_n_trajs', '', [1],
+    #     'eval_n_trajs', '', [1],
+    # ]
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting)
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)

@@ -495,7 +495,10 @@ def run_single_exp(variant):
                          'sac_average_qf1', 'sac_average_qf2', 'average_traj_length',
                          'sac_qf1_distill_loss', 'sac_qf2_distill_loss']
         for m in things_to_log:
-            logger.log_tabular(m, viskit_metrics[m])
+            if m not in viskit_metrics:
+                logger.log_tabular(m, 0)
+            else:
+                logger.log_tabular(m, viskit_metrics[m])
 
         logger.log_tabular("total_time", time.time()-st)
         logger.log_tabular("train_time", viskit_metrics["train_time"])
