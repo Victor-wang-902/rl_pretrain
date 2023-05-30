@@ -34,7 +34,7 @@ def main():
 
     variant = get_default_variant_dict() # this is a dictionary
     ###########################################################
-    exp_prefix = 'cqlr3'
+    exp_prefix = 'testonly'
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
@@ -48,6 +48,7 @@ def main():
         'batch_size', '', [4],
         'eval_n_trajs', '', [1],
         'eval_n_trajs', '', [1],
+        'q_network_feature_lr_scale', '', [0.1],
     ] #
 
     # [

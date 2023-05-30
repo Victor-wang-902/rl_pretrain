@@ -43,7 +43,7 @@ class ConservativeSAC(object):
             config.update(ConfigDict(updates).copy_and_resolve_references())
         return config
 
-    def __init__(self, config, policy, qf1, qf2, target_qf1, target_qf2):
+    def __init__(self, config, policy, qf1, qf2, target_qf1, target_qf2, variant):
         self.config = ConservativeSAC.get_default_config(config)
         self.policy = policy
         self.qf1 = qf1
@@ -59,9 +59,23 @@ class ConservativeSAC(object):
         self.policy_optimizer = optimizer_class(
             self.policy.parameters(), self.config.policy_lr,
         )
-        self.qf_optimizer = optimizer_class(
-            list(self.qf1.parameters()) + list(self.qf2.parameters()), self.config.qf_lr
-        )
+
+        if variant['q_network_feature_lr_scale'] == 1:
+            self.qf_optimizer = optimizer_class(
+                list(self.qf1.parameters()) + list(self.qf2.parameters()), self.config.qf_lr
+            )
+        else:
+            reduced_lr = variant['q_network_feature_lr_scale'] * self.config.qf_lr
+            self.qf_optimizer = optimizer_class([
+                {"params": self.qf1.hidden_layers.parameters(), "lr": reduced_lr},
+                {"params": self.qf2.hidden_layers.parameters(), "lr": reduced_lr},
+                {"params": self.qf1.last_fc_layer.parameters(),},
+                {"params": self.qf2.last_fc_layer.parameters(),},
+            ], lr=self.config.qf_lr)
+            print(self.qf_optimizer)
+            quit()
+            #     list(self.qf1.parameters()) + list(self.qf2.parameters()), self.config.qf_lr
+            # )
 
         if self.config.use_automatic_entropy_tuning:
             self.log_alpha = Scalar(0.0)

@@ -83,6 +83,7 @@ def get_default_variant_dict():
         q_distill_weight=0,
         q_distill_pretrain_steps=0, # will not use the q distill weight defined here
         distill_only=False,
+        q_network_feature_lr_scale=1, # 0 means pretrained/random features are frozen
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -315,7 +316,7 @@ def run_single_exp(variant):
     if variant['cql'].target_entropy >= 0.0:
         variant['cql'].target_entropy = -np.prod(eval_sampler.env.action_space.shape).item()
 
-    agent = ConservativeSAC(variant['cql'], policy, qf1, qf2, target_qf1, target_qf2)
+    agent = ConservativeSAC(variant['cql'], policy, qf1, qf2, target_qf1, target_qf2, variant)
     agent.torch_to_device(variant['device'])
 
     sampler_policy = SamplerPolicy(policy, variant['device'])
