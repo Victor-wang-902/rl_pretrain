@@ -72,10 +72,6 @@ class ConservativeSAC(object):
                 {"params": self.qf1.last_fc_layer.parameters(),},
                 {"params": self.qf2.last_fc_layer.parameters(),},
             ], lr=self.config.qf_lr)
-            print(self.qf_optimizer)
-            quit()
-            #     list(self.qf1.parameters()) + list(self.qf2.parameters()), self.config.qf_lr
-            # )
 
         if self.config.use_automatic_entropy_tuning:
             self.log_alpha = Scalar(0.0)

@@ -200,7 +200,7 @@ singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/
 After singulairty starts, run this to make path correct:
 ```
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
-cd /cqlcode/exp/
+cd /cqlcode/exp/cqlr3
 ```
 
 quick cql testing:
