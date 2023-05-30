@@ -106,7 +106,7 @@ class ConservativeSAC(object):
         qf_loss.backward()
         self.qf_optimizer.step()
 
-    def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0):
+    def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0, distill_only=False):
         self._total_steps += 1
 
         observations = batch['observations']
@@ -114,6 +114,48 @@ class ConservativeSAC(object):
         rewards = batch['rewards']
         next_observations = batch['next_observations']
         dones = batch['dones']
+
+        if distill_only:
+            # distill Q
+            q1_pred = self.qf1(observations, actions)
+            q2_pred = self.qf2(observations, actions)
+
+            with torch.no_grad():
+                q1_ready = ready_agent.qf1(observations, actions)
+                q2_ready = ready_agent.qf2(observations, actions)
+            qf1_distill_loss = F.mse_loss(q1_pred, q1_ready)
+            qf2_distill_loss = F.mse_loss(q2_pred, q2_ready)
+
+            qf_loss = qf1_distill_loss + qf2_distill_loss
+
+            # distill policy
+            new_actions, log_pi = self.policy(observations)
+            with torch.no_grad():
+                actions_ready, log_pi_ready = ready_agent.policy(observations)
+            policy_loss = F.mse_loss(new_actions, actions_ready)
+
+            # optimizer
+            self.policy_optimizer.zero_grad()
+            policy_loss.backward()
+            self.policy_optimizer.step()
+
+            self.qf_optimizer.zero_grad()
+            qf_loss.backward()
+            self.qf_optimizer.step()
+
+            metrics = dict(
+                log_pi=log_pi.mean().item(),
+                policy_loss=policy_loss.item(),
+                qf1_loss=qf1_distill_loss.item(),
+                qf2_loss=qf2_distill_loss.item(),
+                average_qf1=q1_pred.mean().item(),
+                average_qf2=q2_pred.mean().item(),
+                total_steps=self.total_steps,
+                qf1_distill_loss=qf1_distill_loss.item(),
+                qf2_distill_loss=qf2_distill_loss.item(),
+            )
+
+            return metrics
 
         new_actions, log_pi = self.policy(observations)
 

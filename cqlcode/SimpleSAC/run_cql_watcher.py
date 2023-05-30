@@ -82,6 +82,7 @@ def get_default_variant_dict():
         offline_data_ratio=1,
         q_distill_weight=0,
         q_distill_pretrain_steps=0, # will not use the q distill weight defined here
+        distill_only=False,
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -432,6 +433,7 @@ def run_single_exp(variant):
                 metrics.update(prefix_metrics(agent.train(batch, bc=epoch < variant['bc_epochs'],
                                                           ready_agent=ready_agent,
                                                           q_distill_weight=variant['q_distill_weight'],
+                                                          distill_only=variant['distill_only'],
                                                           ), 'sac', connector_string='_'))
 
         with Timer() as eval_timer:
