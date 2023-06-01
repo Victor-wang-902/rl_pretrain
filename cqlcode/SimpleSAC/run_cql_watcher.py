@@ -185,7 +185,7 @@ def save_extra_dict(variant, logger, dataset,
                     ret_list, ret_normalized_list, iter_list, step_list,
                     agent_after_pretrain, agent_e20, agent, best_agent,
                     best_return, best_return_normalized, best_step, best_iter,
-                    return_e20, return_normalized_e20):
+                    return_e20, return_normalized_e20, additional_dict=None):
     """get extra dict"""
     # get convergence steps
     conv_k = get_convergence_index(ret_list)
@@ -253,6 +253,8 @@ def save_extra_dict(variant, logger, dataset,
         'best_iter':best_iter,
         'num_feature_timesteps': num_feature_timesteps,
     }
+    if additional_dict is not None:
+        extra_dict.update(additional_dict)
     # print()
     # for key, val in extra_dict.items():
     #     print(key, val, type(val))
@@ -269,6 +271,12 @@ def get_cqlr3_baseline_ready_agent_dict(env, dataset, seed):
         ready_agent_dict = torch.load(ready_agent_full_path)
     print("Ready agent loaded from:", ready_agent_full_path)
     return ready_agent_dict
+
+def get_additional_dict(additional_dict_with_list):
+    additional_dict = {}
+    for key in additional_dict_with_list:
+        additional_dict[key] = np.mean(additional_dict_with_list[key])
+    return additional_dict
 
 def run_single_exp(variant):
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
@@ -410,12 +418,17 @@ def run_single_exp(variant):
     print("============================ OFFLINE STAGE STARTED! ============================")
 
     best_agent = deepcopy(agent)
+    prev_agent = deepcopy(agent)
     agent_e20, return_e20, return_normalized_e20 = None, 0, 0
     best_step, best_iter = 0, 0
     iter_list, step_list, ret_list, ret_normalized_list = [],[],[],[]
     best_return, best_return_normalized = -np.inf, -np.inf
     viskit_metrics = {}
     st = time.time()
+    additional_dict_with_list = {}
+    for additional in ['feature_diff_last_iter', 'feature_sim_last_iter', 'weight_diff_last_iter', 'weight_sim_last_iter',
+                       'wd0_li', 'ws0_li', 'wd1_li', 'ws1_li', 'wdfc_li', 'wsfc_li']:
+        additional_dict_with_list[additional] = []
 
     if variant['q_distill_pretrain_steps'] > 0:
         for _ in range(variant['q_distill_pretrain_steps']):
@@ -474,11 +487,12 @@ def run_single_exp(variant):
                 # wandb_logger.save_pickle(save_data, 'model.pkl')
 
             if (epoch + 1) % 40 == 0:
+                additional_dict = get_additional_dict(additional_dict_with_list)
                 save_extra_dict(variant, logger, dataset,
                                 ret_list, ret_normalized_list, iter_list, step_list,
                                 agent_after_pretrain, agent_e20, agent, best_agent,
                                 best_return, best_return_normalized, best_step, best_iter,
-                                return_e20, return_normalized_e20)
+                                return_e20, return_normalized_e20, additional_dict=additional_dict)
 
         metrics['train_time'] = train_timer()
         metrics['eval_time'] = eval_timer()
@@ -501,6 +515,28 @@ def run_single_exp(variant):
             else:
                 logger.log_tabular(m, viskit_metrics[m])
 
+        # TODO here compute feature diff between current agent and agent from last iter, and then
+        #  we update the prev_agent
+        feature_diff_last_iter, feature_sim_last_iter, _ = get_feature_diff(agent, prev_agent, dataset, variant['device'])
+        weight_diff_last_iter, weight_sim_last_iter, wd0_li, ws0_li, wd1_li, ws1_li, wdfc_li, wsfc_li = get_weight_diff(agent, agent_after_pretrain)
+
+        additional_dict_with_list['feature_diff_last_iter'].append(feature_diff_last_iter)
+        additional_dict_with_list['feature_sim_last_iter'].append(feature_sim_last_iter)
+
+        additional_dict_with_list['weight_diff_last_iter'].append(weight_diff_last_iter)
+        additional_dict_with_list['weight_sim_last_iter'].append(weight_sim_last_iter)
+        additional_dict_with_list['wd0_li'].append(wd0_li)
+        additional_dict_with_list['ws0_li'].append(ws0_li)
+        additional_dict_with_list['wd1_li'].append(wd1_li)
+        additional_dict_with_list['ws1_li'].append(ws1_li)
+        additional_dict_with_list['wdfc_li'].append(wdfc_li)
+        additional_dict_with_list['wsfc_li'].append(wsfc_li)
+
+        for key in additional_dict_with_list:
+            logger.log_tabular(key, additional_dict_with_list[key][-1])
+
+        # TODO add an average value to the extra json file
+
         logger.log_tabular("total_time", time.time()-st)
         logger.log_tabular("train_time", viskit_metrics["train_time"])
         logger.log_tabular("eval_time", viskit_metrics["eval_time"])
@@ -513,11 +549,12 @@ def run_single_exp(variant):
         # logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
 
     """get extra dict"""
+    additional_dict = get_additional_dict(additional_dict_with_list)
     save_extra_dict(variant, logger, dataset,
                     ret_list, ret_normalized_list, iter_list, step_list,
                     agent_after_pretrain, agent_e20, agent, best_agent,
                     best_return, best_return_normalized, best_step, best_iter,
-                    return_e20, return_normalized_e20)
+                    return_e20, return_normalized_e20, additional_dict=additional_dict)
 
 
 if __name__ == '__main__':

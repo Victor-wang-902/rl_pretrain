@@ -101,6 +101,22 @@ algs = [ # 'dt', 'chibiT',
    # 'chibiT-rerun'
 ]
 
+# table comparing distillation with different feature learning rate scale
+algs = [
+    'cqlr3_prenone_l2_disTrue_qflrs0',
+    'cqlr3_prenone_l2_disTrue_qflrs0.01',
+    'cqlr3_prenone_l2_disTrue_qflrs0.1',
+    'cqlr3_prenone_l2_disTrue',
+]
+
+# table comparing distillation with different feature learning rate scale, with pretraining
+# algs = [
+#     'cqlr3_preq_sprime_l2_disTrue_qflrs0',
+#     'cqlr3_preq_sprime_l2_disTrue_qflrs0.01',
+#     'cqlr3_preq_sprime_l2_disTrue_qflrs0.1',
+#     'cqlr3_preq_sprime_l2_disTrue',
+# ]
+
 # load extra dict for all alg, all envs, all seeds
 for alg in algs:
     alg_dataset_dict[alg] = {}
@@ -192,21 +208,21 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
             bold = False
             if best_value_bold:
                 if row_name not in row_names_higher_is_better:
-                    if mean < (1+bold_threshold)*min_values[i]:
+                    if mean <= (1+bold_threshold)*min_values[i]:
                         bold = True
                 else:
-                    if mean > (1-bold_threshold)*max_values[i]:
+                    if mean >= (1-bold_threshold)*max_values[i]:
                         bold = True
                 if bold:
                     if row_name in ['Best Score', 'Best Std over Seeds', 'Convergence Iter']:
                         row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
                     else:
-                        row_string += (' & \\textbf{%.2f} $\pm$ %.2f' % (mean, std))
+                        row_string += (' & \\textbf{%.3f} $\pm$ %.3f' % (mean, std))
                 else:
                     if row_name in ['Best Score', 'Best Std over Seeds', 'Convergence Iter']:
                         row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
                     else:
-                        row_string += (' & %.2f $\pm$ %.2f' % (mean, std))
+                        row_string += (' & %.3f $\pm$ %.3f' % (mean, std))
         row_string += '\\\\'
         print(row_string)
 
