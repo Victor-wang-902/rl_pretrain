@@ -41,7 +41,7 @@ def main():
         'pretrain_mode', 'pre', ['none', 'q_sprime', ],
         'qf_hidden_layer', 'l', [2,],
         'distill_only', 'dis', [True, ],
-        'q_network_feature_lr_scale', 'qflrs', [0, 0.01, 0.1],
+        'q_network_feature_lr_scale', 'qflrs', [0, 0.01, 0.1, 1],
         'seed', '', [42, 666, 1024],
     ] #
 
