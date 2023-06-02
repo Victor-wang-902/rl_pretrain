@@ -275,7 +275,10 @@ def run_single_exp(variant):
 
     set_random_seed(variant['seed'])
 
-    ready_agent = get_cqlr3_baseline_ready_agent_dict(variant['env'], variant['dataset'], variant['seed'])['agent']
+    if variant['q_distill_pretrain_steps'] > 0 or variant['q_distill_weight'] > 0:
+        ready_agent = get_cqlr3_baseline_ready_agent_dict(variant['env'], variant['dataset'], variant['seed'])['agent']
+    else:
+        ready_agent = None
 
     env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
     eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])
