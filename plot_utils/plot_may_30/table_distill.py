@@ -106,7 +106,7 @@ algs = [
     'cqlr3_prenone_l2_disTrue_qflrs0',
     'cqlr3_prenone_l2_disTrue_qflrs0.01',
     'cqlr3_prenone_l2_disTrue_qflrs0.1',
-    'cqlr3_prenone_l2_disTrue',
+    'cqlr3_prenone_l2_disTrue_qflrs1',
 ]
 
 # table comparing distillation with different feature learning rate scale, with pretraining

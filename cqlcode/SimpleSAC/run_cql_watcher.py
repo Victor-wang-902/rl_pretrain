@@ -518,7 +518,7 @@ def run_single_exp(variant):
         # TODO here compute feature diff between current agent and agent from last iter, and then
         #  we update the prev_agent
         feature_diff_last_iter, feature_sim_last_iter, _ = get_feature_diff(agent, prev_agent, dataset, variant['device'])
-        weight_diff_last_iter, weight_sim_last_iter, wd0_li, ws0_li, wd1_li, ws1_li, wdfc_li, wsfc_li = get_weight_diff(agent, agent_after_pretrain)
+        weight_diff_last_iter, weight_sim_last_iter, wd0_li, ws0_li, wd1_li, ws1_li, wdfc_li, wsfc_li = get_weight_diff(agent, prev_agent)
 
         additional_dict_with_list['feature_diff_last_iter'].append(feature_diff_last_iter)
         additional_dict_with_list['feature_sim_last_iter'].append(feature_sim_last_iter)
@@ -543,6 +543,7 @@ def run_single_exp(variant):
         logger.log_tabular("current_hours", (time.time()-st)/3600)
         logger.log_tabular("est_total_hours", (variant['n_epochs']/(epoch + 1) * (time.time()-st))/3600)
 
+        prev_agent = deepcopy(agent)
         logger.dump_tabular()
         sys.stdout.flush() # flush at end of each epoch for results to show up in hpc
         # logger_other.record_dict(viskit_metrics)
