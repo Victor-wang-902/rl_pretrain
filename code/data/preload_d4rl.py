@@ -1,7 +1,14 @@
+import argparse
+import os
+
+ld_library_path = os.environ.get('LD_LIBRARY_PATH', '')
+ld_library_path += ':/workspace/.mujoco/mujoco210/bin:/usr/local/nvidia/lib:/usr/lib/nvidia'
+os.environ['LD_LIBRARY_PATH'] = ld_library_path
+os.environ['MUJOCO_GL'] = 'egl'
+os.environ['MUJOCO_PY_MUJOCO_PATH'] = '/workspace/.mujoco/mujoco210/'
+
 import gym
 import d4rl
-import argparse
-
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--env', type=str, default='halfcheetah')
