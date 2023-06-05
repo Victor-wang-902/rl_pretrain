@@ -322,6 +322,12 @@ class ConservativeSAC(object):
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
             pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
+        elif pretrain_mode == 'q_mle':
+            obs_dist1 = self.qf1.predict_next_dist(observations, actions)
+            obs_dist2 = self.qf2.predict_next_dist(observations, actions)
+            pretrain_loss1 = - torch.sum(obs_dist1.log_prob(next_observations), dim=-1).mean()
+            pretrain_loss2 = - torch.sum(obs_dist2.log_prob(next_observations), dim=-1).mean()
+            pretrain_loss = pretrain_loss1 + pretrain_loss2
 
         self.qf_optimizer.zero_grad()
         pretrain_loss.backward()

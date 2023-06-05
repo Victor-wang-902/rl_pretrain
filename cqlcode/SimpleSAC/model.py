@@ -224,6 +224,8 @@ class FullyConnectedQFunctionPretrain(nn.Module):
         self.hidden_to_next_obs = nn.Linear(d, obs_dim)
         # pretrain mode: q_mc
         self.hidden_to_value = nn.Linear(d, 1)
+        # pretrain mode: q_mle
+        self.hidden_to_dist = nn.Linear(d, 2 * obs_dim)
 
         if orthogonal_init:
             nn.init.orthogonal_(self.hidden_to_next_obs.weight, gain=1e-2)
@@ -248,6 +250,15 @@ class FullyConnectedQFunctionPretrain(nn.Module):
     def predict_value(self, observations, actions):
         h = self.get_feature(observations, actions)
         return self.hidden_to_value(h)
+
+    def predict_next_dist(self, obervations, actions):
+        h = self.get_feature(obervations, actions)
+        stats = self.hidden_to_dist(h)
+        mean, log_std = torch.split(stats, self.obs_dim, dim=-1)
+        log_std = torch.clamp(log_std, min=-2.0, max=7.5)
+        std = torch.exp(log_std)
+        obs_distribution = Normal(mean, std)
+        return obs_distribution
 
     @multiple_action_q_function
     def forward(self, observations, actions):

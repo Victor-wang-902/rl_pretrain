@@ -38,7 +38,7 @@ def main():
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
-        'pretrain_mode', 'pre', ['none', 'q_sprime', ],
+        'pretrain_mode', 'pre', ['none', 'q_sprime', 'q_mle'],
         'qf_hidden_layer', 'l', [2,],
         'seed', '', [42, 666, 1024],
     ] #
