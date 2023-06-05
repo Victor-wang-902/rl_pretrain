@@ -11,7 +11,7 @@
 #SBATCH --error=../logs/%A_%a.err # MAKE SURE WHEN YOU RUN THIS, ../logs IS A VALID PATH
 
 # #####################################################
-#SBATCH --gres=gpu:1 # uncomment this line to request a gpu
+# #SBATCH --gres=gpu:1 # uncomment this line to request a gpu
 # #SBATCH --cpus-per-task=4
 
 sleep $(( (RANDOM%10) + 1 )) # to avoid issues when submitting large amounts of jobs
