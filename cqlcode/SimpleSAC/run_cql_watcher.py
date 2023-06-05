@@ -515,8 +515,6 @@ def run_single_exp(variant):
             else:
                 logger.log_tabular(m, viskit_metrics[m])
 
-        # TODO here compute feature diff between current agent and agent from last iter, and then
-        #  we update the prev_agent
         feature_diff_last_iter, feature_sim_last_iter, _ = get_feature_diff(agent, prev_agent, dataset, variant['device'])
         weight_diff_last_iter, weight_sim_last_iter, wd0_li, ws0_li, wd1_li, ws1_li, wdfc_li, wsfc_li = get_weight_diff(agent, prev_agent)
 
@@ -534,8 +532,6 @@ def run_single_exp(variant):
 
         for key in additional_dict_with_list:
             logger.log_tabular(key, additional_dict_with_list[key][-1])
-
-        # TODO add an average value to the extra json file
 
         logger.log_tabular("total_time", time.time()-st)
         logger.log_tabular("train_time", viskit_metrics["train_time"])

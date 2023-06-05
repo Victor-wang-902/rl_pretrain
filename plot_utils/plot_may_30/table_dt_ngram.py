@@ -4,24 +4,6 @@ import pandas as pd
 import json
 # use this to generate the main table
 
-# def get_final_performance_seeds(datafolder_path):
-#     if not os.path.exists(datafolder_path):
-#         raise FileNotFoundError("Path does not exist: %s" % datafolder_path)
-#     # return a list, each entry is the final performance of a seed
-#     performance_list = []
-#     for subdir, dirs, files in os.walk(datafolder_path):
-#         if 'progress.txt' in files:
-#             # load progress file for this seed
-#             progress_file_path = os.path.join(subdir, 'progress.txt')
-#         elif 'progress.csv' in files:
-#             progress_file_path = os.path.join(subdir, 'progress.csv')
-#         else:
-#             continue
-#         df = pd.read_table(progress_file_path)
-#         final_performance = df['TestEpNormRet'].tail(2).mean()
-#         performance_list.append(final_performance)
-#     return performance_list
-
 base_measures = ['best_return_normalized', 'best_return',
                  'final_test_returns', 'final_test_normalized_returns',
         'best_weight_diff',
@@ -35,26 +17,12 @@ base_measures = ['best_return_normalized', 'best_return',
         "best_0_weight_sim",
         "best_1_weight_sim",
 
-        'best_fc_weight_diff',
-        'best_fc_weight_sim',
-
         'convergence_iter',
 
          'final_feature_diff',
          'final_weight_diff',
          'final_feature_sim',
          'final_weight_sim',
-
-         'weight_diff_last_iter',
-         'feature_diff_last_iter',
-         'weight_sim_last_iter',
-         'feature_sim_last_iter',
-         'wd0_li',
-         'ws0_li',
-         'wd1_li',
-         'ws1_li',
-         'wdfc_li',
-         'wsfc_li',
                  ]
 
 def get_extra_dict_multiple_seeds(datafolder_path):
@@ -98,7 +66,11 @@ def get_extra_dict_multiple_seeds(datafolder_path):
 
 data_path = '../../code/checkpoints/'
 
-MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah',  ]
+MUJOCO_3_ENVS = [
+                'hopper',
+                 'halfcheetah',
+                # 'walker2d',
+]
 MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
 envs = []
 for e in MUJOCO_3_ENVS:
@@ -108,55 +80,14 @@ for e in MUJOCO_3_ENVS:
 # final table: for each variant name, for each measure, compute relevant values
 alg_dataset_dict = {}
 
-# 1. table comparing distillation with different feature learning rate scale
-# algs = [
-#     'cqlr3_prenone_l2_disTrue_qflrs0',
-#     'cqlr3_prenone_l2_disTrue_qflrs0.01',
-#     'cqlr3_prenone_l2_disTrue_qflrs0.1',
-#     'cqlr3_prenone_l2_disTrue_qflrs1',
-# ]
-
-# 2. table comparing distillation with different feature learning rate scale, with pretraining
-# algs = [
-#     'cqlr3_preq_sprime_l2_disTrue_qflrs0',
-#     'cqlr3_preq_sprime_l2_disTrue_qflrs0.01',
-#     'cqlr3_preq_sprime_l2_disTrue_qflrs0.1',
-#     'cqlr3_preq_sprime_l2_disTrue_qflrs1',
-# ]
-
-# 3. table comparing CQL baseline
-# algs = [
-#     'cqlr3_prenone_l2_qflrs0',
-#     'cqlr3_prenone_l2_qflrs0.01',
-#     'cqlr3_prenone_l2_qflrs0.1',
-#     'cqlr3_prenone_l2_qflrs1',
-# ]
-
-# 4. table comparing CQL baseline with pretrained init
-# algs = [
-#     'cqlr3_preq_sprime_l2_qflrs0',
-#     'cqlr3_preq_sprime_l2_qflrs0.01',
-#     'cqlr3_preq_sprime_l2_qflrs0.1',
-#     'cqlr3_preq_sprime_l2_qflrs1',
-# ]
-
-# NEW 1. table comparing CQL, with/w.o. pretrain, with different feature learning rate scales
+# DT table
 algs = [
-    'cqlr3_prenone_l2_qflrs0',
-    'cqlr3_prenone_l2_qflrs0.1',
-    'cqlr3_prenone_l2_qflrs1',
-    'cqlr3_preq_sprime_l2_qflrs0',
-    'cqlr3_preq_sprime_l2_qflrs0.1',
-    'cqlr3_preq_sprime_l2_qflrs1',
+'dt-rerun-data_size_dt_1.0',
+    'chibiT-rerun',
+    'chibiT-rerun-syn_ngram1_nvocab10_temperature1.0',
+    'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
+    'chibiT-rerun-syn_ngram1_nvocab1000_temperature1.0',
 ]
-
-# NEW 2. table comparing CQL, with/w.o. pretrain, with distill with/w.o. pretrain
-# algs = [
-#     'cqlr3_prenone_l2_qflrs1',
-#     'cqlr3_preq_sprime_l2_qflrs1',
-#     'cqlr3_prenone_l2_disTrue_qflrs1',
-#     'cqlr3_preq_sprime_l2_disTrue_qflrs1',
-# ]
 
 # load extra dict for all alg, all envs, all seeds
 for alg in algs:
@@ -186,13 +117,11 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
         'best_weight_diff',
         "best_0_weight_diff",
         "best_1_weight_diff",
-        'best_fc_weight_diff',
 
         'best_feature_sim',
         'best_weight_sim',
         "best_0_weight_sim",
         "best_1_weight_sim",
-        'best_fc_weight_sim',
 
         'convergence_iter',
 
@@ -201,17 +130,6 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
         'final_weight_diff',
         'final_feature_sim',
         'final_weight_sim',
-
-        'feature_diff_last_iter',
-        'weight_diff_last_iter',
-        'feature_sim_last_iter',
-        'weight_sim_last_iter',
-        'wd0_li',
-        'wd1_li',
-        'wdfc_li',
-        'ws0_li',
-        'ws1_li',
-        'wsfc_li',
     ]
     row_names = ['Best Score',
                  'Best Std over Seeds',
@@ -220,13 +138,11 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
                  'Best Weight Diff',
                  'Best Weight Diff L0',
                  'Best Weight Diff L1',
-                 'Best Weight Diff Last FC',
 
                  'Best Feature Sim',
                  'Best Weight Sim',
                  'Best Weight Sim L0',
                  'Best Weight Sim L1',
-                 'Best Weight Sim Last FC',
 
                  'Convergence Iter',
 
@@ -235,18 +151,6 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
                  'Final Weight Diff',
                  'Final Feature Sim',
                  'Final Weight Sim',
-
-                 'Prev Feature Diff',
-                 'Prev Weight Diff',
-                 'Prev Feature Sim',
-                 'Prev Weight Sim',
-
-                 'Prev Weight Diff 0',
-                 'Prev Weight Diff 1',
-                 'Prev Weight Diff fc',
-                 'Prev Weight Sim 0',
-                 'Prev Weight Sim 1',
-                 'Prev Weight Sim fc',
                  ]
     row_names_higher_is_better = [
         'Best Score',
@@ -289,14 +193,14 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
                     elif row_name in ['Best Score', 'Best Std over Seeds', 'Convergence Iter']:
                         row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
                     else:
-                        row_string += (' & \\textbf{%.2f} $\pm$ %.1f' % (mean, std))
+                        row_string += (' & \\textbf{%.3f} $\pm$ %.1f' % (mean, std))
                 else:
                     if 'Prev' in row_name:
                         row_string += (' & %.6f' % (mean,))
                     elif row_name in ['Best Score', 'Best Std over Seeds', 'Convergence Iter']:
                         row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
                     else:
-                        row_string += (' & %.2f $\pm$ %.1f' % (mean, std))
+                        row_string += (' & %.3f $\pm$ %.1f' % (mean, std))
         row_string += '\\\\'
         print(row_string)
 
