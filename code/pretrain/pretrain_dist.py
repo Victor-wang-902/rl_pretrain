@@ -4,7 +4,7 @@ from transformers import GPT2LMHeadModel
 from transformers import GPT2Tokenizer
 from torch.utils.data import DataLoader
 from transformers import AdamW, get_linear_schedule_with_warmup
-from data import get_dataloader, GPT2Dataset, GPT2Collator, worker_init_fn, load_synthetic_dataset, SyntheticTokenizer, SyntheticDataset
+from data import get_dataloader, GPT2Dataset, GPT2Collator, worker_init_fn
 import math
 import csv
 import time
@@ -40,14 +40,10 @@ def eval(args, dataloader, model, device, accelerator):
 
 def main(args):  # add argparser
     accelerator = Accelerator()
-    device = accelerator.device
-    nvocab = int(os.path.basename(args.dataset).split("_")[4]) #hack
-    #nvocab = args.dataset.split("_")[4] #hack
-    #tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
-    tokenizer = SyntheticTokenizer(nvocab)
-    #print(nvocab, args.embed_dim)
+    device = accelerator.device    
+    tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
     config = GPT2Config(
-        vocab_size=nvocab,
+        vocab_size=tokenizer.vocab_size,
         n_embd=args.embed_dim,
         n_layer=args.n_layer,
         n_head=args.n_head,
@@ -65,12 +61,14 @@ def main(args):  # add argparser
         state_dict = torch.load(args.load_checkpoint)
         model.load_state_dict(state_dict)
         accelerator.accelerator.print(f"Loaded from {variant['load_checkpoint']}")
-    train_data, valid_data, test_data = load_synthetic_dataset(args.dataset)
+    data = load_dataset(args.dataset, args.subsplit)
 
+    test_data = data["test"]
+    valid_data = data["validation"]
     with accelerator.main_process_first():
 
-        valid_dataset = SyntheticDataset(valid_data, split="valid")
-        test_dataset = SyntheticDataset(test_data, split="test")
+        valid_dataset = GPT2Dataset(valid_data, tokenizer, split="valid")
+        test_dataset = GPT2Dataset(test_data, tokenizer, split="test")
 
     collator = GPT2Collator()
 
@@ -103,8 +101,9 @@ def main(args):  # add argparser
             writer.writerow(["current_train_time", "current_eval_time", "total_time", "steps", "train_loss", "train_ppl", "eval_ppl"])
     accelerator.wait_for_everyone()
     if not args.eval_only:
+        train_data = data["train"]
         with accelerator.main_process_first():
-            train_dataset = SyntheticDataset(train_data, seed=args.seed, data_size=args.data_size)
+            train_dataset = GPT2Dataset(train_data, tokenizer, seed=args.seed, data_size=args.data_size)
 
         train_data_loader = get_dataloader(
             train_dataset,
@@ -160,8 +159,6 @@ def main(args):  # add argparser
                 #    attention_mask=batch["attention_mask"].to(device), 
                 #    labels=batch["input_ids"].detach().clone().long().to(device)
                 #    )  # fix here
-                #print(batch["input_ids"].shape)
-                #raise Exception
                 outputs = model(
                     batch['input_ids'], 
                     attention_mask=batch["attention_mask"], 
@@ -242,8 +239,11 @@ def main(args):  # add argparser
 def set_dt_args(args_to_parse=None):
     parser = argparse.ArgumentParser()
     parser.add_argument(
-        "--dataset", type=str,
-    )  
+        "--dataset", type=str, default="wikitext"
+    )  # medium, medium-replay, medium-expert, expert
+    parser.add_argument(
+        "--subsplit", type=str, default="wikitext-103-raw-v1"
+    )  # normal for standard setting, delayed for sparse
     parser.add_argument("--batch_size", type=int, default=65536)
     parser.add_argument(
         "--model_type", type=str, default="dt"
@@ -281,7 +281,7 @@ def set_dt_args(args_to_parse=None):
 if __name__ == "__main__":
     start_time = time.time()
     args = set_dt_args()
-    data_dir = 'pretrain/checkpoints_ngram'
+    data_dir = 'pretrain/checkpoints'
     exp_name_full = args.outdir
     args.outdir = os.path.join(data_dir, exp_name_full)
     os.makedirs(args.outdir, exist_ok=True)

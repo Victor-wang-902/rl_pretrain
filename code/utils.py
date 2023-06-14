@@ -90,8 +90,8 @@ def calculate_statistics(dir, fname="progress.csv"):
         final_test_normalized_returns = df["TestEpNormRet"].iloc[-1]
         best_return = max(df["TestEpRet"])
         best_return_normalized = max(df["TestEpNormRet"])
-        convergence_step = df["Steps"].iloc[df["TestEpRet"].ge(best_return_normalized - 2.0).idxmax()]
-        convergence_iter = df["Iteration"].iloc[df["TestEpRet"].ge(best_return_normalized - 2.0).idxmax()]
+        convergence_step = df["Steps"].iloc[df["TestEpNormRet"].ge(best_return_normalized - 2.0).idxmax()]
+        convergence_iter = df["Iteration"].iloc[df["TestEpNormRet"].ge(best_return_normalized - 2.0).idxmax()]
         best_step = df["Steps"][df["TestEpRet"] == best_return].iat[0]
         best_iter = df["Iteration"][df["TestEpRet"] == best_return].iat[0]
 

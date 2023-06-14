@@ -1,9 +1,11 @@
-from ngram_generator import NGramGenerator, NGramGeneratorOnline
+from ngram_generator_test import NGramGenerator, NGramGeneratorOnline, NGramGeneratorOnlineNumpy
 import argparse
 import os
 import csv
 from tqdm import tqdm
 import torch.multiprocessing as mp
+import pandas as pd
+import time
 
 if __name__ == "__main__":
     #mp.set_start_method("spawn")
@@ -22,7 +24,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
     os.makedirs(args.outdir, exist_ok=True)
     if args.online:
-        gen = NGramGeneratorOnline(ngram=args.ngram, nvocab=args.nvocab, seed=args.seed, temperature=args.temperature, num_workers=args.num_workers)
+        gen = NGramGeneratorOnlineNumpy(ngram=args.ngram, nvocab=args.nvocab, seed=args.seed, temperature=args.temperature, num_workers=args.num_workers)
     else:
         gen = NGramGenerator(ngram=args.ngram, nvocab=args.nvocab, seed=args.seed, temperature=args.temperature)
     filepath = os.path.join(args.outdir, "data_ngram_" + str(args.ngram) + "_nvocab_" + str(args.nvocab) + "_temperature_" + str(args.temperature) + ".csv")
@@ -39,3 +41,17 @@ if __name__ == "__main__":
                 #raise Exception
             else:
                 raise NotImplementedError
+                
+    '''print("saving to", filepath)
+    for itr in tqdm(range(args.iterations)):
+        batch = gen.generate(itr, max_length=args.length, batch_size=args.batch_size)
+        if args.raw:
+            #print(batch.shape)
+            #print(batch.tolist())
+            #df = pd.DataFrame(batch)
+            #df.to_csv(filepath,header=False, index=False, mode="a")
+            #time.sleep(1)
+            #writer.writerows(batch.tolist())
+            #raise Exception
+        else:
+            raise NotImplementedError'''

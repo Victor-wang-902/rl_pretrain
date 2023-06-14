@@ -4,6 +4,7 @@ import random
 import torch.multiprocessing as mp
 import os
 import time
+import traceback
 
 class NGramGenerator:
     def __init__(
@@ -81,65 +82,132 @@ class NGramGeneratorOnline:
             self.param_seeder[worker_id][0].manual_seed(self.seed)
 
     def get_param(self, worker_id, indices=None):
+        #print(worker_id, "check 15")
+
         if indices is not None:
             transposed_inds = indices.T
+            #print(worker_id, "check 16")
+
             cur_ngram = transposed_inds.shape[1]
+            #print(worker_id, "check 17")
+
             params = []
             for item in transposed_inds:
+                #print(worker_id, "check 18")
+
                 self.set_param_seed(worker_id, item.tolist())
+                #print(worker_id, "check 19")
+
                 params.append(torch.sum(torch.stack([torch.rand(self.nvocab, generator=self.param_seeder[worker_id][i]) / self.ngram * self.pos_embed[i] for i in range(cur_ngram)]), dim=0))
+                #print(worker_id, "check 20")
+
             #print(params)
             return torch.stack(params, dim=0)
         else:
+            #print(worker_id, "check 21")
+
             self.set_param_seed(worker_id)
+            #print(worker_id, "check 22")
+            #params = torch.rand(self.nvocab, generator=self.param_seeder[worker_id][0]).numpy() / self.temperature
             return torch.rand(self.nvocab, generator=self.param_seeder[worker_id][0])
+            #return params
 
-    def generate_worker(self, worker_id, total_itr, max_length, batch_size, results_queue):
-
+    #def generate_worker(self, worker_id, total_itr, max_length, batch_size, results_queue):#, event):
+    def generate_worker(self, worker_id, total_itr, max_length, batch_size, results_queue, event):
         #start_seq = worker_id * batch_size
         #end_seq = (worker_id + 1) * batch_size
-        #print(os.getpid(), start_seq, end_seq)
+        #print(worker_id, "check 1")
         generated = None
         for itr in range(max_length):
+            #print(worker_id, "check 2, itr", itr)
+
             self.set_sample_seed(worker_id, total_itr, itr, max_length)
+            #print(worker_id, "check 3, itr", itr)
+
             if generated is not None:
                 #print(os.getpid(), generated)
                 indices = generated[-self.ngram:,:]
                 #print(os.getpid(), indices)
+                #print(worker_id, "check 4, itr", itr)
                 probs = torch.softmax(self.get_param(worker_id, indices) / self.temperature, dim=-1)
+                #probs = torch.softmax(self.get_param(worker_id, indices), dim=-1)
+
+                #probs = torch.softmax(torch.tensor(self.get_param(worker_id, indices).numpy() / self.temperature), dim=-1)
+                #print(worker_id, "check 5, itr", itr)
+
                 #print(worker_id, self.sample_seeder[worker_id].initial_seed(), probs)
                 tok = torch.multinomial(probs, 1, generator=self.sample_seeder[worker_id]).squeeze().reshape(1, -1)
+                #print(worker_id, "check 6, itr", itr)
+ 
                 generated = torch.cat([generated, tok], dim=0)
-            else:
-                probs = torch.softmax(self.get_param(worker_id) / self.temperature, dim=-1)
-                tok = torch.multinomial(probs, batch_size, replacement=True).squeeze()
-                generated = tok.reshape(1, -1)
+                #print(worker_id, "check 7, itr", itr)
 
-        results_queue.put(generated.T.numpy())
-        #results_queue.put(generated.T)
+            else:
+                #print(worker_id, "check 8, itr", itr)
+                #try:
+                #    print(self.get_param(worker_id) / self.temperature)
+                #except Exception as err:
+                #    traceback.print_exc()
+                #print(torch.tensor(self.get_param(worker_id).numpy() / self.temperature))
+                #print("worked")
+                #probs = torch.softmax(torch.tensor(self.get_param(worker_id).numpy() / self.temperature), dim=-1)
+                probs = torch.softmax(self.get_param(worker_id) / self.temperature, dim=-1)
+                #probs = torch.softmax(self.get_param(worker_id), dim=-1)
+
+                #transformed_probs = self.get_param(worker_id)
+                #print(transformed_probs.dtype)
+                #transformed_probs = transformed_probs / torch.full((self.nvocab,),self.temperature,dtype=torch.float32)
+                #probs = softmax(transformed_probs, dim=-1)
+                #print(worker_id, "check 9, itr", itr)
+
+                tok = torch.multinomial(probs, batch_size, replacement=True).squeeze()
+                #print(worker_id, "check 10, itr", itr)
+
+                generated = tok.reshape(1, -1)
+                #print(worker_id, "check 11, itr", itr)
+
+        #results_queue.put(generated.T.numpy())
+        #print(worker_id, "check 12")
+
+        results_queue.put(generated.T)
+        #print(worker_id, "check 13")
+
+        #print(os.getpid(), "check")
+        event.set()
+        #print(worker_id, "check 14")
+
+        return
         #if generated.numel() > 0:
         #    results_queue.put(generated.T.numpy())
         #else:
         #    results_queue.put(torch.zeros((max_length, batch_size)).long().numpy())
 
 
-    def generate(self, total_itr, max_length=1024, batch_size=64):
-        results_queue = mp.Queue()
+    def generate(self, total_itr, max_length=1024, batch_size=32):
+        results_queue = mp.Manager().Queue()
         processes = []
+        event = mp.Event()
 
         for worker_id in range(self.num_workers):
-            p = mp.Process(target=self.generate_worker, args=(worker_id, total_itr, max_length, batch_size // self.num_workers, results_queue))
+            p = mp.Process(target=self.generate_worker, args=(worker_id, total_itr, max_length, batch_size // self.num_workers, results_queue, event))
+            #p = mp.Process(target=self.generate_worker, args=(worker_id, total_itr, max_length, batch_size // self.num_workers, results_queue))
             processes.append(p)
             p.start()
             #time.sleep(1)
-
+        #time.sleep(10)
+        #print("main starts to wait")
+        event.wait()
         generated_batches = []
-        for _ in range(self.num_workers):
-            generated_batches.append(torch.tensor(results_queue.get()))
-            #generated_batches.append(results_queue.get())
 
+        #print(results_queue.empty())
+        for _ in range(self.num_workers):
+            #while not results_queue.empty():
+            #generated_batches.append(torch.tensor(results_queue.get()))
+            generated_batches.append(results_queue.get())
+        #print(generated_batches)
         for p in processes:
             p.join()
+            #p.terminate()
 
         generated = torch.cat(generated_batches, dim=0)
         return generated
