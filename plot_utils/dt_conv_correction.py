@@ -24,26 +24,28 @@ for root, dirs, files in os.walk(base_path):
             subfolder = os.path.join(root, dir)
             for file in os.listdir(subfolder):
                 if file == 'progress.csv':
-                    iter, step = get_correct_convergence(os.path.join(subfolder, file))
-                    ex_new = os.path.join(subfolder, 'extra_new.json')
-                    ex = os.path.join(subfolder, 'extra.json')
-                    ex_to_use = ex
-                    if os.path.exists(ex_new) or os.path.exists(ex):
-                        if os.path.exists(ex_new):
-                            ex_to_use = ex_new
+                    try:
+                        iter, step = get_correct_convergence(os.path.join(subfolder, file))
+                        ex_new = os.path.join(subfolder, 'extra_new.json')
+                        ex = os.path.join(subfolder, 'extra.json')
+                        ex_to_use = ex
+                        if os.path.exists(ex_new) or os.path.exists(ex):
+                            if os.path.exists(ex_new):
+                                ex_to_use = ex_new
 
-                        # load extra.json, prefer newer version
-                        print(ex_to_use)
-                        with open(ex_to_use, 'r') as ex_file:
-                            extra_dict = json.load(ex_file)
+                            # load extra.json, prefer newer version
+                            print(ex_to_use)
+                            with open(ex_to_use, 'r') as ex_file:
+                                extra_dict = json.load(ex_file)
 
-                        print("correction:")
-                        print(extra_dict['convergence_iter'], iter)
-                        print(extra_dict['convergence_step'], step)
+                            print("correction:")
+                            print(extra_dict['convergence_iter'], iter)
+                            print(extra_dict['convergence_step'], step)
 
-                        extra_dict['convergence_iter'] = int(iter)
-                        extra_dict['convergence_step'] = int(step)
+                            extra_dict['convergence_iter'] = int(iter)
+                            extra_dict['convergence_step'] = int(step)
 
-                        with open(ex_new, 'w') as ex_file:
-                            json.dump(extra_dict, ex_file)
-
+                            with open(ex_new, 'w') as ex_file:
+                                json.dump(extra_dict, ex_file)
+                    except Exception as e:
+                        print(e)

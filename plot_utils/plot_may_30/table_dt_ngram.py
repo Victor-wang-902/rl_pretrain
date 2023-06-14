@@ -58,7 +58,7 @@ def get_extra_dict_multiple_seeds(datafolder_path):
 
     for measure in measures:
         if len(aggregate_dict[measure]) == 0:
-            print(measure, 0)
+            print(datafolder_path, 'has nothing for measure:',measure)
         aggregate_dict[measure] = [np.mean(aggregate_dict[measure]), np.std(aggregate_dict[measure])]
     for measure in ['final_test_returns', 'final_test_normalized_returns', 'best_return', 'best_return_normalized']:
         aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1],]
@@ -69,34 +69,23 @@ data_path = '../../code/checkpoints/'
 MUJOCO_3_ENVS = [
                 'hopper',
                  'halfcheetah',
-                # 'walker2d',
+                'walker2d',
 ]
 MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
-envs = []
+all_envs = []
 for e in MUJOCO_3_ENVS:
     for dataset in MUJOCO_3_DATASETS:
-        envs.append('%s_%s' % (e, dataset))
+        all_envs.append('%s_%s' % (e, dataset))
 
-# final table: for each variant name, for each measure, compute relevant values
-alg_dataset_dict = {}
-
-# DT table
-algs = [
-'dt-rerun-data_size_dt_1.0',
-    'chibiT-rerun',
-    'chibiT-rerun-syn_ngram1_nvocab10_temperature1.0',
-    'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
-    'chibiT-rerun-syn_ngram1_nvocab1000_temperature1.0',
-]
-
-# load extra dict for all alg, all envs, all seeds
-for alg in algs:
-    alg_dataset_dict[alg] = {}
-    for env in envs:
-        folderpath = os.path.join(data_path, '%s_%s' % (alg, env))
-        alg_dataset_dict[alg][env] = get_extra_dict_multiple_seeds(folderpath)
-
-# TODO compute performance gain from pretraining for ones use pretraining (compared to no pretrain baseline)
+def get_alg_dataset_dict(algs, envs):
+    # load extra dict for all alg, all envs, all seeds
+    alg_dataset_dict = {}
+    for alg in algs:
+        alg_dataset_dict[alg] = {}
+        for env in envs:
+            folderpath = os.path.join(data_path, '%s_%s' % (alg, env))
+            alg_dataset_dict[alg][env] = get_extra_dict_multiple_seeds(folderpath)
+    return alg_dataset_dict
 
 def get_aggregated_value(alg_dataset_dict, alg, measure):
     # for an alg-measure pair, aggregate over all datasets
@@ -106,7 +95,7 @@ def get_aggregated_value(alg_dataset_dict, alg, measure):
     return np.mean(value_list), np.std(value_list)
 
 """table generation"""
-def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
+def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05):
     print("\nNow generate latex table:\n")
     # each row is a measure, each column is an algorithm variant
     rows = [
@@ -175,6 +164,12 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
     max_values = np.max(table[0], axis=1)
     min_values = np.min(table[0], axis=1)
 
+    col_name_line = ''
+    for col in column_names:
+        col_name_line += col +' & '
+    col_name_line = col_name_line[:-2] + '\\\\'
+    print(col_name_line)
+    print("		\\hline ")
     for i, row_name in enumerate(row_names):
         row_string = row_name
         for j in range(len(algs)):
@@ -237,5 +232,45 @@ def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
         row_string += '\\\\'
         print(row_string)
 
-generate_aggregate_table(algs)
-# generate_per_env_score_table()
+
+
+def generate_table_nvocab_markov_chain():
+    #################### table 1
+    # DT table, 1-step markov chain, change the number of vocab
+    algs = [
+    'dt-rerun-data_size_dt_1.0',
+        'chibiT-rerun',
+        'chibiT-rerun-syn_ngram1_nvocab10_temperature1.0',
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
+        'chibiT-rerun-syn_ngram1_nvocab1000_temperature1.0',
+        'chibiT-rerun-syn_ngram1_nvocab10000_temperature1.0',
+        'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0',
+    ]
+    col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 10','1-MC Voc 100','1-MC Voc 1000','1-MC Voc 10000', '5-MC voc 50257']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_nstep_markov_chain():
+    #################### table 2
+    # DT table, pretrain with markov chain data change number of step
+    algs = [
+    'dt-rerun-data_size_dt_1.0',
+        'chibiT-rerun',
+        # 'chibiT-rerun-syn_ngram1_nvocab50257_temperature1.0',
+        # 'chibiT-rerun-syn_ngram2_nvocab50257_temperature1.0',
+        # 'chibiT-rerun-syn_ngram3_nvocab50257_temperature1.0',
+        'chibiT-rerun-syn_ngram4_nvocab50257_temperature1.0',
+        'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0',
+    ]
+    col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 10','1-MC Voc 100','1-MC Voc 1000','1-MC Voc 10000',]
+    envs = ['halfcheetah_medium',]
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+
+##################### table generation
+# generate_table_nvocab_markov_chain()
+generate_table_nstep_markov_chain()
