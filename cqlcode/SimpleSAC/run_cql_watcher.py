@@ -290,7 +290,7 @@ def run_single_exp(variant):
     env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
 
     def next_mujoco_env_name(env_name, reverse=False):
-        envs = ['hopper', 'walker', 'halfcheetah']
+        envs = ['hopper', 'walker2d', 'halfcheetah']
         if not reverse:
             new_index = (envs.index(env_name) + 1) % 3
         else:
