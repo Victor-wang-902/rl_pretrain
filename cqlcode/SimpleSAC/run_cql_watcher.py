@@ -25,7 +25,7 @@ import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
 from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, index_batch
-from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain
+from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain, FullyConnectedQFunctionPretrain2
 from SimpleSAC.sampler import StepSampler, TrajSampler
 from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
 from SimpleSAC.utils import WandBLogger
@@ -130,7 +130,7 @@ def get_weight_diff(agent1, agent2):
 
     return weight_diff, weight_sim, weight_diff1, weight_sim1, weight_diff2, weight_sim2, weight_difffc, weight_simfc
 
-def get_feature_diff(agent1, agent2, dataset, device, ratio=0.1, seed=0):
+def get_feature_diff(agent1, agent2, dataset, device, ratio=0.01, seed=0):
     # feature diff: for each data point, get difference of feature from old and new network
     # compute l2 norm of this diff, average over a number of data points.
     # agent class should have features_from_batch() func
@@ -288,11 +288,25 @@ def run_single_exp(variant):
     ready_agent = get_cqlr3_baseline_ready_agent_dict(variant['env'], variant['dataset'], variant['seed'])['agent']
 
     env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
+
+    def next_mujoco_env_name(env_name, reverse=False):
+        envs = ['hopper', 'walker', 'halfcheetah']
+        if not reverse:
+            new_index = (envs.index(env_name) + 1) % 3
+        else:
+            new_index = (envs.index(env_name) - 1) % 3
+        return envs[new_index]
+
+    if variant['pretrain_mode'] == 'proj1_q_sprime':
+        pretrain_env_name = '%s-%s-v2' % (next_mujoco_env_name(variant['env']), variant['dataset'])
+    elif variant['pretrain_mode'] == 'proj2_q_sprime':
+        pretrain_env_name = '%s-%s-v2' % (next_mujoco_env_name(variant['env'], reverse=True), variant['dataset'])
+    else:
+        pretrain_env_name = env_full
+
+    # pretrain dataset
+    sampler_pretrain = TrajSampler(gym.make(pretrain_env_name).unwrapped, variant['max_traj_length'])
     eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])
-    dataset = get_d4rl_dataset_with_ratio(eval_sampler.env, variant['offline_data_ratio'])
-    print("D4RL dataset loaded for", env_full)
-    dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
-    dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
 
     policy_arch = '-'.join([str(variant['policy_hidden_unit']) for _ in range(variant['policy_hidden_layer'])])
     policy = TanhGaussianPolicy(
@@ -304,21 +318,40 @@ def run_single_exp(variant):
         orthogonal_init=variant['orthogonal_init'],
     )
 
+    # TODO has to decide pretraining dataset and their obs and act dims, based on pretraining mode.
     qf_arch = '-'.join([str(variant['qf_hidden_unit']) for _ in range(variant['qf_hidden_layer'])])
-    qf1 = FullyConnectedQFunctionPretrain(
-        eval_sampler.env.observation_space.shape[0],
-        eval_sampler.env.action_space.shape[0],
-        arch=qf_arch,
-        orthogonal_init=variant['orthogonal_init'],
-    )
-    target_qf1 = deepcopy(qf1)
+    if variant['pretrain_mode'] in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime']:
+        qf1 = FullyConnectedQFunctionPretrain2(
+            eval_sampler.env.observation_space.shape[0],
+            eval_sampler.env.action_space.shape[0],
+            sampler_pretrain.env.observation_space.shape[0],
+            sampler_pretrain.env.action_space.shape[0],
+            arch=qf_arch,
+            orthogonal_init=variant['orthogonal_init'],
+        )
+        qf2 = FullyConnectedQFunctionPretrain2(
+            eval_sampler.env.observation_space.shape[0],
+            eval_sampler.env.action_space.shape[0],
+            sampler_pretrain.env.observation_space.shape[0],
+            sampler_pretrain.env.action_space.shape[0],
+            arch=qf_arch,
+            orthogonal_init=variant['orthogonal_init'],
+        )
+    else:
+        qf1 = FullyConnectedQFunctionPretrain(
+            eval_sampler.env.observation_space.shape[0],
+            eval_sampler.env.action_space.shape[0],
+            arch=qf_arch,
+            orthogonal_init=variant['orthogonal_init'],
+        )
+        qf2 = FullyConnectedQFunctionPretrain(
+            eval_sampler.env.observation_space.shape[0],
+            eval_sampler.env.action_space.shape[0],
+            arch=qf_arch,
+            orthogonal_init=variant['orthogonal_init'],
+        )
 
-    qf2 = FullyConnectedQFunctionPretrain(
-        eval_sampler.env.observation_space.shape[0],
-        eval_sampler.env.action_space.shape[0],
-        arch=qf_arch,
-        orthogonal_init=variant['orthogonal_init'],
-    )
+    target_qf1 = deepcopy(qf1)
     target_qf2 = deepcopy(qf2)
 
     if variant['cql'].target_entropy >= 0.0:
@@ -355,6 +388,12 @@ def run_single_exp(variant):
             if variant['offline_data_ratio'] < 1:
                 print("warning offline data ratio in pretraining")
                 quit()
+
+            # load pretraining dataset here.
+            dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, variant['offline_data_ratio'])
+            print("D4RL dataset loaded for", pretrain_env_name)
+            dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
+            dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
 
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch+1}
@@ -416,6 +455,11 @@ def run_single_exp(variant):
 
     """offline stage"""
     print("============================ OFFLINE STAGE STARTED! ============================")
+    # TODO we can load offline dataset here... but load pretrain dataset earlier
+    dataset = get_d4rl_dataset_with_ratio(eval_sampler.env, variant['offline_data_ratio'])
+    print("D4RL dataset loaded for", env_full)
+    dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
+    dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
 
     best_agent = deepcopy(agent)
     prev_agent = deepcopy(agent)
@@ -515,7 +559,7 @@ def run_single_exp(variant):
             else:
                 logger.log_tabular(m, viskit_metrics[m])
 
-        feature_diff_last_iter, feature_sim_last_iter, _ = get_feature_diff(agent, prev_agent, dataset, variant['device'])
+        feature_diff_last_iter, feature_sim_last_iter, _ = get_feature_diff(agent, prev_agent, dataset, variant['device'], ratio=0.005)
         weight_diff_last_iter, weight_sim_last_iter, wd0_li, ws0_li, wd1_li, ws1_li, wdfc_li, wsfc_li = get_weight_diff(agent, prev_agent)
 
         additional_dict_with_list['feature_diff_last_iter'].append(feature_diff_last_iter)

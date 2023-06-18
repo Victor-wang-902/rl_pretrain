@@ -251,6 +251,17 @@ def generate_table_nvocab_markov_chain():
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
+MUJOCO_3_ENVS = [
+                # 'hopper',
+                 'halfcheetah',
+                # 'walker2d',
+]
+MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
+envs2 = []
+for e in MUJOCO_3_ENVS:
+    for dataset in MUJOCO_3_DATASETS:
+        envs2.append('%s_%s' % (e, dataset))
+
 
 def generate_table_nstep_markov_chain():
     #################### table 2
@@ -258,14 +269,32 @@ def generate_table_nstep_markov_chain():
     algs = [
     'dt-rerun-data_size_dt_1.0',
         'chibiT-rerun',
-        # 'chibiT-rerun-syn_ngram1_nvocab50257_temperature1.0',
-        # 'chibiT-rerun-syn_ngram2_nvocab50257_temperature1.0',
-        # 'chibiT-rerun-syn_ngram3_nvocab50257_temperature1.0',
+        'chibiT-rerun-syn_ngram1_nvocab50257_temperature1.0',
+        'chibiT-rerun-syn_ngram2_nvocab50257_temperature1.0',
+        'chibiT-rerun-syn_ngram3_nvocab50257_temperature1.0',
         'chibiT-rerun-syn_ngram4_nvocab50257_temperature1.0',
         'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0',
     ]
-    col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 10','1-MC Voc 100','1-MC Voc 1000','1-MC Voc 10000',]
-    envs = ['halfcheetah_medium',]
+    col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 50257','2-MC Voc 50257','3-MC Voc 50257','4-MC Voc 50257','5-MC Voc 50257',]
+    envs = envs2
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_nstep_markov_chain2():
+    #################### table 2
+    # DT table, pretrain with markov chain data change number of step
+    algs = [
+    'dt-rerun-data_size_dt_1.0',
+        'chibiT-rerun',
+        'chibiT-rerun-syn_ngram1_nvocab10_temperature1.0',
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
+        'chibiT-rerun-syn_ngram1_nvocab1000_temperature1.0',
+        'chibiT-rerun-syn_ngram1_nvocab10000_temperature1.0',
+        'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0',
+    ]
+    col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 10', '1-MC Voc 100','1-MC Voc 1000','1-MC Voc 10000', '5-MC Voc 50257', ]
+    envs = envs2
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
@@ -273,4 +302,5 @@ def generate_table_nstep_markov_chain():
 
 ##################### table generation
 # generate_table_nvocab_markov_chain()
-generate_table_nstep_markov_chain()
+# generate_table_nstep_markov_chain()
+generate_table_nstep_markov_chain2()
