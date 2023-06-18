@@ -43,6 +43,7 @@ def main():
         'seed', '', [42],
         'n_train_step_per_epoch', '', [2],
         'n_epochs', '', [22],
+        'n_pretrain_epochs', '', [22],
         'eval_n_trajs', '', [1],
         'batch_size', '', [4],
         'eval_n_trajs', '', [1],
