@@ -367,8 +367,9 @@ def run_single_exp(variant):
     st = time.time()
     if variant['pretrain_mode'] != 'none':
         pretrain_model_folder_path = '/cqlcode/pretrained_cql_models/'
-        pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % ('cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
-                                                            variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
+        pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % (
+            'cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
+            variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         try:
             if not torch.cuda.is_available():
