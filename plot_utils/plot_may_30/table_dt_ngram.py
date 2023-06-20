@@ -276,7 +276,7 @@ def generate_table_nstep_markov_chain():
         'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0',
     ]
     col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 50257','2-MC Voc 50257','3-MC Voc 50257','4-MC Voc 50257','5-MC Voc 50257',]
-    envs = envs2
+    envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
@@ -294,7 +294,24 @@ def generate_table_nstep_markov_chain2():
         'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0',
     ]
     col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 10', '1-MC Voc 100','1-MC Voc 1000','1-MC Voc 10000', '5-MC Voc 50257', ]
-    envs = envs2
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_cql_cross_domain():
+    #################### table 3
+    # CQL table, cross domain pretraining
+    algs = [
+    'cqlr3_prenone_l2_qflrs1',
+    'cqlr3_preq_sprime_l2_qflrs1',
+    'cqlr3_prerand_q_sprime_l2',
+    'cqlr3_preproj0_q_sprime_l2',
+    'cqlr3_preproj1_q_sprime_l2',
+    'cqlr3_preproj2_q_sprime_l2',
+    ]
+    col_names = ['Measures', 'CQL', 'CQL pre', 'CQL rand pre', 'CQL proj0', 'CQL proj1', 'CQL proj2' ]
+    envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
@@ -303,4 +320,6 @@ def generate_table_nstep_markov_chain2():
 ##################### table generation
 # generate_table_nvocab_markov_chain()
 # generate_table_nstep_markov_chain()
-generate_table_nstep_markov_chain2()
+# generate_table_nstep_markov_chain2()
+
+generate_table_cql_cross_domain()
