@@ -90,8 +90,8 @@ def calculate_statistics(dir, fname="progress.csv"):
         final_test_normalized_returns = df["TestEpNormRet"].iloc[-1]
         best_return = max(df["TestEpRet"])
         best_return_normalized = max(df["TestEpNormRet"])
-        convergence_step = df["Steps"].iloc[df["TestEpRet"].ge(best_return_normalized - 2.0).idxmax()]
-        convergence_iter = df["Iteration"].iloc[df["TestEpRet"].ge(best_return_normalized - 2.0).idxmax()]
+        convergence_step = df["Steps"].iloc[df["TestEpNormRet"].ge(best_return_normalized - 2.0).idxmax()]
+        convergence_iter = df["Iteration"].iloc[df["TestEpNormRet"].ge(best_return_normalized - 2.0).idxmax()]
         best_step = df["Steps"][df["TestEpRet"] == best_return].iat[0]
         best_iter = df["Iteration"][df["TestEpRet"] == best_return].iat[0]
 
@@ -105,7 +105,7 @@ def calculate_weight_diff(dir, iter, init_model, weight_only=True):
     blocks = dict()
     for name, layer in model_state_dict.items():
         if "transformer" in name:
-            if not weight_only or "weight" in name:
+            if (not weight_only or "weight" in name) and ("wte" not in name) and ("wpe" not in name):
                 layers.append(layer.view(-1))
                 flag = False
                 block_no = None
@@ -126,7 +126,7 @@ def calculate_weight_diff(dir, iter, init_model, weight_only=True):
     blocks2 = dict()
     for name, layer in init_state_dict.items():
         if "transformer" in name:
-            if not weight_only or "weight" in name:
+            if (not weight_only or "weight" in name) and ("wte" not in name) and ("wpe" not in name):
                 layers2.append(layer.view(-1))
                 flag = False
                 block_no = None
@@ -144,10 +144,10 @@ def calculate_weight_diff(dir, iter, init_model, weight_only=True):
     block_weight_sim = dict()
     for b in blocks:
         block_weight_diff[b] = torch.mean((torch.cat(blocks[b]) - torch.cat(blocks2[b]))**2).item()
-        block_weight_sim[b] = torch.mean(cos(torch.cat(blocks[b]), torch.cat(blocks2[b]))).item()
+        block_weight_sim[b] = cos(torch.cat(blocks[b]), torch.cat(blocks2[b])).item()
     #weight_diff = torch.norm(weights - init_weights, p=2).item()
     weight_diff = torch.mean((weights - init_weights)**2).item()
-    weight_sim = torch.mean(cos(weights, init_weights)).item()
+    weight_sim = cos(weights, init_weights).item()
     return weight_diff, weight_sim, block_weight_diff, block_weight_sim
 
 @torch.no_grad()
@@ -364,7 +364,7 @@ def calculate_feature_diff(
             rtg[:, :-1],
             timesteps,
             attention_mask=attention_mask,
-        )
+        ).to(torch.device("cpu"))
 
         init_feature = init_model.get_feature(
             states,
@@ -373,7 +373,7 @@ def calculate_feature_diff(
             rtg[:, :-1],
             timesteps,
             attention_mask=attention_mask,
-        )
+        ).to(torch.device("cpu"))
         feature_diff = (init_feature - cur_feature).cpu()
         temp = attention_mask[:,:,None].to(torch.device("cpu"))
         masked_feature_diff = feature_diff * temp

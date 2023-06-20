@@ -4,7 +4,7 @@ from transformers import GPT2LMHeadModel
 from transformers import GPT2Tokenizer
 from torch.utils.data import DataLoader
 from transformers import AdamW, get_linear_schedule_with_warmup
-from data import get_dataloader, GPT2Dataset, GPT2Collator, worker_init_fn
+from data import get_dataloader, GPT2Dataset, GPT2Collator, worker_init_fn, load_synthetic_dataset, SyntheticTokenizer, SyntheticDataset
 import math
 import csv
 from datasets import load_dataset
@@ -14,28 +14,29 @@ import argparse
 import os
 
 ##########simple one GPU pretraining#########
-os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
+#os.environ['CUDA_LAUNCH_BLOCKING'] = '1'
 @torch.no_grad()
 def eval(args, dataloader, model, device):
     model.eval()
     cumulative_loss = 0.
-    total_rows = 0
+    #total_rows = 0
     for step, batch in tqdm(enumerate(dataloader)):
-        total_rows += batch["input_ids"].shape[0]
+        #total_rows += batch["input_ids"].shape[0]
         inputs = batch['input_ids'].to(device)
         labels = batch["input_ids"].detach().clone().long().to(device)
         attn_msk = batch["attention_mask"].to(device)
         outputs = model(inputs, attention_mask=attn_msk, labels=labels)  # fix here
         loss = outputs.loss
         cumulative_loss += loss.detach().cpu().item()
-    return cumulative_loss / total_rows
+    return cumulative_loss / (step + 1)
     
 
 def main(args):  # add argparser
     device = torch.device(args.device)
     tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
+    nvocab = int(os.path.basename(args.dataset).split("_")[4])
     config = GPT2Config(
-        vocab_size=tokenizer.vocab_size,
+        vocab_size=nvocab,
         n_embd=args.embed_dim,
         n_layer=args.n_layer,
         n_head=args.n_head,
@@ -52,14 +53,14 @@ def main(args):  # add argparser
         state_dict = torch.load(args.load_checkpoint)
         model.load_state_dict(state_dict)
         print(f"Loaded from {variant['load_checkpoint']}")
-
-    data = load_dataset(args.dataset, args.subsplit)
+    train_data, valid_data, test_data = load_synthetic_dataset(args.dataset)
+    #data = load_dataset(args.dataset, args.subsplit)
     
-    test_data = data["test"]
-    valid_data = data["validation"]
+    #test_data = data["test"]
+    #valid_data = data["validation"]
 
-    valid_dataset = GPT2Dataset(valid_data, tokenizer, split="valid")
-    test_dataset = GPT2Dataset(test_data, tokenizer, split="test")
+    valid_dataset = SyntheticDataset(valid_data, split="valid")
+    test_dataset = SyntheticDataset(test_data, split="test")
 
     collator = GPT2Collator()
 
@@ -91,8 +92,7 @@ def main(args):  # add argparser
         writer.writerow(["current_train_time", "current_eval_time", "total_time", "steps", "train_loss", "train_ppl", "eval_ppl"])
 
     if not args.eval_only:
-        train_data = data["train"]
-        train_dataset = GPT2Dataset(train_data, tokenizer, seed=args.seed, data_size=args.data_size)
+        train_dataset = SyntheticDataset(train_data, seed=args.seed, data_size=args.data_size)
 
         train_data_loader = get_dataloader(
             train_dataset,
@@ -116,43 +116,49 @@ def main(args):  # add argparser
         total_start_time = time.time()
         cur_start_time = time.time()
         cumulative_loss = 0.
-        for step, batch in tqdm(enumerate(train_data_loader), total=num_steps):
-            model.train()
-            labels = batch["input_ids"].detach().clone().long()
-            print(labels.shape)
-            print(labels)
-            outputs = model(
-                batch['input_ids'].to(device), 
-                attention_mask=batch["attention_mask"].to(device), 
-                labels=batch["input_ids"].detach().clone().long().to(device)
-                )  # fix here
-            optimizer.zero_grad()  
-            loss = outputs.loss
-            print(loss)
-            loss.backward()
-            cumulative_loss += loss.detach().cpu().item()
-            optimizer.step()
-            scheduler.step()
-            if (step + 1) % args.num_steps_per_save == 0:
+        cur_step = 0
+        epoch = 0
+        while True:
+            for step, batch in tqdm(enumerate(train_data_loader), total=num_steps):
+                model.train()
+                labels = batch["input_ids"].detach().clone().long()
+                #print(labels.shape)
+                #print(labels)
+                outputs = model(
+                    batch['input_ids'].to(device), 
+                    attention_mask=batch["attention_mask"].to(device), 
+                    labels=batch["input_ids"].detach().clone().long().to(device)
+                    )  # fix here
+                optimizer.zero_grad()  
+                loss = outputs.loss
+                #print(loss)
+                loss.backward()
+                cumulative_loss += loss.detach().cpu().item()
+                optimizer.step()
+                scheduler.step()
+                if (cur_step + 1) % args.num_steps_per_save == 0:
+                    torch.cuda.empty_cache()
+                    train_ppl = torch.exp(torch.tensor(cumulative_loss) / args.num_steps_per_save).item()
+                    cur_train_end_time = time.time()
+                    valid_loss = eval(args, valid_data_loader, model, device)
+                    valid_ppl = math.exp(valid_loss)
+                    cur_eval_end_time = time.time()
+                    print(f'Step {cur_step + 1}/{num_steps}, epoch {epoch}, train loss = {cumulative_loss}, train ppl = {train_ppl}, valid ppl = {valid_ppl}')
+                    cur_total_time = time.time()
+
+                    if args.outdir is not None:
+                        model.save_pretrained(f"{args.outdir}/model_{cur_step + 1}")
+                    with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
+                        writer = csv.writer(f, delimiter="\t")
+                        writer.writerow([cur_train_end_time - cur_start_time, cur_eval_end_time - cur_train_end_time, cur_total_time - total_start_time, cur_step + 1, cumulative_loss, train_ppl, valid_ppl])
+                    cur_start_time = time.time()
+                    cumulative_loss = 0.
+                    torch.cuda.empty_cache()
                 torch.cuda.empty_cache()
-                train_ppl = math.exp(cumulative_loss / args.num_steps_per_save)
-                cur_train_end_time = time.time()
-                valid_loss = eval(args, valid_data_loader, model, device)
-                valid_ppl = math.exp(valid_loss)
-                cur_eval_end_time = time.time()
-                print(f'Step {step + 1}/{num_steps}, train loss = {cumulative_loss}, train ppl = {train_ppl}, valid ppl = {valid_ppl}')
-                if args.outdir is not None:
-                    torch.save(
-                        model.state_dict(),
-                        f"{args.outdir}/model_{step + 1}.pt",
-                    )
-                cur_total_time = time.time()
-                with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
-                    writer = csv.writer(f, delimiter="\t")
-                    writer.writerow([cur_train_end_time - cur_start_time, cur_eval_end_time - cur_train_end_time, cur_total_time - total_start_time, step + 1, cumulative_loss, train_ppl, valid_ppl])
-                cur_start_time = time.time()
-                cumulative_loss = 0.
-                torch.cuda.empty_cache()
+                cur_step += 1
+            epoch += 1
+            if cur_step >= num_steps:
+                break
     test_start_time = time.time()
     test_loss = eval(args, test_data_loader, model, device)
     test_ppl = math.exp(test_loss)
@@ -161,7 +167,8 @@ def main(args):  # add argparser
     with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
         writer = csv.writer(f, delimiter="\t")
         writer.writerow([0., test_end_time - test_start_time, test_end_time - total_start_time, "test", 0., 0., test_ppl])
-
+    if args.outdir is not None:
+        model.save_pretrained(f"{args.outdir}/model_final")
 
 
 
