@@ -43,13 +43,13 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
             'next_observations': next_states}
 
 # generate 1M data, each trajectory has 1000 steps
-n_traj, max_length, n_state, n_action = 1000, 1000, 1000, 1000
+n_traj, max_length, n_state, n_action = 10, 1000, 1000, 1000
 policy_temperature = 1 # higher temperature -> uniform random actions, close to 0 temperature -> deterministic action
 transition_temperature = 1 # higher -> uniform random transition, close to 0 -> deterministic transition
 
 
 data = gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, transition_temperature)
-joblib.dump(data, '../../mdpdata/random.pkl')
+joblib.dump(data, '/cqlcode/mdpdata/random.pkl')
 
 # the variations:
     # a. whether action is random, or from a fixed policy
