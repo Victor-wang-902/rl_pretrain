@@ -37,7 +37,7 @@ def main():
 
     exp_prefix = 'preonly-cqlr3'
     settings = [
-        'env', '', ['hopper'], # 'hopper', 'walker2d', 'halfcheetah',
+        'env', '', MUJOCO_3_ENVS, # 'hopper', 'walker2d', 'halfcheetah',
         'dataset', '', ['medium'], # 'medium', 'medium-replay', 'medium-expert',
         'pretrain_mode', 'pre', ['mdp_same_proj', 'mdp_same_noproj'], # 'none', 'q_sprime', 'mdp_same_proj', 'mdp_same_noproj'
         'qf_hidden_layer', 'l', [2],

@@ -356,7 +356,7 @@ class ConservativeSAC(object):
 
         return metrics
 
-    def pretrain(self, batch, pretrain_mode, mdp_use_proj=True):
+    def pretrain(self, batch, pretrain_mode):
         # pretrain mode:  q_sprime, 4. q_mc
         self._total_pretrain_steps += 1
 
@@ -366,15 +366,14 @@ class ConservativeSAC(object):
         next_observations = batch['next_observations']
         # dones = batch['dones']
 
-        # TODO work on it here
-        if pretrain_mode == 'q_sprime' or (pretrain_mode == 'mdp_q_sprime' and not mdp_use_proj):
+        if pretrain_mode in ['q_sprime', 'mdp_same_noproj']:
             # here use both q networks to predict next obs
             obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
             obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
             pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
-        elif pretrain_mode in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime']:
+        elif pretrain_mode in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime', 'mdp_same_proj']:
             obs_next_q1 = self.qf1.get_pretrain_next_obs(observations, actions)
             obs_next_q2 = self.qf2.get_pretrain_next_obs(observations, actions)
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
