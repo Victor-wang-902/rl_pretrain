@@ -42,7 +42,7 @@ def main():
         'qf_hidden_layer', 'l', [2],
         'n_pretrain_epochs', '', [1],
         'mdppre_n_state', 'ns', [1],
-        'mdppre_policy_temperature', 'pt', [33],
+        'mdppre_policy_temperature', 'pt', [100],
         'mdppre_state_dim', '', [17],
         'mdppre_same_as_s_and_policy', '', [True],
         'do_pretrain_only', 'po', [True],
