@@ -375,8 +375,6 @@ class ConservativeSAC(object):
             pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
         elif pretrain_mode in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime']:
-            print(observations.dtype)
-            print(actions.dtype)
             obs_next_q1 = self.qf1.get_pretrain_next_obs(observations, actions)
             obs_next_q2 = self.qf2.get_pretrain_next_obs(observations, actions)
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
