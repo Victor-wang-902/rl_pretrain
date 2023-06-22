@@ -43,7 +43,7 @@ def main():
         'qf_hidden_layer', 'l', [2],
         'mdppre_n_state', 'ns', [1000],
         'mdppre_policy_temperature', 'pt', [1],
-        'mdppre_state_dim', 'sd', [1, 5, 50, 200],
+        'mdppre_state_dim', 'sd', [1000],
         'mdppre_same_as_s_and_policy', 'same', [True],
         'seed', '', [42, 666, 1024],
     ] #
