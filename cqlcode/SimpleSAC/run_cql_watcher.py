@@ -94,6 +94,7 @@ def get_default_variant_dict():
         mdppre_state_dim=20,
         mdppre_action_dim=20,
         mdppre_same_as_s_and_policy=False, # if True, then action hyper will be same as state, tt will be same as pt
+        mdppre_same_dim_proj_mode=0, # 1: use same state/action dim as downstream task and use projection, if 2 then no projection
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -293,6 +294,8 @@ def run_single_exp(variant):
         variant['mdppre_n_action'] = variant['mdppre_n_state']
         variant['mdppre_transition_temperature'] = variant['mdppre_policy_temperature']
         variant['mdppre_action_dim'] = variant['mdppre_state_dim']
+    if variant['mdppre_same_dim_proj_mode'] > 0:
+        variant['mdppre_action_dim'], variant['mdppre_state_dim'] = 'auto', 'auto'
 
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
     logger.save_config(variant)
@@ -321,16 +324,19 @@ def run_single_exp(variant):
     else:
         pretrain_env_name = env_full
 
+    eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])
+
     # pretrain dataset
     if pretrain_env_name:
         sampler_pretrain = TrajSampler(gym.make(pretrain_env_name).unwrapped, variant['max_traj_length'])
         pretrain_obs_dim = sampler_pretrain.env.observation_space.shape[0]
         pretrain_act_dim = sampler_pretrain.env.action_space.shape[0]
     else: # if random mdp pretrain
+        if variant['mdppre_same_dim_proj_mode'] > 0:
+            variant['mdppre_state_dim'] = eval_sampler.env.observation_space.shape[0]
+            variant['mdppre_action_dim'] = eval_sampler.env.action_space.shape[0]
         pretrain_obs_dim = variant['mdppre_state_dim']
         pretrain_act_dim = variant['mdppre_action_dim']
-
-    eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])
 
     policy_arch = '-'.join([str(variant['policy_hidden_unit']) for _ in range(variant['policy_hidden_layer'])])
     policy = TanhGaussianPolicy(
@@ -344,7 +350,8 @@ def run_single_exp(variant):
 
     # TODO has to decide pretraining dataset and their obs and act dims, based on pretraining mode.
     qf_arch = '-'.join([str(variant['qf_hidden_unit']) for _ in range(variant['qf_hidden_layer'])])
-    if variant['pretrain_mode'] in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime']:
+    if variant['pretrain_mode'] in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime'] and \
+        variant['mdppre_same_dim_proj_mode'] < 2:
         qf1 = FullyConnectedQFunctionPretrain2(
             eval_sampler.env.observation_space.shape[0],
             eval_sampler.env.action_space.shape[0],
@@ -455,7 +462,8 @@ def run_single_exp(variant):
                         batch['next_observations'] = index2state[batch['next_observations']]
 
                     batch = batch_to_torch(batch, variant['device'])
-                    metrics.update(agent.pretrain(batch, variant['pretrain_mode']))
+                    mdp_use_proj = variant['mdppre_same_dim_proj_mode'] < 2
+                    metrics.update(agent.pretrain(batch, variant['pretrain_mode'], mdp_use_proj=mdp_use_proj))
 
                 pretrain_logger.log_tabular("PretrainIteration", epoch + 1)
                 pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * variant['n_train_step_per_epoch'])

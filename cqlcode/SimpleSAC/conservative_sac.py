@@ -356,7 +356,7 @@ class ConservativeSAC(object):
 
         return metrics
 
-    def pretrain(self, batch, pretrain_mode):
+    def pretrain(self, batch, pretrain_mode, mdp_use_proj=True):
         # pretrain mode:  q_sprime, 4. q_mc
         self._total_pretrain_steps += 1
 
@@ -367,7 +367,7 @@ class ConservativeSAC(object):
         # dones = batch['dones']
 
         # TODO work on it here
-        if pretrain_mode == 'q_sprime':
+        if pretrain_mode == 'q_sprime' or (pretrain_mode == 'mdp_q_sprime' and not mdp_use_proj):
             # here use both q networks to predict next obs
             obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
             obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
