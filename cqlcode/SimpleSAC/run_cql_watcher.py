@@ -434,12 +434,22 @@ def run_single_exp(variant):
                                                      variant['mdppre_n_action'],
                                                      variant['mdppre_policy_temperature'],
                                                      variant['mdppre_transition_temperature'])
-            quit()
+                index2state = 2 * np.random.rand((variant['mdppre_n_state'], variant['mdppre_state_dim'])) - 1
+                index2action = 2 * np.random.rand((variant['mdppre_n_action'], variant['mdppre_action_dim'])) - 1
 
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch+1}
                 for i_pretrain in range(variant['n_train_step_per_epoch']):
                     batch = subsample_batch(dataset, variant['batch_size'])
+                    print(batch['observations'].shape)
+
+                    if not pretrain_env_name:
+                        batch['observations'] = index2state[batch['observations']]
+                        batch['actions'] = index2action[batch['actions']]
+                        batch['next_observations'] = index2state[batch['next_observations']]
+                        print(batch['observations'].shape)
+                        quit()
+
                     batch = batch_to_torch(batch, variant['device'])
                     metrics.update(agent.pretrain(batch, variant['pretrain_mode']))
 

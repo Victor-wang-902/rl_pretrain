@@ -362,9 +362,9 @@ class ConservativeSAC(object):
 
         observations = batch['observations']
         actions = batch['actions']
-        rewards = batch['rewards']
+        # rewards = batch['rewards']
         next_observations = batch['next_observations']
-        dones = batch['dones']
+        # dones = batch['dones']
 
         # TODO work on it here
         if pretrain_mode == 'q_sprime':
@@ -374,7 +374,7 @@ class ConservativeSAC(object):
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
             pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
-        elif pretrain_mode in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime']:
+        elif pretrain_mode in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime']:
             obs_next_q1 = self.qf1.get_pretrain_next_obs(observations, actions)
             obs_next_q2 = self.qf2.get_pretrain_next_obs(observations, actions)
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
