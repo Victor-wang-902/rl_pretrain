@@ -461,10 +461,6 @@ def run_single_exp(variant):
                 sys.stdout.flush()
 
                 if (epoch+1) in (2, 20, 100, 500, 1000):
-                    pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % (
-                        'cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
-                        variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
-
                     pretrain_model_name_mid = pretrain_model_name[:-4] + '_%d' % (epoch+1) + pretrain_model_name[-4:]
 
                     pretrain_full_path_mid = os.path.join(pretrain_model_folder_path, pretrain_model_name_mid)

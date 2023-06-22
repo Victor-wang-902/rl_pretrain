@@ -40,7 +40,7 @@ def main():
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['mdp_q_sprime'], # 'none', 'q_sprime',
         'qf_hidden_layer', 'l', [2],
-        'do_pretrain_only', 'po', [True],
+        'n_pretrain_epochs', '', [1],
         'seed', '', [42],
     ] #
 
