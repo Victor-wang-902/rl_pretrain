@@ -434,8 +434,8 @@ def run_single_exp(variant):
                                                      variant['mdppre_n_action'],
                                                      variant['mdppre_policy_temperature'],
                                                      variant['mdppre_transition_temperature'])
-                index2state = 2 * np.random.rand((variant['mdppre_n_state'], variant['mdppre_state_dim'])) - 1
-                index2action = 2 * np.random.rand((variant['mdppre_n_action'], variant['mdppre_action_dim'])) - 1
+                index2state = 2 * np.random.rand(variant['mdppre_n_state'], variant['mdppre_state_dim']) - 1
+                index2action = 2 * np.random.rand(variant['mdppre_n_action'], variant['mdppre_action_dim']) - 1
 
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch+1}
