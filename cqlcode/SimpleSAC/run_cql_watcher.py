@@ -93,6 +93,7 @@ def get_default_variant_dict():
         mdppre_transition_temperature=1,
         mdppre_state_dim=20,
         mdppre_action_dim=20,
+        mdppre_same_as_s_and_policy=False, # if True, then action hyper will be same as state, tt will be same as pt
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -288,6 +289,11 @@ def get_additional_dict(additional_dict_with_list):
     return additional_dict
 
 def run_single_exp(variant):
+    if variant['mdppre_same_as_s_and_policy']:
+        variant['mdppre_n_action'] = variant['mdppre_n_state']
+        variant['mdppre_transition_temperature'] = variant['mdppre_policy_temperature']
+        variant['mdppre_action_dim'] = variant['mdppre_state_dim']
+
     logger = EpochLogger(variant["outdir"], 'progress.csv', variant["exp_name"])
     logger.save_config(variant)
     pretrain_logger = EpochLogger(variant["outdir"], 'pretrain_progress.csv', variant["exp_name"])

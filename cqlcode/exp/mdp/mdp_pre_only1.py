@@ -34,18 +34,20 @@ def main():
 
     variant = get_default_variant_dict() # this is a dictionary
     ###########################################################
-    exp_prefix = 'testonly'
+
+    exp_prefix = 'preonly-cqlr3'
     settings = [
-        'env', '', MUJOCO_3_ENVS,
-        'dataset', '', MUJOCO_3_DATASETS,
+        'env', '', ['hopper'], # 'hopper', 'walker2d', 'halfcheetah',
+        'dataset', '', ['medium'], # 'medium', 'medium-replay', 'medium-expert',
         'pretrain_mode', 'pre', ['mdp_q_sprime'], # 'none', 'q_sprime',
         'qf_hidden_layer', 'l', [2],
-        'n_pretrain_epochs', '', [1],
         'mdppre_n_state', 'ns', [1],
-        'mdppre_policy_temperature', 'pt', [33],
-        'mdppre_state_dim', '', [17],
-        'mdppre_same_as_s_and_policy', '', [True],
+        'mdppre_n_action', 'na', [1],
+        'mdppre_policy_temperature', 'pt', [1],
+        'mdppre_transition_temperature', 'tt', [1],
         'do_pretrain_only', 'po', [True],
+        'mdppre_state_dim', '', [20],
+        'mdppre_action_dim', '', [20],
         'seed', '', [42],
     ] #
 
