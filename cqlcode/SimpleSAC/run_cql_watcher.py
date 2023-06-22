@@ -401,7 +401,7 @@ def run_single_exp(variant):
 
     if variant['pretrain_mode'] != 'none':
         pretrain_model_folder_path = '/cqlcode/pretrained_cql_models/'
-        if variant['pretrain_mode'] != 'mdp_q_sprime':
+        if variant['pretrain_mode'] != ['mdp_q_sprime', 'mdp_same_proj', 'mdp_same_noproj']:
             pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % (
                 'cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
                 variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
