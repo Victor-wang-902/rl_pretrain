@@ -24,7 +24,7 @@ import absl.app
 import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
-from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, index_batch
+from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, index_batch, get_mdp_dataset_with_ratio
 from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain, FullyConnectedQFunctionPretrain2
 from SimpleSAC.sampler import StepSampler, TrajSampler
 from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
@@ -84,6 +84,15 @@ def get_default_variant_dict():
         q_distill_pretrain_steps=0, # will not use the q distill weight defined here
         distill_only=False,
         q_network_feature_lr_scale=1, # 0 means pretrained/random features are frozen
+
+        # mdp pretrain related
+        mdppre_n_traj=1000,
+        mdppre_n_state=1000,
+        mdppre_n_action=1000,
+        mdppre_policy_temperature=1,
+        mdppre_transition_temperature=1,
+        mdppre_state_dim=20,
+        mdppre_action_dim=20,
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -301,11 +310,20 @@ def run_single_exp(variant):
         pretrain_env_name = '%s-%s-v2' % (next_mujoco_env_name(variant['env']), variant['dataset'])
     elif variant['pretrain_mode'] == 'proj2_q_sprime':
         pretrain_env_name = '%s-%s-v2' % (next_mujoco_env_name(variant['env'], reverse=True), variant['dataset'])
+    elif variant['pretrain_mode'] == 'mdp_q_sprime':
+        pretrain_env_name = None
     else:
         pretrain_env_name = env_full
 
     # pretrain dataset
-    sampler_pretrain = TrajSampler(gym.make(pretrain_env_name).unwrapped, variant['max_traj_length'])
+    if pretrain_env_name:
+        sampler_pretrain = TrajSampler(gym.make(pretrain_env_name).unwrapped, variant['max_traj_length'])
+        pretrain_obs_dim = sampler_pretrain.env.observation_space.shape[0]
+        pretrain_act_dim = sampler_pretrain.env.action_space.shape[0]
+    else: # if random mdp pretrain
+        pretrain_obs_dim = variant['mdppre_state_dim']
+        pretrain_act_dim = variant['mdppre_action_dim']
+
     eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])
 
     policy_arch = '-'.join([str(variant['policy_hidden_unit']) for _ in range(variant['policy_hidden_layer'])])
@@ -320,20 +338,20 @@ def run_single_exp(variant):
 
     # TODO has to decide pretraining dataset and their obs and act dims, based on pretraining mode.
     qf_arch = '-'.join([str(variant['qf_hidden_unit']) for _ in range(variant['qf_hidden_layer'])])
-    if variant['pretrain_mode'] in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime']:
+    if variant['pretrain_mode'] in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime']:
         qf1 = FullyConnectedQFunctionPretrain2(
             eval_sampler.env.observation_space.shape[0],
             eval_sampler.env.action_space.shape[0],
-            sampler_pretrain.env.observation_space.shape[0],
-            sampler_pretrain.env.action_space.shape[0],
+            pretrain_obs_dim,
+            pretrain_act_dim,
             arch=qf_arch,
             orthogonal_init=variant['orthogonal_init'],
         )
         qf2 = FullyConnectedQFunctionPretrain2(
             eval_sampler.env.observation_space.shape[0],
             eval_sampler.env.action_space.shape[0],
-            sampler_pretrain.env.observation_space.shape[0],
-            sampler_pretrain.env.action_space.shape[0],
+            pretrain_obs_dim,
+            pretrain_act_dim,
             arch=qf_arch,
             orthogonal_init=variant['orthogonal_init'],
         )
@@ -365,11 +383,25 @@ def run_single_exp(variant):
     """pretrain stage"""
     print("============================ PRETRAIN STAGE STARTED! ============================")
     st = time.time()
+
+    # TODO 1. pretrain model path will be different for mdp pretrain
+    #  2. decide pretrain data path
+    #  3. assign random vectors for each state and action?
+
     if variant['pretrain_mode'] != 'none':
         pretrain_model_folder_path = '/cqlcode/pretrained_cql_models/'
-        pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % (
-            'cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
-            variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
+        if variant['pretrain_mode'] != 'mdp_q_sprime':
+            pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % (
+                'cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
+                variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
+        else: # mdp pretrain
+            pretrain_model_name = '%s_%d_%d_%d_%s_%s_%d_%d_%s_%d_%d_%s.pth' % (
+                'cql',
+                variant['mdppre_n_traj'], variant['mdppre_n_state'], variant['mdppre_n_action'],
+                str(variant['mdppre_policy_temperature']), str(variant['mdppre_transition_temperature']),
+                variant['mdppre_state_dim'], variant['mdppre_action_dim'],
+                variant['pretrain_mode'], variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
+
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         try:
             if not torch.cuda.is_available():
@@ -391,10 +423,18 @@ def run_single_exp(variant):
                 quit()
 
             # load pretraining dataset here.
-            dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, variant['offline_data_ratio'])
-            print("D4RL dataset loaded for", pretrain_env_name)
-            dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
-            dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
+            if pretrain_env_name:
+                dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, variant['offline_data_ratio'])
+                dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
+                dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
+                print("D4RL dataset loaded for", pretrain_env_name)
+            else:
+                dataset = get_mdp_dataset_with_ratio(variant['mdppre_n_traj'],
+                                                     variant['mdppre_n_state'],
+                                                     variant['mdppre_n_action'],
+                                                     variant['mdppre_policy_temperature'],
+                                                     variant['mdppre_transition_temperature'])
+            quit()
 
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch+1}

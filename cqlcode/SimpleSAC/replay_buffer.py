@@ -6,6 +6,7 @@ import d4rl
 
 import numpy as np
 import torch
+import joblib
 
 
 class ReplayBuffer(object):
@@ -126,6 +127,21 @@ def get_d4rl_dataset_with_ratio(env, ratio=1, seed=0):
         rewards=dataset['rewards'][idxs],
         dones=dataset['terminals'][idxs].astype(np.float32),
     )
+
+def get_mdp_dataset_with_ratio(n_traj, n_state, n_action, policy_temperature, transition_temperature,
+                               ratio=1, seed=0, verbose=True):
+    # TODO add the ratio thing later
+    if ratio < 1:
+        raise NotImplementedError
+
+    data_name = 'mdp_traj%d_ns%d_na%d_pt%s_tt%s.pkl' % (n_traj, n_state, n_action,
+                                                        str(policy_temperature), str(transition_temperature))
+    save_name = '/cqlcode/mdpdata/%s' % data_name
+
+    data_dict = joblib.load(save_name)
+    if verbose:
+        print("MDP pretrain data loaded from:", save_name)
+    return data_dict
 
 
 def index_batch(batch, indices):
