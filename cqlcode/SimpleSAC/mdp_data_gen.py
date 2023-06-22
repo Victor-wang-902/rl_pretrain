@@ -48,11 +48,19 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
     print("Data saved to:", save_name)
 
 # generate 1M data, each trajectory has 1000 steps
-n_traj, max_length, n_state, n_action = 10, 1000, 1000, 1000
+n_traj, max_length, n_state, n_action = 1000, 1000, 1000, 1000
 policy_temperature = 1 # higher temperature -> uniform random actions, close to 0 temperature -> deterministic action
 transition_temperature = 1 # higher -> uniform random transition, close to 0 -> deterministic transition
 
-data = gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, transition_temperature)
+# 1. different state-action space size
+for n_state_action in [1, 10, 100, 1000, 10000, 50257]:
+    gen_mdp_data(n_traj, max_length, n_state_action, n_state_action, policy_temperature, transition_temperature)
+
+# 2. different temperatures
+for temperature in [0.01, 0.1, 1, 10, 100]:
+    gen_mdp_data(n_traj, max_length, 1000, 1000, temperature, temperature)
+
+
 
 # the variations:
     # a. whether action is random, or from a fixed policy
