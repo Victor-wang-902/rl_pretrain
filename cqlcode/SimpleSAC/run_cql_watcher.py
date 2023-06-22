@@ -441,14 +441,11 @@ def run_single_exp(variant):
                 metrics = {'pretrain_epoch': epoch+1}
                 for i_pretrain in range(variant['n_train_step_per_epoch']):
                     batch = subsample_batch(dataset, variant['batch_size'])
-                    print(batch['observations'].shape)
 
                     if not pretrain_env_name:
                         batch['observations'] = index2state[batch['observations']]
                         batch['actions'] = index2action[batch['actions']]
                         batch['next_observations'] = index2state[batch['next_observations']]
-                        print(batch['observations'].shape)
-                        quit()
 
                     batch = batch_to_torch(batch, variant['device'])
                     metrics.update(agent.pretrain(batch, variant['pretrain_mode']))
