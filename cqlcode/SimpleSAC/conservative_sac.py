@@ -366,7 +366,7 @@ class ConservativeSAC(object):
         next_observations = batch['next_observations']
         # dones = batch['dones']
 
-        if pretrain_mode in ['q_sprime', 'mdp_same_noproj']:
+        if pretrain_mode in ['q_sprime', 'mdp_same_noproj', 'q_sprime_3x']:
             # here use both q networks to predict next obs
             obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
             obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
@@ -380,7 +380,8 @@ class ConservativeSAC(object):
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
             pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
-        elif pretrain_mode in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime', 'mdp_same_proj']:
+        elif pretrain_mode in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime', 'mdp_same_proj',
+                               'proj0_q_sprime_3x', 'proj1_q_sprime_3x']:
             obs_next_q1 = self.qf1.get_pretrain_next_obs(observations, actions)
             obs_next_q2 = self.qf2.get_pretrain_next_obs(observations, actions)
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
@@ -395,6 +396,8 @@ class ConservativeSAC(object):
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
             pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
+        else:
+            raise NotImplementedError
 
         self.qf_optimizer.zero_grad()
         pretrain_loss.backward()

@@ -37,9 +37,9 @@ def main():
 
     exp_prefix = 'preonly-cqlr3'
     settings = [
-        'env', '', MUJOCO_3_ENVS,
-        'dataset', '', MUJOCO_3_DATASETS,
-        'pretrain_mode', 'pre', ['q_sprime_3x'], # 'none', 'q_sprime',
+        'env', '', ['hopper'],
+        'dataset', '', ['medium'],
+        'pretrain_mode', 'pre', ['q_sprime_3x', 'proj0_q_sprime_3x'], # 'none', 'q_sprime',
         'qf_hidden_layer', 'l', [2],
         'do_pretrain_only', 'po', [True],
         'seed', '', [42],
