@@ -133,6 +133,8 @@ def get_d4rl_dataset_from_multiple_envs(envs):
     d = None
     for env in envs:
         dataset = d4rl.qlearning_dataset(env)
+        dataset['dones'] = dataset['terminals']
+        del dataset['terminals']
         n_data += dataset['observations'].shape[0]
         if not d:
             d = dict(
@@ -140,7 +142,7 @@ def get_d4rl_dataset_from_multiple_envs(envs):
                 actions = dataset['actions'],
                 next_observations = dataset['next_observations'],
                 rewards = dataset['rewards'],
-                dones = dataset['terminals'].astype(np.float32),
+                dones = dataset['dones'].astype(np.float32),
             )
         else:
             for key in d:
