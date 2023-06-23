@@ -128,7 +128,7 @@ def get_d4rl_dataset_with_ratio(env, ratio=1, seed=0):
         dones=dataset['terminals'][idxs].astype(np.float32),
     )
 
-def get_d4rl_dataset_from_multiple_envs(envs):
+def get_d4rl_dataset_from_multiple_envs(envs, verbose=True):
     n_data = 0
     d = None
     for env in envs:
@@ -147,6 +147,8 @@ def get_d4rl_dataset_from_multiple_envs(envs):
         else:
             for key in d:
                 d[key] = np.concatenate((d[key], dataset[key]), axis=0)
+    if verbose:
+        print("Loaded data from:", envs)
     return d
 
 def get_mdp_dataset_with_ratio(n_traj, n_state, n_action, policy_temperature, transition_temperature,
