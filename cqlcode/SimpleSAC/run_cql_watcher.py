@@ -317,10 +317,12 @@ def run_single_exp(variant):
             new_index = (envs.index(env_name) - 1) % 3
         return envs[new_index]
 
-    if variant['pretrain_mode'] == 'proj1_q_sprime':
-        pretrain_env_name = '%s-%s-v2' % (next_mujoco_env_name(variant['env']), variant['dataset'])
-    elif variant['pretrain_mode'] == 'proj2_q_sprime':
-        pretrain_env_name = '%s-%s-v2' % (next_mujoco_env_name(variant['env'], reverse=True), variant['dataset'])
+    if variant['pretrain_mode'] in ['proj1_q_sprime', 'proj1_q_sprime_3x']:
+        pretrain_task_name = next_mujoco_env_name(variant['env'])
+        pretrain_env_name = '%s-%s-v2' % (pretrain_task_name, variant['dataset'])
+    elif variant['pretrain_mode'] in ['proj2_q_sprime', 'proj2_q_sprime_3x']:
+        pretrain_task_name = next_mujoco_env_name(variant['env'], reverse=True)
+        pretrain_env_name = '%s-%s-v2' % (pretrain_task_name, variant['dataset'])
     elif variant['pretrain_mode'] in ['mdp_q_sprime', 'mdp_same_proj', 'mdp_same_noproj']:
         pretrain_env_name = None
     else:
@@ -443,6 +445,11 @@ def run_single_exp(variant):
                     envs = []
                     for dataset_name in MUJOCO_3_DATASETS:
                         envs.append(gym.make('%s-%s-v2' % (variant['env'], dataset_name)).unwrapped)
+                    dataset = get_d4rl_dataset_from_multiple_envs(envs)
+                elif variant[''] in ['proj1_q_sprime_3x', 'proj2_q_sprime_3x']:
+                    envs = []
+                    for dataset_name in MUJOCO_3_DATASETS:
+                        envs.append(gym.make('%s-%s-v2' % (pretrain_task_name, dataset_name)).unwrapped)
                     dataset = get_d4rl_dataset_from_multiple_envs(envs)
                 else:
                     dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, variant['offline_data_ratio'])
