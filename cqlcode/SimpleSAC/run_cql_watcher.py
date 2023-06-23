@@ -446,7 +446,7 @@ def run_single_exp(variant):
                     for dataset_name in MUJOCO_3_DATASETS:
                         envs.append(gym.make('%s-%s-v2' % (variant['env'], dataset_name)).unwrapped)
                     dataset = get_d4rl_dataset_from_multiple_envs(envs)
-                elif variant[''] in ['proj1_q_sprime_3x', 'proj2_q_sprime_3x']:
+                elif variant['pretrain_mode'] in ['proj1_q_sprime_3x', 'proj2_q_sprime_3x']:
                     envs = []
                     for dataset_name in MUJOCO_3_DATASETS:
                         envs.append(gym.make('%s-%s-v2' % (pretrain_task_name, dataset_name)).unwrapped)
