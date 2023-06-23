@@ -355,7 +355,7 @@ def run_single_exp(variant):
     # TODO has to decide pretraining dataset and their obs and act dims, based on pretraining mode.
     qf_arch = '-'.join([str(variant['qf_hidden_unit']) for _ in range(variant['qf_hidden_layer'])])
     if variant['pretrain_mode'] in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime', 'mdp_same_proj',
-                                    'proj0_q_sprime_3x', 'proj1_q_sprime_3x']:
+                                    'proj0_q_sprime_3x', 'proj1_q_sprime_3x', 'proj2_q_sprime_3x']:
         qf1 = FullyConnectedQFunctionPretrain2(
             eval_sampler.env.observation_space.shape[0],
             eval_sampler.env.action_space.shape[0],
