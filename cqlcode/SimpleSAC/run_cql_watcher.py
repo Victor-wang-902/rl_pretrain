@@ -446,11 +446,13 @@ def run_single_exp(variant):
                     for dataset_name in MUJOCO_3_DATASETS:
                         envs.append(gym.make('%s-%s-v2' % (variant['env'], dataset_name)).unwrapped)
                     dataset = get_d4rl_dataset_from_multiple_envs(envs)
+                    print("Loaded 3 datasets from", variant['env'])
                 elif variant['pretrain_mode'] in ['proj1_q_sprime_3x', 'proj2_q_sprime_3x']:
                     envs = []
                     for dataset_name in MUJOCO_3_DATASETS:
                         envs.append(gym.make('%s-%s-v2' % (pretrain_task_name, dataset_name)).unwrapped)
                     dataset = get_d4rl_dataset_from_multiple_envs(envs)
+                    print("Loaded 3 datasets from", pretrain_task_name)
                 else:
                     dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, variant['offline_data_ratio'])
                     dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
