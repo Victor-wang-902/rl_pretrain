@@ -35,12 +35,13 @@ def main():
     variant = get_default_variant_dict() # this is a dictionary
     ###########################################################
 
-    exp_prefix = 'testonly-cqlr3'
+    exp_prefix = 'preonly-cqlr3'
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['q_noact_sprime'], # 'none', 'q_sprime',
         'qf_hidden_layer', 'l', [2],
+        'do_pretrain_only', 'po', [True],
         'seed', '', [42],
     ] #
 

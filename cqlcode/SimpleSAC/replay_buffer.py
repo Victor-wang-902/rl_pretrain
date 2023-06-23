@@ -128,6 +128,25 @@ def get_d4rl_dataset_with_ratio(env, ratio=1, seed=0):
         dones=dataset['terminals'][idxs].astype(np.float32),
     )
 
+def get_d4rl_dataset_from_multiple_envs(envs):
+    n_data = 0
+    d = None
+    for env in envs:
+        dataset = d4rl.qlearning_dataset(env)
+        n_data += dataset['observations'].shape[0]
+        if not d:
+            d = dict(
+                observations = dataset['observations'],
+                actions = dataset['actions'],
+                next_observations = dataset['next_observations'],
+                rewards = dataset['rewards'],
+                dones = dataset['terminals'].astype(np.float32),
+            )
+        else:
+            for key in d:
+                d[key] = np.concatenate((d[key], dataset[key]), axis=0)
+    return d
+
 def get_mdp_dataset_with_ratio(n_traj, n_state, n_action, policy_temperature, transition_temperature,
                                ratio=1, seed=0, verbose=True):
     # TODO add the ratio thing later

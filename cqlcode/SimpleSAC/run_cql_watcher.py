@@ -24,7 +24,8 @@ import absl.app
 import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
-from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, index_batch, get_mdp_dataset_with_ratio
+from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, \
+    index_batch, get_mdp_dataset_with_ratio, get_d4rl_dataset_from_multiple_envs
 from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain, FullyConnectedQFunctionPretrain2
 from SimpleSAC.sampler import StepSampler, TrajSampler
 from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, prefix_metrics
@@ -438,10 +439,18 @@ def run_single_exp(variant):
 
             # load pretraining dataset here.
             if pretrain_env_name:
-                dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, variant['offline_data_ratio'])
-                dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
-                dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
-                print("D4RL dataset loaded for", pretrain_env_name)
+                if variant['pretrain_mode'] in ['q_sprime_3x', 'proj0_q_sprime_3x']: # , 'proj1_q_sprime_3x'
+                    envs = []
+                    for dataset_name in MUJOCO_3_DATASETS:
+                        envs.append(gym.make('%s-%s-v2' % (variant['env'], dataset_name)).unwrapped)
+                    dataset = get_d4rl_dataset_from_multiple_envs(envs)
+                    print(dataset['observations'].shape)
+                    quit()
+                else:
+                    dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, variant['offline_data_ratio'])
+                    dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
+                    dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
+                    print("D4RL dataset loaded for", pretrain_env_name)
             else:
                 dataset = get_mdp_dataset_with_ratio(variant['mdppre_n_traj'],
                                                      variant['mdppre_n_state'],
