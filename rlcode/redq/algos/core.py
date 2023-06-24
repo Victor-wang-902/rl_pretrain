@@ -153,9 +153,12 @@ class QNetPretrain(nn.Module):
         output = self.last_fc_layer(h)
         return output
 
-    # TODO
     def predict_next_state(self, input):
-        return
+        h = input
+        for i, fc_layer in enumerate(self.hidden_layers):
+            h = fc_layer(h)
+            h = self.hidden_activation(h)
+        return self.predict_next_layer(h)
 
 class TanhNormal(Distribution):
     """

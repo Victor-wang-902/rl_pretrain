@@ -582,6 +582,7 @@ def run_single_exp(variant):
             agent.q_distill_only(batch, ready_agent, 1)
         agent.update_target_network(1)
 
+    # TODO before we start offline stage, might want to copy q network into target network??????
     for epoch in range(variant['n_epochs']):
         metrics = {'epoch': epoch}
 

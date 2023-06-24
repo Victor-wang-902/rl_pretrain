@@ -4,7 +4,8 @@ from torch import Tensor
 import torch.nn as nn
 import torch.optim as optim
 from redq.algos.core import TanhGaussianPolicy, Mlp, soft_update_model1_with_model2, ReplayBuffer,\
-    mbpo_target_entropy_dict
+    mbpo_target_entropy_dict, QNetPretrain
+import torch.nn.functional as F
 
 def get_probabilistic_num_min(num_mins):
     # allows the number of min to be a float
@@ -39,9 +40,9 @@ class REDQSACAgent(object):
         self.policy_net = TanhGaussianPolicy(obs_dim, act_dim, hidden_sizes, action_limit=act_limit).to(device)
         self.q_net_list, self.q_target_net_list = [], []
         for q_i in range(num_Q):
-            new_q_net = Mlp(obs_dim + act_dim, 1, hidden_sizes).to(device)
+            new_q_net = QNetPretrain(obs_dim, act_dim, 1, hidden_sizes).to(device)
             self.q_net_list.append(new_q_net)
-            new_q_target_net = Mlp(obs_dim + act_dim, 1, hidden_sizes).to(device)
+            new_q_target_net = QNetPretrain(obs_dim, act_dim, 1, hidden_sizes).to(device)
             new_q_target_net.load_state_dict(new_q_net.state_dict())
             self.q_target_net_list.append(new_q_target_net)
         # set up optimizers
@@ -103,6 +104,10 @@ class REDQSACAgent(object):
             else:
                 action = env.action_space.sample()
         return action
+
+    def hard_update_target_q_nets(self):
+        for q_i in range(len(self.q_net_list)):
+            self.q_target_net_list[q_i].load_state_dict(self.q_net_list[q_i].state_dict())
 
     def get_test_action(self, obs):
         # given an observation, output a deterministic action in numpy form
@@ -191,7 +196,26 @@ class REDQSACAgent(object):
         return y_q, sample_idxs
 
     def pretrain(self, batch):
-        return
+        observations = batch['observations']
+        actions = batch['actions']
+        next_observations = batch['next_observations']
+        prediction_list = []
+        for q_net in self.q_net_list:
+            s_a = torch.cat([observations, actions], 1)
+            prediction = q_net.predict_next_state(s_a)
+            prediction_list.append(prediction)
+
+        pretrain_loss = 0
+        for prediction in prediction_list:
+            pretrain_loss += F.mse_loss(prediction, next_observations)
+
+        for q_i in range(self.num_Q):
+            self.q_optimizer_list[q_i].zero_grad()
+        pretrain_loss.backward()
+        for q_i in range(self.num_Q):
+            self.q_optimizer_list[q_i].step()
+
+        return pretrain_loss.item()
 
     def train(self, logger):
         # this function is called after each datapoint collected.

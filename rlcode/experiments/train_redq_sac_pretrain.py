@@ -148,13 +148,15 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
             batch['next_observations'] = index2state[batch['next_observations']]
             batch = batch_to_torch(batch, device)
             # TODO implement pretrain in agent
-            agent.pretrain(batch)
-
+            pretrain_loss = agent.pretrain(batch)
+            agent.hard_update_target_q_nets()
+            print("pretrain loss:", pretrain_loss)
             quit()
 
     """online stage"""
     seed_all(epoch=0)
     o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
+
 
     for t in range(total_steps):
         # get action from agent
