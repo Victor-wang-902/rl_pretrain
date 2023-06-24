@@ -6,7 +6,7 @@ os.environ['MUJOCO_GL'] = 'egl'
 os.environ['MUJOCO_PY_MUJOCO_PATH'] = '/workspace/.mujoco/mujoco210/'
 
 from exp_scripts.grid_utils import *
-from experiments.train_redq_sac import redq_sac as function_to_run ## here make sure you import correct function
+from experiments.train_redq_sac_pretrain import redq_sac as function_to_run ## here make sure you import correct function
 import time
 import argparse
 
