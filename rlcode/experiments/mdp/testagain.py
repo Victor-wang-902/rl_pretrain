@@ -27,7 +27,7 @@ if __name__ == '__main__':
     # env, dataset and seed values will be added to the end of the folder name string
     # for each 3-tuple,
     settings = [
-        'env_name', '', ['hopper'],
+        'env_name', '', ['Hopper-v2'],
         'seed', '', [42, 666, 1024],
     ]
 
