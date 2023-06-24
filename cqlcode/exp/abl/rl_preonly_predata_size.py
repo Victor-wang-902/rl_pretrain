@@ -41,7 +41,7 @@ def main():
         'dataset', '', MUJOCO_3_DATASETS, # 'medium', 'medium-replay', 'medium-expert',
         'pretrain_mode', 'pre', ['q_sprime'], # 'none', 'q_sprime',
         'qf_hidden_layer', 'l', [2],
-        'pretrain_data_ratio', 'pdr', [0.1, 0.25, 0.5, 0.75],
+        'pretrain_data_ratio', 'pdr', [0.01, 0.1, 0.25, 0.5, 0.75],
         'do_pretrain_only', 'po', [True],
         'seed', '', [42],
     ] #

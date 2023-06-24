@@ -45,7 +45,7 @@ def main():
         'mdppre_policy_temperature', 'pt', [1],
         'mdppre_state_dim', 'sd', [20],
         'mdppre_same_as_s_and_policy', 'same', [True],
-        'pretrain_data_ratio', 'pdr', [0.1, 0.25, 0.5, 0.75],
+        'pretrain_data_ratio', 'pdr', [0.01, 0.1, 0.25, 0.5, 0.75],
         'do_pretrain_only', 'po', [True],
         'seed', '', [42],
     ] #
