@@ -8,7 +8,7 @@ from redq.algos.core import mbpo_epoches, test_agent
 from redq.utils.run_utils import setup_logger_kwargs
 from redq.utils.bias_utils import log_bias_evaluation
 from redq.utils.logx import EpochLogger
-from cqlcode.SimpleSAC.replay_buffer import get_mdp_dataset_with_ratio, subsample_batch, batch_to_torch
+from SimpleSAC.replay_buffer import get_mdp_dataset_with_ratio, subsample_batch, batch_to_torch
 
 def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
              max_ep_len=1000, n_evals_per_epoch=1,
