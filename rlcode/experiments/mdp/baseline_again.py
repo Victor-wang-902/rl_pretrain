@@ -27,8 +27,8 @@ if __name__ == '__main__':
     # env, dataset and seed values will be added to the end of the folder name string
     # for each 3-tuple,
     settings = [
-        'env_name', '', ['Hopper-v2'],
-        'seed', '', [42, 666, 1024],
+        'env_name', '', ['Hopper-v2', 'HalfCheetah-v2', 'Walker2d-v2', 'Ant-v2', 'Humanoid-v2'],
+        'seed', '', [0, 1, 42, 666, 1024],
     ]
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting_id)
