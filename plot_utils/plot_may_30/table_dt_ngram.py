@@ -288,24 +288,6 @@ def generate_table_nstep_markov_chain():
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
 
-def generate_table_nstep_markov_chain2():
-    #################### table 2
-    # DT table, pretrain with markov chain data change number of step
-    algs = [
-    'dt-rerun-data_size_dt_1.0',
-        'chibiT-rerun',
-        'chibiT-rerun-syn_ngram1_nvocab10_temperature1.0',
-        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
-        'chibiT-rerun-syn_ngram1_nvocab1000_temperature1.0',
-        'chibiT-rerun-syn_ngram1_nvocab10000_temperature1.0',
-        'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0',
-    ]
-    col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 10', '1-MC Voc 100','1-MC Voc 1000','1-MC Voc 10000', '5-MC Voc 50257', ]
-    envs = all_envs
-    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
-    generate_aggregate_table(algs, alg_dataset_dict, col_names)
-
-
 def generate_table_cql_cross_domain():
     # CQL table, cross domain pretraining
     algs = [
@@ -443,7 +425,6 @@ def generate_table_no_action_predict_next_state():
 ##################### table generation
 # generate_table_nvocab_markov_chain()
 # generate_table_nstep_markov_chain()
-# generate_table_nstep_markov_chain2()
 
 # generate_table_cql_cross_domain()
 

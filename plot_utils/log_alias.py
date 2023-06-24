@@ -3,7 +3,46 @@
 """
 DT related
 """
+# DT baselines
+dt = 'dt-rerun-data_size_dt_1.0'
+chibiT = 'chibiT-rerun'
 
+# DT data size experiment
+dt_finetune_data_size_0_1 = 'dt-rerun-data_size_dt_0.1'
+dt_finetune_data_size_0_25 = 'dt-rerun-data_size_dt_0.25'
+dt_finetune_data_size_0_5 = 'dt-rerun-data_size_dt_0.5'
+dt_finetune_data_size_0_75 = 'dt-rerun-data_size_dt_0.75'
+dt_finetune_data_size_1 = dt
+
+chibiT_finetune_data_size_0_1 = 'chibiT-rerun-data_size_dt_0.1'
+chibiT_finetune_data_size_0_25 = 'chibiT-rerun-data_size_dt_0.25'
+chibiT_finetune_data_size_0_5 = 'chibiT-rerun-data_size_dt_0.5'
+chibiT_finetune_data_size_0_75 = 'chibiT-rerun-data_size_dt_0.75'
+chibiT_finetune_data_size_1 = chibiT
+
+# DT with different model sizes
+dt_model_size_default = dt
+dt_model_size_4layer_256 = 'dt_embed_dim256_n_layer4_n_head4'
+dt_model_size_6layer_512 = 'dt_embed_dim512_n_layer6_n_head8'
+dt_model_size_12layer_768 = 'dt_embed_dim768_n_layer12_n_head12'
+
+chibiT_model_size_default = chibiT
+chibiT_model_size_4layer_256 = 'chibiT_embed_dim256_n_layer4_n_head4'
+chibiT_model_size_6layer_512 = 'chibiT_embed_dim512_n_layer6_n_head8'
+chibiT_model_size_12layer_768 = 'chibiT_embed_dim768_n_layer12_n_head12'
+
+
+# DT with markov chain pretraining
+dt_mc_1step_vocab10 = 'chibiT-rerun-syn_ngram1_nvocab10_temperature1.0'
+dt_mc_1step_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0'
+dt_mc_1step_vocab1000 = 'chibiT-rerun-syn_ngram1_nvocab1000_temperature1.0'
+dt_mc_1step_vocab10000 = 'chibiT-rerun-syn_ngram1_nvocab10000_temperature1.0'
+dt_mc_1step_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature1.0'
+
+dt_mc_2step_vocab50257 = 'chibiT-rerun-syn_ngram2_nvocab50257_temperature1.0'
+dt_mc_3step_vocab50257 = 'chibiT-rerun-syn_ngram3_nvocab50257_temperature1.0'
+dt_mc_4step_vocab50257 = 'chibiT-rerun-syn_ngram4_nvocab50257_temperature1.0'
+dt_mc_5step_vocab50257 = 'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0'
 
 
 
