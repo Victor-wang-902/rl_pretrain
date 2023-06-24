@@ -9,6 +9,7 @@ from redq.utils.run_utils import setup_logger_kwargs
 from redq.utils.bias_utils import log_bias_evaluation
 from redq.utils.logx import EpochLogger
 from SimpleSAC.replay_buffer import get_mdp_dataset_with_ratio, subsample_batch, batch_to_torch
+from tqdm import tqdm
 
 def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
              max_ep_len=1000, n_evals_per_epoch=1,
@@ -19,7 +20,7 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
              lr=3e-4, gamma=0.99, polyak=0.995,
              alpha=0.2, auto_alpha=True, target_entropy='mbpo',
              start_steps=5000, delay_update_steps='auto',
-             utd_ratio=20, num_Q=10, num_min=2, q_target_mode='min',
+             utd_ratio=1, num_Q=2, num_min=2, q_target_mode='min',
              policy_update_delay=20,
              # following are bias evaluation related
              evaluate_bias=True, n_mc_eval=1000, n_mc_cutoff=350, reseed_each_epoch=True,
@@ -141,14 +142,14 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
                                              transition_temperature,
                                              ratio=1)
 
-        for i_pretrain in range(1000000):
+        for i_pretrain in tqdm(range(1000000)):
             batch = subsample_batch(dataset, batch_size)
             batch['observations'] = index2state[batch['observations']]
             batch['actions'] = index2action[batch['actions']]
             batch['next_observations'] = index2state[batch['next_observations']]
             batch = batch_to_torch(batch, device)
             pretrain_loss = agent.pretrain(batch)
-            if i_pretrain % 5000 == 0:
+            if i_pretrain % 1000 == 0:
                 print('Pretrain step %d, loss: %.4f' % (i_pretrain, pretrain_loss))
 
     """online stage"""
