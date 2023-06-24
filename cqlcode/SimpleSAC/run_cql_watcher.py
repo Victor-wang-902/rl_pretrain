@@ -479,6 +479,10 @@ def run_single_exp(variant):
                 index2state = 2 * np.random.rand(variant['mdppre_n_state'], variant['mdppre_state_dim']) - 1
                 index2action = 2 * np.random.rand(variant['mdppre_n_action'], variant['mdppre_action_dim']) - 1
                 index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)
+            if variant['pretrain_mode'] == 'random_fd_1000_state':
+                index2state = 2 * np.random.rand(1000, pretrain_obs_dim) - 1
+                index2action = 2 * np.random.rand(1000, pretrain_act_dim) - 1
+                index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)
 
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch+1}
@@ -489,6 +493,13 @@ def run_single_exp(variant):
                         batch['observations'] = index2state[batch['observations']]
                         batch['actions'] = index2action[batch['actions']]
                         batch['next_observations'] = index2state[batch['next_observations']]
+                    if variant['pretrain_mode'] == 'random_fd_1000_state':
+                        rand_obs = np.random.choice(1000, size=variant['batch_size'])
+                        rand_acts = np.random.choice(1000, size=variant['batch_size'])
+                        rand_next_obs = np.random.choice(1000, size=variant['batch_size'])
+                        batch['observations'] = index2state[rand_obs]
+                        batch['actions'] = index2action[rand_acts]
+                        batch['next_observations'] = index2state[rand_next_obs]
 
                     batch = batch_to_torch(batch, variant['device'])
                     metrics.update(agent.pretrain(batch, variant['pretrain_mode']))

@@ -366,7 +366,7 @@ class ConservativeSAC(object):
         next_observations = batch['next_observations']
         # dones = batch['dones']
 
-        if pretrain_mode in ['q_sprime', 'mdp_same_noproj', 'q_sprime_3x']:
+        if pretrain_mode in ['q_sprime', 'mdp_same_noproj', 'q_sprime_3x', 'random_fd_1000_state']:
             # here use both q networks to predict next obs
             obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
             obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
