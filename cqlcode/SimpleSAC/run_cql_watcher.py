@@ -420,8 +420,8 @@ def run_single_exp(variant):
             if variant['pretrain_data_ratio'] == 1:
                 dataset_name_string = variant['mdppre_n_traj']
             else:
-                dataset_name_string = '%s_%s' % (variant['mdppre_n_traj'], str(variant['pretrain_data_ratio']))
-            pretrain_model_name = '%s_%s_%d_%d_%d_%s_%s_%d_%d_%s_%d_%d_%s.pth' % (
+                dataset_name_string = '%d_%s' % (variant['mdppre_n_traj'], str(variant['pretrain_data_ratio']))
+            pretrain_model_name = '%s_%s_%s_%d_%d_%s_%s_%d_%d_%s_%d_%d_%s.pth' % (
                 'cql', variant['env'], # downstream task env is needed here because pretrain projection will be different for each task
                 dataset_name_string, variant['mdppre_n_state'], variant['mdppre_n_action'],
                 str(variant['mdppre_policy_temperature']), str(variant['mdppre_transition_temperature']),
