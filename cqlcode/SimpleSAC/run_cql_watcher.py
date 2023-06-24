@@ -98,6 +98,8 @@ def get_default_variant_dict():
         mdppre_state_dim=20,
         mdppre_action_dim=20,
         mdppre_same_as_s_and_policy=False, # if True, then action hyper will be same as state, tt will be same as pt
+
+        hard_update_target_after_pretrain=False, # if True, hard update target networks after pretraining stage.
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -549,6 +551,10 @@ def run_single_exp(variant):
     sys.stdout.flush()
     if variant['do_pretrain_only']:
         return
+
+    if variant['hard_update_target_after_pretrain']:
+        agent.update_target_network(1)
+
     agent_after_pretrain = deepcopy(agent)
     if variant['save_model']:
         save_dict = {'agent': agent_after_pretrain, 'variant': variant, 'epoch': 0}
