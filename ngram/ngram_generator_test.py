@@ -9,6 +9,56 @@ from numpy.random import Generator, SeedSequence, default_rng
 from sklearn.utils.extmath import softmax
 
 
+"""class RandomTokenGenerator:
+    def __init__(
+        self,
+        nvocab,
+        seed,
+        mode=0,
+    ):
+        torch.manual_seed(seed)
+        self.vocab = nvocab
+        self.seed = seed
+        self.num_workers = num_workers
+        self.mode = mode
+        self.sample_seeder = [default_rng(self.seed) for _ in range(num_workers)]
+
+    def set_sample_seed(self, worker_id, iter_o):
+        itr = iter_o * self.num_workers + worker_id
+        env_seed = self.seed + itr
+        self.sample_seeder[worker_id] = default_rng(env_seed)
+
+    def generate_worker(self, worker_id, total_itr, max_length, batch_size, results_queue, event):
+        print("workerid", worker_id)
+        generated = None
+        if self.mode == 0:
+            self.set_sample_seed(worker_id, total_itr)
+        
+            generated = self.sample_seeder[worker_id].multinomial(batch_size * max_length, [1.0/self.vocab] * self.vocab, (batch_size, max_length))
+        else:
+            distribution = ##TODO
+        for itr in range(max_length):
+            self.set_sample_seed(worker_id, total_itr, itr, max_length)
+            if generated is not None:
+
+                toks = self.sample_seeder[worker_id].multinomial(1, probs).argmax(1).reshape(1,-1)
+                #print(toks)
+                generated = np.concatenate([generated, toks], axis=0)
+            else:
+                param_np = self.get_param(worker_id)
+                probs = softmax(param_np / self.temperature)
+                tok = self.sample_seeder[worker_id].choice(self.nvocab, size=(batch_size,), p=probs.squeeze())
+                #print(self.sample_seeder[worker_id].multinomial(batch_size, probs).shape)
+
+                #tok = self.sample_seeder[worker_id].multinomial(batch_size, probs).argmax(1).reshape(1,-1)
+                #print(tok)
+                #raise Exception
+                tok = tok.reshape(1, -1)
+                generated = tok
+        results_queue.put(generated.T)
+        event.set()
+        return
+"""
 class NGramGenerator:
     def __init__(
         self,

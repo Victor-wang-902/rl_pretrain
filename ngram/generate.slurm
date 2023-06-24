@@ -5,7 +5,7 @@
 ##SBATCH --partition=aquila
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=10GB
-#SBATCH --job-name=hopper_train
+#SBATCH --job-name=v100_n5_train
 #SBATCH --mail-type=END
 ##SBATCH --mail-user=zw2374@nyu.edu
 #SBATCH --time=168:00:00
@@ -18,5 +18,5 @@ export PYTHONPATH=$PYTHONPATH:/code
 nvidia-smi
 echo $PATH
 echo $LD_LIBRARY_PATH
-python generate_test.py --nvocab 50257 --ngram 1 --temperature 10.0 --raw --outdir data_online_new_new --num_workers 32 --batch_size 1024 --iterations 125 --online
+python generate_test.py --nvocab 100 --ngram 5 --temperature 1.0 --raw --outdir data_online_new_new --num_workers 32 --batch_size 1024 --iterations 125 --online
 "

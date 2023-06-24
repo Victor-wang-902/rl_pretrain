@@ -84,7 +84,7 @@ def get_dataloader(dataset, collator, batch_size, worker_init_fn=None, num_worke
 def load_synthetic_dataset(data, valid=4000, test=4000):
     with open(data, "r") as f:
         reader = csv.reader(f, delimiter=",")
-        data = [list(map(int, rec)) for rec in in reader]
+        data = [list(map(int, rec)) for rec in reader]
     train = data[:-(valid + test)]
     valid = data[len(train):-test]
     test = data[len(train) + len(valid):]
@@ -96,11 +96,12 @@ class SyntheticTokenizer:
         self.eos_token_id = self.nvocab
 
 class SyntheticDataset(IterableDataset):
-    def __init__(self, data, tokenizer, split="train", n_tokens=1024, seed=0, data_size=1.0):
+    def __init__(self, data, split="train", n_tokens=1024, seed=0, data_size=1.0):
         super().__init__()
         self.data = data
-        self.tokenizer = tokenizer
-        self.eos_token_id = tokenizer.eos_token_id
+        #self.tokenizer = tokenizer
+        #self.eos_token_id = tokenizer.eos_token_id
+        self.tokenized = []
 
         ind = list(range(len(data)))
         if split == "train":
@@ -111,8 +112,8 @@ class SyntheticDataset(IterableDataset):
         print("read %s entries from the raw dataset" % str(len(ind)))
         for i in tqdm.tqdm(ind):
             line = data[i]
-            input_ids =  line + [self.eos_token_id]
-            attention_mask = [1 for _ in range(len(line))] + [1]
+            input_ids =  line #+ [self.eos_token_id]
+            attention_mask = [1 for _ in range(len(line))] #+ [1]
             self.tokenized.append({"input_ids": input_ids, "attention_mask": attention_mask})
         print("processed %s entries in the tokenized dataset" % str(len(self.tokenized)))
         self.start = 0
