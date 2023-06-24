@@ -45,22 +45,22 @@ dt_mc_3step_vocab50257 = 'chibiT-rerun-syn_ngram3_nvocab50257_temperature1.0'
 dt_mc_4step_vocab50257 = 'chibiT-rerun-syn_ngram4_nvocab50257_temperature1.0'
 dt_mc_5step_vocab50257 = 'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0'
 
-dt_mc_temp0.1_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature0.1'
-dt_mc_temp0.2_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature0.2'
-dt_mc_temp0.4_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature0.4'
-dt_mc_temp0.8_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature0.8'
-dt_mc_temp10.0_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature10.0'
+dt_mc_temp0_1_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature0.1'
+dt_mc_temp0_2_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature0.2'
+dt_mc_temp0_4_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature0.4'
+dt_mc_temp0_8_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature0.8'
+dt_mc_temp10_0_vocab50257 = 'chibiT-rerun-syn_ngram1_nvocab50257_temperature10.0'
 
 dt_mc_2step_vocab100 = 'chibiT-rerun-syn_ngram2_nvocab100_temperature1.0'
 dt_mc_3step_vocab100 = 'chibiT-rerun-syn_ngram3_nvocab100_temperature1.0'
 dt_mc_4step_vocab100 = 'chibiT-rerun-syn_ngram4_nvocab100_temperature1.0'
 dt_mc_5step_vocab100 = 'chibiT-rerun-syn_ngram5_nvocab100_temperature1.0'
 
-dt_mc_temp0.1_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature0.1'
-dt_mc_temp0.2_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature0.2'
-dt_mc_temp0.4_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature0.4'
-dt_mc_temp0.8_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature0.8'
-dt_mc_temp10.0_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature10.0'
+dt_mc_temp0_1_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature0.1'
+dt_mc_temp0_2_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature0.2'
+dt_mc_temp0_4_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature0.4'
+dt_mc_temp0_8_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature0.8'
+dt_mc_temp10_0_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature10.0'
 
 """
 CQL related
