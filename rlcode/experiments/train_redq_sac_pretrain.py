@@ -152,6 +152,7 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
             if i_pretrain % 10000 == 0:
                 print('Pretrain step %d, loss: %.4f' % (i_pretrain, pretrain_loss))
         print('Pretraining stage finished!')
+        dataset = None
 
     """online stage"""
     seed_all(epoch=0)
