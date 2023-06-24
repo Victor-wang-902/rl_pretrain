@@ -9,7 +9,7 @@ from redq.utils.run_utils import setup_logger_kwargs
 from redq.utils.bias_utils import log_bias_evaluation
 from redq.utils.logx import EpochLogger
 
-def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
+def redq_sac(env, seed=0, epochs='mbpo', steps_per_epoch=1000,
              max_ep_len=1000, n_evals_per_epoch=1,
              logger_kwargs=dict(), debug=False,
              # following are agent related hyperparameters
@@ -78,7 +78,7 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
 
     """set up environment and seeding"""
     env_fn = lambda: gym.make(env_name)
-    env, test_env, bias_eval_env = env_fn(), env_fn(), env_fn()
+    train_env, test_env, bias_eval_env = env_fn(), env_fn(), env_fn()
     # seed torch and numpy
     torch.manual_seed(seed)
     np.random.seed(seed)
@@ -92,8 +92,8 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
         bias_eval_env_seed = (seed + 20000 + seed_shift) % mod_value
         torch.manual_seed(env_seed)
         np.random.seed(env_seed)
-        env.seed(env_seed)
-        env.action_space.np_random.seed(env_seed)
+        train_env.seed(env_seed)
+        train_env.action_space.np_random.seed(env_seed)
         test_env.seed(test_env_seed)
         test_env.action_space.np_random.seed(test_env_seed)
         bias_eval_env.seed(bias_eval_env_seed)
@@ -102,13 +102,13 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
 
     """prepare to init agent"""
     # get obs and action dimensions
-    obs_dim = env.observation_space.shape[0]
-    act_dim = env.action_space.shape[0]
+    obs_dim = train_env.observation_space.shape[0]
+    act_dim = train_env.action_space.shape[0]
     # if environment has a smaller max episode length, then use the environment's max episode length
-    max_ep_len = env._max_episode_steps if max_ep_len > env._max_episode_steps else max_ep_len
+    max_ep_len = train_env._max_episode_steps if max_ep_len > train_env._max_episode_steps else max_ep_len
     # Action limit for clamping: critically, assumes all dimensions share the same bound!
     # we need .item() to convert it from numpy float to python float
-    act_limit = env.action_space.high[0].item()
+    act_limit = train_env.action_space.high[0].item()
     # keep track of run time
     start_time = time.time()
     # flush logger (optional)
@@ -124,13 +124,13 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
                  utd_ratio, num_Q, num_min, q_target_mode,
                  policy_update_delay, ensemble_decay_n_data, safe_q_target_factor)
 
-    o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
+    o, r, d, ep_ret, ep_len = train_env.reset(), 0, False, 0, 0
 
     for t in range(total_steps):
         # get action from agent
-        a = agent.get_exploration_action(o, env)
+        a = agent.get_exploration_action(o, train_env)
         # Step the env, get next observation, reward and done signal
-        o2, r, d, _ = env.step(a)
+        o2, r, d, _ = train_env.step(a)
 
         # Very important: before we let agent store this transition,
         # Ignore the "done" signal if it comes from hitting the time
@@ -152,7 +152,7 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
             # store episode return and length to logger
             logger.store(EpRet=ep_ret, EpLen=ep_len)
             # reset environment
-            o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
+            o, r, d, ep_ret, ep_len = train_env.reset(), 0, False, 0, 0
 
         # End of epoch wrap-up
         if (t+1) % steps_per_epoch == 0:
