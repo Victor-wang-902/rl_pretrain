@@ -150,7 +150,10 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
             # TODO implement pretrain in agent
             agent.pretrain(batch)
 
+            quit()
+
     """online stage"""
+    seed_all(epoch=0)
     o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
     for t in range(total_steps):
