@@ -82,6 +82,7 @@ def get_default_variant_dict():
         cql=ConservativeSAC.get_default_config(),
         logging=WandBLogger.get_default_config(),
         do_pretrain_only=False,
+        pretrain_data_ratio=1,
         offline_data_ratio=1,
         q_distill_weight=0,
         q_distill_pretrain_steps=0, # will not use the q distill weight defined here
@@ -408,19 +409,27 @@ def run_single_exp(variant):
     if variant['pretrain_mode'] != 'none':
         pretrain_model_folder_path = '/cqlcode/pretrained_cql_models/'
         if variant['pretrain_mode'] not in ['mdp_q_sprime', 'mdp_same_proj', 'mdp_same_noproj']:
+            if variant['pretrain_data_ratio'] == 1:
+                dataset_name_string = variant['dataset']
+            else:
+                dataset_name_string = '%s_%s' % (variant['dataset'], str(variant['pretrain_data_ratio']))
             pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s.pth' % (
-                'cql', variant['env'], variant['dataset'], variant['pretrain_mode'],
+                'cql', variant['env'], dataset_name_string, variant['pretrain_mode'],
                 variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
         else: # mdp pretrain
-            pretrain_model_name = '%s_%d_%d_%d_%s_%s_%d_%d_%s_%d_%d_%s.pth' % (
-                'cql',
-                variant['mdppre_n_traj'], variant['mdppre_n_state'], variant['mdppre_n_action'],
+            if variant['pretrain_data_ratio'] == 1:
+                dataset_name_string = variant['mdppre_n_traj']
+            else:
+                dataset_name_string = '%s_%s' % (variant['mdppre_n_traj'], str(variant['pretrain_data_ratio']))
+            pretrain_model_name = '%s_%s_%d_%d_%d_%s_%s_%d_%d_%s_%d_%d_%s.pth' % (
+                'cql', variant['env'], # downstream task env is needed here because pretrain projection will be different for each task
+                dataset_name_string, variant['mdppre_n_state'], variant['mdppre_n_action'],
                 str(variant['mdppre_policy_temperature']), str(variant['mdppre_transition_temperature']),
                 variant['mdppre_state_dim'], variant['mdppre_action_dim'],
                 variant['pretrain_mode'], variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'])
 
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
-        try:
+        if os.path.exists(pretrain_full_path):
             if not torch.cuda.is_available():
                 pretrain_dict = torch.load(pretrain_full_path, map_location=torch.device('cpu'))
             else:
@@ -429,16 +438,12 @@ def run_single_exp(variant):
             agent.qf2.load_state_dict(pretrain_dict['agent'].qf2.state_dict())
             loaded = True
             print("Pretrained model loaded from:", pretrain_full_path)
-        except Exception as e:
-            print(e, "No pretrained model, start pretraining.")
+        else:
+            print("Pretrained model does not exist:", pretrain_full_path)
             loaded = False
 
         if not loaded:
-            # TODO be careful not to get pretrainig messed
-            if variant['offline_data_ratio'] < 1:
-                print("warning offline data ratio in pretraining")
-                quit()
-
+            print("Start pretraining")
             # load pretraining dataset here.
             if pretrain_env_name:
                 if variant['pretrain_mode'] in ['q_sprime_3x', 'proj0_q_sprime_3x']: # , 'proj1_q_sprime_3x'
@@ -447,14 +452,19 @@ def run_single_exp(variant):
                         envs.append(gym.make('%s-%s-v2' % (variant['env'], dataset_name)).unwrapped)
                     dataset = get_d4rl_dataset_from_multiple_envs(envs)
                     print("Loaded 3 datasets from", variant['env'])
+                    if variant['pretrain_data_ratio'] < 1:
+                        raise NotImplementedError
                 elif variant['pretrain_mode'] in ['proj1_q_sprime_3x', 'proj2_q_sprime_3x']:
                     envs = []
                     for dataset_name in MUJOCO_3_DATASETS:
                         envs.append(gym.make('%s-%s-v2' % (pretrain_task_name, dataset_name)).unwrapped)
                     dataset = get_d4rl_dataset_from_multiple_envs(envs)
                     print("Loaded 3 datasets from", pretrain_task_name)
+                    if variant['pretrain_data_ratio'] < 1:
+                        raise NotImplementedError
                 else:
-                    dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, variant['offline_data_ratio'])
+                    # TODO add hyper to change pretrain data size, need to reflect that in pretrain model name
+                    dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, ratio=variant['pretrain_data_ratio'])
                     dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
                     dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
                     print("D4RL dataset loaded for", pretrain_env_name)
@@ -463,7 +473,9 @@ def run_single_exp(variant):
                                                      variant['mdppre_n_state'],
                                                      variant['mdppre_n_action'],
                                                      variant['mdppre_policy_temperature'],
-                                                     variant['mdppre_transition_temperature'])
+                                                     variant['mdppre_transition_temperature'],
+                                                     ratio=variant['pretrain_data_ratio'])
+                np.random.seed(0)
                 index2state = 2 * np.random.rand(variant['mdppre_n_state'], variant['mdppre_state_dim']) - 1
                 index2action = 2 * np.random.rand(variant['mdppre_n_action'], variant['mdppre_action_dim']) - 1
                 index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)

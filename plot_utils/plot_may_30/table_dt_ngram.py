@@ -3,6 +3,7 @@ import numpy as np
 import pandas as pd
 import json
 # use this to generate the main table
+from log_alias import *
 
 base_measures = ['best_return_normalized', 'best_return',
                  'final_test_returns', 'final_test_normalized_returns',
@@ -160,13 +161,19 @@ def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bo
     for i, row in enumerate(rows):
         for j, alg in enumerate(algs):
             table[0,i,j], table[1,i,j] = get_aggregated_value(alg_dataset_dict, alg, row)
+            if row == 'best_return_normalized':
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, alg, 'best_return_normalized_std')
+                table[1, i, j] = std_mean
+            if row == 'final_test_normalized_returns':
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, alg, 'final_test_normalized_returns_std')
+                table[1, i, j] = std_mean
 
     max_values = np.max(table[0], axis=1)
     min_values = np.min(table[0], axis=1)
 
     col_name_line = ''
     for col in column_names:
-        col_name_line += col +' & '
+        col_name_line += str(col) +' & '
     col_name_line = col_name_line[:-2] + '\\\\'
     print(col_name_line)
     print("		\\hline ")
@@ -300,7 +307,6 @@ def generate_table_nstep_markov_chain2():
 
 
 def generate_table_cql_cross_domain():
-    #################### table 3
     # CQL table, cross domain pretraining
     algs = [
     'cqlr3_prenone_l2_qflrs1',
@@ -316,10 +322,135 @@ def generate_table_cql_cross_domain():
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
 
+def generate_table_cql_mdp_compare_n_state_action():
+    algs = [
+        # cql_base,
+        # cql_fd_pretrain,
+        # cql_random_pretrain,
+        cql_mdp_pretrain_nstate1,
+        cql_mdp_pretrain_nstate10,
+        cql_mdp_pretrain_nstate100,
+        cql_mdp_pretrain_nstate1000,
+        cql_mdp_pretrain_nstate10000,
+        cql_mdp_pretrain_nstate50257,
+    ]
+    col_names = ['Measures',
+                 # 'CQL', 'CQL pre', 'CQL rand pre',
+                '1', '10', '100', '1000', '10000', '50257'
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_cql_mdp_compare_temperature():
+    algs = [
+        # cql_base,
+        # cql_fd_pretrain,
+        # cql_random_pretrain,
+        cql_mdp_pretrain_temperature0_01,
+        cql_mdp_pretrain_temperature0_1,
+        cql_mdp_pretrain_temperature1,
+        cql_mdp_pretrain_temperature10,
+        cql_mdp_pretrain_temperature100,
+    ]
+    col_names = ['Measures',
+                 # 'CQL', 'CQL pre', 'CQL rand pre',
+                '0.01', '0.1', '1', '10', '100'
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_cql_mdp_compare_state_action_dim():
+    algs = [
+        # cql_base,
+        # cql_fd_pretrain,
+        # cql_random_pretrain,
+        cql_mdp_pretrain_state_action_dim1,
+        cql_mdp_pretrain_state_action_dim5,
+        cql_mdp_pretrain_state_action_dim20,
+        cql_mdp_pretrain_state_action_dim50,
+        cql_mdp_pretrain_state_action_dim200,
+        cql_mdp_pretrain_state_action_dim1000,
+    ]
+    col_names = ['Measures',
+                 # 'CQL', 'CQL pre', 'CQL rand pre',
+                '1', '5', '20', '50', '200', '1000'
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+
+def generate_table_cql_mdp_same_dim_with_and_no_projection():
+    algs = [
+        cql_fd_pretrain,
+        cql_fd_pretrain_same_task_with_projection,
+        cql_fd_pretrain_cross_task1,
+        cql_fd_pretrain_cross_task2,
+        cql_mdp_pretrain_same_dim_no_projection,
+        cql_mdp_pretrain_same_dim_with_projection,
+    ]
+    col_names = ['Measures',
+                'CQL pre', 'CQL pre (proj)',
+                'CQL cross task', 'CQL cross task',
+                 'CQL mdp same dim', 'CQL mdp same dim (proj)',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+
+def generate_table_cql_3x_data():
+    algs = [
+        cql_base,
+        cql_fd_pretrain,
+        cql_fd_3x_data,
+        cql_fd_3x_data_with_projection,
+        cql_fd_3x_data_cross_task,
+    ]
+    col_names = ['Measures',
+                 'CQL',
+                'CQL pre', 'CQL pre (3x)',
+                 'CQL pre (3x, proj)', 'CQL cross-task 3x'
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_no_action_predict_next_state():
+    algs = [
+        cql_base,
+        cql_fd_pretrain,
+        cql_no_action_predict_next_state
+    ]
+    col_names = ['Measures',
+                 'CQL',
+                'CQL pre',
+                 'CQL fd no act',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
 
 ##################### table generation
 # generate_table_nvocab_markov_chain()
 # generate_table_nstep_markov_chain()
 # generate_table_nstep_markov_chain2()
 
-generate_table_cql_cross_domain()
+# generate_table_cql_cross_domain()
+
+# generate_table_cql_mdp_compare_n_state_action()
+# generate_table_cql_mdp_compare_temperature()
+# generate_table_cql_mdp_compare_state_action_dim()
+# generate_table_cql_mdp_same_dim_with_and_no_projection()
+
+# generate_table_cql_3x_data()
+# generate_table_no_action_predict_next_state()
