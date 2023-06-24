@@ -24,7 +24,7 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
              policy_update_delay=20,
              # following are bias evaluation related
              evaluate_bias=True, n_mc_eval=1000, n_mc_cutoff=350, reseed_each_epoch=True,
-             mdp_pretrain=False,
+             mdp_pretrain=False, pretrain_step=1000000,
              ):
     """
     :param env_name: name of the gym environment
@@ -142,15 +142,16 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
                                              transition_temperature,
                                              ratio=1)
 
-        for i_pretrain in tqdm(range(1000000)):
+        for i_pretrain in tqdm(range(pretrain_step)):
             batch = subsample_batch(dataset, batch_size)
             batch['observations'] = index2state[batch['observations']]
             batch['actions'] = index2action[batch['actions']]
             batch['next_observations'] = index2state[batch['next_observations']]
             batch = batch_to_torch(batch, device)
             pretrain_loss = agent.pretrain(batch)
-            if i_pretrain % 1000 == 0:
+            if i_pretrain % 10000 == 0:
                 print('Pretrain step %d, loss: %.4f' % (i_pretrain, pretrain_loss))
+        print('Pretraining stage finished!')
 
     """online stage"""
     seed_all(epoch=0)

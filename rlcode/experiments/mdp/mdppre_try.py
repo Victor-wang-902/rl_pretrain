@@ -28,7 +28,10 @@ if __name__ == '__main__':
     # for each 3-tuple,
     settings = [
         'env_name', '', ['Hopper-v2', 'HalfCheetah-v2', 'Walker2d-v2', 'Ant-v2', 'Humanoid-v2'],
-        'mdp_pretrain', 'mdp', [True],
+        'num_Q', 'nq', [2],
+        'utd_ratio', 'utd', [1],
+        'mdp_pretrain', 'mdp', [True, False],
+        'pretrain_step', '', [1000],
         'seed', '', [0, 1, 42, 666, 1024],
     ]
 
