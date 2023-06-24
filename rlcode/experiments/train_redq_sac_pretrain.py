@@ -147,16 +147,14 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
             batch['actions'] = index2action[batch['actions']]
             batch['next_observations'] = index2state[batch['next_observations']]
             batch = batch_to_torch(batch, device)
-            # TODO implement pretrain in agent
             pretrain_loss = agent.pretrain(batch)
-            agent.hard_update_target_q_nets()
-            print("pretrain loss:", pretrain_loss)
-            quit()
+            if i_pretrain % 5000 == 0:
+                print('Pretrain step %d, loss: %.4f' % (i_pretrain, pretrain_loss))
 
     """online stage"""
     seed_all(epoch=0)
     o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
-
+    agent.hard_update_target_q_nets() # after pretrain, make sure the target networks also init with same weight
 
     for t in range(total_steps):
         # get action from agent
