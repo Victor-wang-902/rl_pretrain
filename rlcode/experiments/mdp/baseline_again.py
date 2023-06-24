@@ -23,7 +23,7 @@ if __name__ == '__main__':
 
     # each 3-tuple is:
     # parameter name - abbreviation - values (this has to be a list)
-    exp_prefix = 'rl'
+    exp_prefix = 'sacbase'
     # env, dataset and seed values will be added to the end of the folder name string
     # for each 3-tuple,
     settings = [

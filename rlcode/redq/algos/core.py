@@ -115,6 +115,48 @@ class Mlp(nn.Module):
         output = self.last_fc_layer(h)
         return output
 
+class QNetPretrain(nn.Module):
+    def __init__(
+            self,
+            obs_size,
+            act_size,
+            output_size,
+            hidden_sizes,
+            hidden_activation=F.relu
+    ):
+        super().__init__()
+
+        self.input_size = obs_size + act_size
+        self.output_size = output_size
+        self.hidden_activation = hidden_activation
+        ## here we use ModuleList so that the layers in it can be
+        ## detected by .parameters() call
+        self.hidden_layers = nn.ModuleList()
+        in_size = self.input_size
+
+        ## initialize each hidden layer
+        for i, next_size in enumerate(hidden_sizes):
+            fc_layer = nn.Linear(in_size, next_size)
+            in_size = next_size
+            self.hidden_layers.append(fc_layer)
+
+        ## init last fully connected layer with small weight and bias
+        self.last_fc_layer = nn.Linear(in_size, output_size)
+        self.predict_next_layer = nn.Linear(in_size, obs_size)
+        self.apply(weights_init_)
+
+    def forward(self, input):
+        h = input
+        for i, fc_layer in enumerate(self.hidden_layers):
+            h = fc_layer(h)
+            h = self.hidden_activation(h)
+        output = self.last_fc_layer(h)
+        return output
+
+    # TODO
+    def predict_next_state(self, input):
+        return
+
 class TanhNormal(Distribution):
     """
     Represent distribution of X where

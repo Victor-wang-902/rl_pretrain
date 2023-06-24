@@ -3,11 +3,12 @@ import numpy as np
 import torch
 import time
 import sys
-from redq.algos.redq_sac import REDQSACAgent
+from redq.algos.redq_sac_pretrain import REDQSACAgent
 from redq.algos.core import mbpo_epoches, test_agent
 from redq.utils.run_utils import setup_logger_kwargs
 from redq.utils.bias_utils import log_bias_evaluation
 from redq.utils.logx import EpochLogger
+from cqlcode.SimpleSAC.replay_buffer import get_mdp_dataset_with_ratio, subsample_batch, batch_to_torch
 
 def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
              max_ep_len=1000, n_evals_per_epoch=1,
@@ -22,6 +23,7 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
              policy_update_delay=20,
              # following are bias evaluation related
              evaluate_bias=True, n_mc_eval=1000, n_mc_cutoff=350, reseed_each_epoch=True,
+             mdp_pretrain=False,
              ):
     """
     :param env_name: name of the gym environment
@@ -121,7 +123,34 @@ def redq_sac(env_name, seed=0, epochs='mbpo', steps_per_epoch=1000,
                  start_steps, delay_update_steps,
                  utd_ratio, num_Q, num_min, q_target_mode,
                  policy_update_delay)
+    # TODO when init, need pretrain obs/act dim
 
+    """pretrain stage"""
+    if mdp_pretrain:
+        np.random.seed(0)
+        mdppre_n_state, mdppre_n_action = 1000, 1000
+        policy_temperature, transition_temperature = 1, 1
+        index2state = 2 * np.random.rand(mdppre_n_state, obs_dim) - 1
+        index2action = 2 * np.random.rand(mdppre_n_action, act_dim) - 1
+        index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)
+
+        dataset = get_mdp_dataset_with_ratio(1000,
+                                             mdppre_n_state,
+                                             mdppre_n_action,
+                                             policy_temperature,
+                                             transition_temperature,
+                                             ratio=1)
+
+        for i_pretrain in range(1000000):
+            batch = subsample_batch(dataset, batch_size)
+            batch['observations'] = index2state[batch['observations']]
+            batch['actions'] = index2action[batch['actions']]
+            batch['next_observations'] = index2state[batch['next_observations']]
+            batch = batch_to_torch(batch, device)
+            # TODO implement pretrain in agent
+            agent.pretrain(batch)
+
+    """online stage"""
     o, r, d, ep_ret, ep_len = env.reset(), 0, False, 0, 0
 
     for t in range(total_steps):

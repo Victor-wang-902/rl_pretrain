@@ -245,15 +245,16 @@ def generate_table_nvocab_markov_chain():
     #################### table 1
     # DT table, 1-step markov chain, change the number of vocab
     algs = [
-    'dt-rerun-data_size_dt_1.0',
         'chibiT-rerun',
         'chibiT-rerun-syn_ngram1_nvocab10_temperature1.0',
         'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
         'chibiT-rerun-syn_ngram1_nvocab1000_temperature1.0',
         'chibiT-rerun-syn_ngram1_nvocab10000_temperature1.0',
-        'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0',
+        dt_mc_1step_vocab50257,
+        dt_mc_1step_vocab100000,
     ]
-    col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 10','1-MC Voc 100','1-MC Voc 1000','1-MC Voc 10000', '5-MC voc 50257']
+    col_names = ['Measures', 'ChibiT', '1-MC Voc 10','1-MC Voc 100','1-MC Voc 1000','1-MC Voc 10000',
+                 '1-MC voc 50257','1-MC Voc 100000']
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
@@ -270,7 +271,7 @@ for e in MUJOCO_3_ENVS:
         envs2.append('%s_%s' % (e, dataset))
 
 
-def generate_table_nstep_markov_chain():
+def generate_table_markov_chain_compare_number_of_steps():
     #################### table 2
     # DT table, pretrain with markov chain data change number of step
     algs = [
@@ -283,6 +284,54 @@ def generate_table_nstep_markov_chain():
         'chibiT-rerun-syn_ngram5_nvocab50257_temperature1.0',
     ]
     col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 50257','2-MC Voc 50257','3-MC Voc 50257','4-MC Voc 50257','5-MC Voc 50257',]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_dt_mc_table_compare_temperature():
+    #################### table 2
+    # DT table, pretrain with markov chain data change number of step
+    algs = [
+        # dt_mc_temp0_1_vocab50257,
+        # dt_mc_temp0_2_vocab50257,
+        dt_mc_temp0_4_vocab50257,
+        dt_mc_temp0_8_vocab50257,
+        dt_mc_temp1_0_vocab50257,
+        dt_mc_temp10_0_vocab50257,
+    ]
+    col_names = ['Measures', '1step v50257 0.4','1step v50257 0.8','1step v50257 1','1step v50257 10',] # '0.1', '0.2',
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_dt_mc_table_more1():
+    algs = [
+        dt_mc_1step_vocab100,
+        dt_mc_2step_vocab100,
+        dt_mc_3step_vocab100,
+        dt_mc_4step_vocab100,
+        dt_mc_5step_vocab100,
+    ]
+    col_names = ['Measures',
+                 '1step v100', '2step v100','3step v100', '4step v100', '5step v100']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_dt_mc_table_more2():
+    algs = [
+        dt_mc_temp0_1_vocab100,
+        dt_mc_temp0_2_vocab100,
+        dt_mc_temp0_4_vocab100,
+        dt_mc_temp0_8_vocab100,
+        dt_mc_1step_vocab100,
+        dt_mc_temp10_0_vocab100,
+    ]
+    col_names = ['Measures',
+                 '1step v100 0.1','1step v100 0.2','1step v100 0.4','1step v100 0.8', '1step v100 1','1step v100 10',] # '0.1', '0.2',
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
@@ -424,7 +473,11 @@ def generate_table_no_action_predict_next_state():
 
 ##################### table generation
 # generate_table_nvocab_markov_chain()
-# generate_table_nstep_markov_chain()
+# generate_table_markov_chain_compare_number_of_steps()
+# generate_dt_mc_table_compare_temperature()
+# generate_dt_mc_table_more1()
+generate_dt_mc_table_more2()
+
 
 # generate_table_cql_cross_domain()
 
