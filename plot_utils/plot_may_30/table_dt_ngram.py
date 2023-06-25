@@ -469,6 +469,113 @@ def generate_table_no_action_predict_next_state():
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
+def generate_table_cql_pretrain_data_sizes():
+    algs = [
+        cql_fd_pretrain_data_ratio_0_01,
+        cql_fd_pretrain_data_ratio_0_1,
+        cql_fd_pretrain_data_ratio_0_25,
+        cql_fd_pretrain_data_ratio_0_5,
+        cql_fd_pretrain_data_ratio_0_75,
+        cql_fd_pretrain_data_ratio_1,
+    ]
+    col_names = ['Measures',
+                 'CQL pre 0.01',
+                 'CQL pre 0.1',
+                 'CQL pre 0.25',
+                 'CQL pre 0.5',
+                 'CQL pre 0.75',
+                 'CQL pre 1',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+def generate_table_cql_mdp_pretrain_data_sizes():
+    algs = [
+        cql_mdp_pretrain_data_ratio_0_01,
+        cql_mdp_pretrain_data_ratio_0_1,
+        cql_mdp_pretrain_data_ratio_0_25,
+        cql_mdp_pretrain_data_ratio_0_5,
+        cql_mdp_pretrain_data_ratio_0_75,
+        cql_mdp_pretrain_data_ratio_1,
+    ]
+    col_names = ['Measures',
+                 'CQL MDP 0.01',
+                 'CQL MDP 0.1',
+                 'CQL MDP 0.25',
+                 'CQL MDP 0.5',
+                 'CQL MDP 0.75',
+                 'CQL MDP 1',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+def generate_table_cql_finetune_data_sizes():
+    algs = [
+        cql_fd_finetune_data_ratio_0_01,
+        cql_fd_finetune_data_ratio_0_1,
+        cql_fd_finetune_data_ratio_0_25,
+        cql_fd_finetune_data_ratio_0_5,
+        cql_fd_finetune_data_ratio_0_75,
+        cql_fd_finetune_data_ratio_1,
+    ]
+    col_names = ['Measures',
+                 'CQL finetune 0.01',
+                 'CQL finetune 0.1',
+                 'CQL finetune 0.25',
+                 'CQL finetune 0.5',
+                 'CQL finetune 0.75',
+                 'CQL finetune 1',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_mdp_pretrain_finetune_data_sizes():
+    algs = [
+        cql_mdp_finetune_data_ratio_0_01,
+        cql_mdp_finetune_data_ratio_0_1,
+        cql_mdp_finetune_data_ratio_0_25,
+        cql_mdp_finetune_data_ratio_0_5,
+        cql_mdp_finetune_data_ratio_0_75,
+        cql_mdp_finetune_data_ratio_1,
+    ]
+    col_names = ['Measures',
+                 'CQL mdp ft 0.01',
+                 'CQL mdp ft 0.1',
+                 'CQL mdp ft 0.25',
+                 'CQL mdp ft 0.5',
+                 'CQL mdp ft 0.75',
+                 'CQL mdp ft 1',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_cql_finetune_both_data_sizes():
+    algs = [
+        cql_fd_finetune_both_ratio_0_01,
+        cql_fd_finetune_both_ratio_0_1,
+        cql_fd_finetune_both_ratio_0_25,
+        cql_fd_finetune_both_ratio_0_5,
+        cql_fd_finetune_both_ratio_0_75,
+        cql_fd_finetune_both_ratio_1,
+    ]
+    col_names = ['Measures',
+                 'CQL both 0.01',
+                 'CQL both 0.1',
+                 'CQL both 0.25',
+                 'CQL both 0.5',
+                 'CQL both 0.75',
+                 'CQL both 1',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
 
 
 ##################### table generation
@@ -476,7 +583,7 @@ def generate_table_no_action_predict_next_state():
 # generate_table_markov_chain_compare_number_of_steps()
 # generate_dt_mc_table_compare_temperature()
 # generate_dt_mc_table_more1()
-generate_dt_mc_table_more2()
+# generate_dt_mc_table_more2()
 
 
 # generate_table_cql_cross_domain()
@@ -488,3 +595,10 @@ generate_dt_mc_table_more2()
 
 # generate_table_cql_3x_data()
 # generate_table_no_action_predict_next_state()
+
+
+# generate_table_cql_pretrain_data_sizes()
+# generate_table_cql_mdp_pretrain_data_sizes()
+# generate_table_cql_finetune_data_sizes()
+# generate_table_mdp_pretrain_finetune_data_sizes()
+generate_table_cql_finetune_both_data_sizes()

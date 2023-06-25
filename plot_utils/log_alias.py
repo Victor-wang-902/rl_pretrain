@@ -93,6 +93,48 @@ cql_pretrain_1_data = cql_fd_pretrain
 
 # CQL pretrain epoch
 
+# CQL pretrain and offline data size variants
+cql_fd_pretrain_data_ratio_0_01 = 'cqlr3_preq_sprime_l2_pdr0.01'
+cql_fd_pretrain_data_ratio_0_1 = 'cqlr3_preq_sprime_l2_pdr0.1'
+cql_fd_pretrain_data_ratio_0_25 = 'cqlr3_preq_sprime_l2_pdr0.25'
+cql_fd_pretrain_data_ratio_0_5 = 'cqlr3_preq_sprime_l2_pdr0.5'
+cql_fd_pretrain_data_ratio_0_75 = 'cqlr3_preq_sprime_l2_pdr0.75'
+cql_fd_pretrain_data_ratio_1 = cql_fd_pretrain
+
+
+cql_mdp_pretrain_data_ratio_0_01 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr0.01'
+cql_mdp_pretrain_data_ratio_0_1 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr0.1'
+cql_mdp_pretrain_data_ratio_0_25 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr0.25'
+cql_mdp_pretrain_data_ratio_0_5 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr0.5'
+cql_mdp_pretrain_data_ratio_0_75 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr0.75'
+cql_mdp_pretrain_data_ratio_1 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue'
+
+
+cql_fd_finetune_data_ratio_0_01 = 'cqlr3_preq_sprime_l2_dr0.01'
+cql_fd_finetune_data_ratio_0_1 = 'cqlr3_preq_sprime_l2_dr0.1'
+cql_fd_finetune_data_ratio_0_25 = 'cqlr3_preq_sprime_l2_dr0.25'
+cql_fd_finetune_data_ratio_0_5 = 'cqlr3_preq_sprime_l2_dr0.5'
+cql_fd_finetune_data_ratio_0_75 = 'cqlr3_preq_sprime_l2_dr0.75'
+cql_fd_finetune_data_ratio_1 = cql_fd_pretrain
+
+cql_mdp_finetune_data_ratio_0_01 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.01'
+cql_mdp_finetune_data_ratio_0_1 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.1'
+cql_mdp_finetune_data_ratio_0_25 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.25'
+cql_mdp_finetune_data_ratio_0_5 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.5'
+cql_mdp_finetune_data_ratio_0_75 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.75'
+cql_mdp_finetune_data_ratio_1 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue'
+
+
+cql_fd_finetune_both_ratio_0_01 = 'cqlr3_preq_sprime_l2_bothdr0.01'
+cql_fd_finetune_both_ratio_0_1 = 'cqlr3_preq_sprime_l2_bothdr0.1'
+cql_fd_finetune_both_ratio_0_25 = 'cqlr3_preq_sprime_l2_bothdr0.25'
+cql_fd_finetune_both_ratio_0_5 = 'cqlr3_preq_sprime_l2_bothdr0.5'
+cql_fd_finetune_both_ratio_0_75 = 'cqlr3_preq_sprime_l2_bothdr0.75'
+cql_fd_finetune_both_ratio_1 = cql_fd_pretrain
+
+
+
+
 # CQL 3x data
 # 'q_noact_sprime', 'q_sprime_3x', 'proj0_q_sprime_3x', 'proj1_q_sprime_3x'
 cql_fd_3x_data = 'cqlr3_preq_sprime_3x_l2'
