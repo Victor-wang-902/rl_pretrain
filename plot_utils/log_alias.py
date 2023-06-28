@@ -74,6 +74,7 @@ CQL related
 cql_base = 'cqlr3_prenone_l2_qflrs1'
 cql_fd_pretrain = 'cqlr3_preq_sprime_l2_qflrs1'
 cql_random_pretrain = 'cqlr3_prerand_q_sprime_l2'
+cql_random_1000_state = 'cqlr3_prerandom_fd_1000_state_l2'
 
 # CQL data size
 cql_no_pretrain_0_1_data = 'cqlr3_prenone_l2_dr0.1'
@@ -88,6 +89,8 @@ cql_pretrain_0_25_data = 'cqlr3_preq_sprime_l2_dr0.25'
 cql_pretrain_0_5_data = 'cqlr3_preq_sprime_l2_dr0.5'
 cql_pretrain_0_75_data = 'cqlr3_preq_sprime_l2_dr0.75'
 cql_pretrain_1_data = cql_fd_pretrain
+
+# with target network update
 
 
 
@@ -133,6 +136,25 @@ cql_fd_finetune_both_ratio_0_75 = 'cqlr3_preq_sprime_l2_bothdr0.75'
 cql_fd_finetune_both_ratio_1 = cql_fd_pretrain
 
 
+cql_mdp_with_target_hard_update = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr1_True'
+cql_mdp_with_target_hard_update_1 = cql_mdp_with_target_hard_update
+cql_mdp_with_target_hard_update_0_5 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.5_True'
+cql_mdp_with_target_hard_update_0_1 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.1_True'
+cql_mdp_with_target_hard_update_0_25 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.25_True'
+cql_mdp_with_target_hard_update_0_5 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.5_True'
+cql_mdp_with_target_hard_update_0_75 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.75_True'
+cql_mdp_with_target_hard_update_0_01 = 'cqlr3_premdp_q_sprime_l2_ns1000_pt1_sd20_sameTrue_pdr1_dr0.01_True'
+
+
+cql_rl_with_target_hard_update = 'cqlr3_preq_sprime_l2_pdr1_dr1_True'
+
+
+cql_rl_with_target_hard_update_0_01 = 'cqlr3_preq_sprime_l2_pdr1_dr0.01_True'
+cql_rl_with_target_hard_update_0_1 = 'cqlr3_preq_sprime_l2_pdr1_dr0.1_True'
+cql_rl_with_target_hard_update_0_25 = 'cqlr3_preq_sprime_l2_pdr1_dr0.25_True'
+cql_rl_with_target_hard_update_0_5 = 'cqlr3_preq_sprime_l2_pdr1_dr0.5_True'
+cql_rl_with_target_hard_update_0_75 = 'cqlr3_preq_sprime_l2_pdr1_dr0.75_True'
+cql_rl_with_target_hard_update_1 = cql_rl_with_target_hard_update
 
 
 # CQL 3x data
@@ -143,7 +165,6 @@ cql_fd_3x_data_cross_task = 'cqlr3_preproj1_q_sprime_3x_l2'
 
 # CQL alternative pretrain scheme
 cql_no_action_predict_next_state = 'cqlr3_preq_noact_sprime_l2'
-
 
 # CQL cross domain
 cql_fd_pretrain_same_task_with_projection = 'cqlr3_preproj0_q_sprime_l2'

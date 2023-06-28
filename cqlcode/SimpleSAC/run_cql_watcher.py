@@ -135,56 +135,57 @@ def get_weight_diff(agent1, agent2):
     # # weight_diff_l2 = torch.norm(weights1-weights2, p=2).item()
     # weight_diff = torch.mean((weights_A - weights_B) ** 2).item()
     # weight_sim = float(F.cosine_similarity(weights_A.reshape(1,-1), weights_B.reshape(1,-1)).item())
+    with torch.no_grad():
+        weight_diff, weight_sim = get_diff_sim_from_layers(agent1.layers_for_weight_diff(), agent2.layers_for_weight_diff())
 
-    weight_diff, weight_sim = get_diff_sim_from_layers(agent1.layers_for_weight_diff(), agent2.layers_for_weight_diff())
+        layers_A1, layers_A2, layers_Afc = agent1.layers_for_weight_diff_extra()
+        layers_B1, layers_B2, layers_Bfc = agent2.layers_for_weight_diff_extra()
+        weight_diff1, weight_sim1 = get_diff_sim_from_layers(layers_A1, layers_B1)
+        weight_diff2, weight_sim2 = get_diff_sim_from_layers(layers_A2, layers_B2)
+        weight_difffc, weight_simfc = get_diff_sim_from_layers(layers_Afc, layers_Bfc)
 
-    layers_A1, layers_A2, layers_Afc = agent1.layers_for_weight_diff_extra()
-    layers_B1, layers_B2, layers_Bfc = agent2.layers_for_weight_diff_extra()
-    weight_diff1, weight_sim1 = get_diff_sim_from_layers(layers_A1, layers_B1)
-    weight_diff2, weight_sim2 = get_diff_sim_from_layers(layers_A2, layers_B2)
-    weight_difffc, weight_simfc = get_diff_sim_from_layers(layers_Afc, layers_Bfc)
-
-    return weight_diff, weight_sim, weight_diff1, weight_sim1, weight_diff2, weight_sim2, weight_difffc, weight_simfc
+        return weight_diff, weight_sim, weight_diff1, weight_sim1, weight_diff2, weight_sim2, weight_difffc, weight_simfc
 
 def get_feature_diff(agent1, agent2, dataset, device, ratio=0.01, seed=0):
     # feature diff: for each data point, get difference of feature from old and new network
     # compute l2 norm of this diff, average over a number of data points.
     # agent class should have features_from_batch() func
-    n_total_data = dataset['observations'].shape[0]
-    # average_feature_l2_norm_list = []
-    average_feature_sim_list = []
-    average_feature_mse_list = []
-    num_feature_timesteps = int(n_total_data * ratio)
-    if num_feature_timesteps % 2 == 1: # avoid potential sampling issue
-        num_feature_timesteps = num_feature_timesteps + 1
-    np.random.seed(seed)
-    idxs_all = np.random.choice(np.arange(0, n_total_data), size=num_feature_timesteps, replace=False)
-    batch_size = 1000
-    n_done = 0
-    i = 0
-    while True:
-        if n_done >= num_feature_timesteps:
-            break
-        idxs = idxs_all[i*batch_size:min((i+1)*batch_size, num_feature_timesteps)]
+    with torch.no_grad():
+        n_total_data = dataset['observations'].shape[0]
+        # average_feature_l2_norm_list = []
+        average_feature_sim_list = []
+        average_feature_mse_list = []
+        num_feature_timesteps = int(n_total_data * ratio)
+        if num_feature_timesteps % 2 == 1: # avoid potential sampling issue
+            num_feature_timesteps = num_feature_timesteps + 1
+        np.random.seed(seed)
+        idxs_all = np.random.choice(np.arange(0, n_total_data), size=num_feature_timesteps, replace=False)
+        batch_size = 1000
+        n_done = 0
+        i = 0
+        while True:
+            if n_done >= num_feature_timesteps:
+                break
+            idxs = idxs_all[i*batch_size:min((i+1)*batch_size, num_feature_timesteps)]
 
-        batch = index_batch(dataset, idxs)
-        batch = batch_to_torch(batch, device)
+            batch = index_batch(dataset, idxs)
+            batch = batch_to_torch(batch, device)
 
-        old_feature = agent1.features_from_batch_no_grad(batch)
-        new_feature = agent2.features_from_batch_no_grad(batch)
-        feature_diff = old_feature - new_feature
+            old_feature = agent1.features_from_batch_no_grad(batch)
+            new_feature = agent2.features_from_batch_no_grad(batch)
+            feature_diff = old_feature - new_feature
 
-        # feature_l2_norm = torch.norm(feature_diff, p=2, dim=1, keepdim=True)
-        # average_feature_l2_norm_list.append(feature_l2_norm.mean().item())
+            # feature_l2_norm = torch.norm(feature_diff, p=2, dim=1, keepdim=True)
+            # average_feature_l2_norm_list.append(feature_l2_norm.mean().item())
 
-        feature_mse = torch.mean(feature_diff ** 2).item()
-        average_feature_mse_list.append(feature_mse)
+            feature_mse = torch.mean(feature_diff ** 2).item()
+            average_feature_mse_list.append(feature_mse)
 
-        feature_sim = float(F.cosine_similarity(old_feature, new_feature).mean().item())
-        average_feature_sim_list.append(feature_sim)
-        i += 1
-        n_done += 1000
-    return np.mean(average_feature_mse_list), np.mean(average_feature_sim_list), num_feature_timesteps
+            feature_sim = float(F.cosine_similarity(old_feature, new_feature).mean().item())
+            average_feature_sim_list.append(feature_sim)
+            i += 1
+            n_done += 1000
+        return np.mean(average_feature_mse_list), np.mean(average_feature_sim_list), num_feature_timesteps
 
 def main():
     variant = get_default_variant_dict() # this is a dictionary

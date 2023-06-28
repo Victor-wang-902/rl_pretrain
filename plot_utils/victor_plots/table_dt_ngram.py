@@ -342,12 +342,12 @@ def generate_table_cql_cross_domain():
     algs = [
     'cqlr3_prenone_l2_qflrs1',
     'cqlr3_preq_sprime_l2_qflrs1',
-    'cqlr3_prerand_q_sprime_l2',
     'cqlr3_preproj0_q_sprime_l2',
     'cqlr3_preproj1_q_sprime_l2',
-    'cqlr3_preproj2_q_sprime_l2',
+    cql_random_pretrain,
+    cql_random_1000_state,
     ]
-    col_names = ['Measures', 'CQL', 'CQL pre', 'CQL rand pre', 'CQL proj0', 'CQL proj1', 'CQL proj2' ]
+    col_names = ['Measures', 'CQL', 'CQL pre', 'CQL proj0', 'CQL proj1', 'CQL rand pre', 'CQL rand 1000']
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
@@ -577,6 +577,115 @@ def generate_table_cql_finetune_both_data_sizes():
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
 
+def generate_table_cql_no_pretrain_finetune_data_sizes():
+    algs = [
+        cql_no_pretrain_0_1_data,
+        cql_no_pretrain_0_25_data,
+        cql_no_pretrain_0_5_data,
+        cql_no_pretrain_0_75_data,
+        cql_no_pretrain_1_data,
+    ]
+    col_names = ['Measures',
+                 'CQL no pre 0.1',
+                 'CQL no pre 0.25',
+                 'CQL no pre 0.5',
+                 'CQL no pre 0.75',
+                 'CQL no pre 1',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_cql_with_target_networks():
+    algs = [
+        cql_fd_finetune_data_ratio_0_01,
+        cql_fd_finetune_data_ratio_0_1,
+        cql_fd_finetune_data_ratio_1,
+        cql_rl_with_target_hard_update_0_01,
+        cql_rl_with_target_hard_update_0_1,
+        cql_rl_with_target_hard_update_1,
+    ]
+    col_names = ['Measures',
+                 'rl 0.01',
+                 'rl 0.1',
+                 'rl 1',
+                 'rl wtu 0.01',
+                 'rl wtu 0.1',
+                 'rl wtu 1',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_cql_with_target_networks2():
+    algs = [
+        cql_mdp_finetune_data_ratio_0_01,
+        cql_mdp_finetune_data_ratio_0_1,
+        cql_mdp_finetune_data_ratio_1,
+        cql_mdp_with_target_hard_update_0_01,
+        cql_mdp_with_target_hard_update_0_1,
+        cql_mdp_with_target_hard_update_1,
+    ]
+    col_names = ['Measures',
+                 'mdp 0.01',
+                 'mdp 0.1',
+                 'mdp 1',
+                 'wtu 0.01',
+                 'wtu 0.1',
+                 'wtu 1',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_cql_with_target_networks3():
+    algs = [
+        cql_fd_finetune_data_ratio_0_25,
+        cql_fd_finetune_data_ratio_0_5,
+        cql_fd_finetune_data_ratio_0_75,
+        cql_rl_with_target_hard_update_0_25,
+        cql_rl_with_target_hard_update_0_5,
+        cql_rl_with_target_hard_update_0_75,
+    ]
+    col_names = ['Measures',
+                 'rl 0.25',
+                 'rl 0.5',
+                 'rl 0.75',
+                 'rl wtu 0.25',
+                 'rl wtu 0.5',
+                 'rl wtu 0.75',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_cql_with_target_networks4():
+    algs = [
+        cql_mdp_finetune_data_ratio_0_25,
+        cql_mdp_finetune_data_ratio_0_5,
+        cql_mdp_finetune_data_ratio_0_75,
+        cql_mdp_with_target_hard_update_0_25,
+        cql_mdp_with_target_hard_update_0_5,
+        cql_mdp_with_target_hard_update_0_75,
+    ]
+    col_names = ['Measures',
+                 'mdp 0.25',
+                 'mdp 0.5',
+                 'mdp 0.75',
+                 'wtu 0.25',
+                 'wtu 0.5',
+                 'wtu 0.75',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+
 
 ##################### table generation
 # generate_table_nvocab_markov_chain()
@@ -584,7 +693,6 @@ def generate_table_cql_finetune_both_data_sizes():
 # generate_dt_mc_table_compare_temperature()
 # generate_dt_mc_table_more1()
 # generate_dt_mc_table_more2()
-
 
 # generate_table_cql_cross_domain()
 
@@ -596,9 +704,17 @@ def generate_table_cql_finetune_both_data_sizes():
 # generate_table_cql_3x_data()
 # generate_table_no_action_predict_next_state()
 
-
+# TODO following all re-table 6-25 morning
 # generate_table_cql_pretrain_data_sizes()
 # generate_table_cql_mdp_pretrain_data_sizes()
 # generate_table_cql_finetune_data_sizes()
 # generate_table_mdp_pretrain_finetune_data_sizes()
-generate_table_cql_finetune_both_data_sizes()
+# generate_table_cql_finetune_both_data_sizes()
+# generate_table_cql_no_pretrain_finetune_data_sizes()
+
+
+
+# generate_table_cql_with_target_networks()
+# generate_table_cql_with_target_networks2()
+# generate_table_cql_with_target_networks3()
+generate_table_cql_with_target_networks4()

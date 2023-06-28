@@ -115,7 +115,7 @@ def quick_plot(labels, data_folders, colors=DEFAULT_COLORS, linestyles=DEFAULT_L
 
 def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COLORS, linestyles=DEFAULT_LINESTYLES, base_data_folder_path=DEFAULT_BASE_PATH,
                save_name='test_save_figure', save_folder_path=DEFAULT_SAVE_PATH, y_value=DEFAULT_Y_VALUE, verbose=True, ymin=None, ymax=None,
-                              y_use_log=None):
+                              y_use_log=None, x_to_use='Steps'):
     # this plots
     label2seeds = OrderedDict()
     for label, data_folder_full_name_list in zip(labels, data_folder_full_names):
@@ -151,7 +151,7 @@ def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COL
 
     for y_to_plot in y_value:
         for i, (label, seeds) in enumerate(label2seeds.items()):
-            x = combine_data_in_seeds(seeds, 'Steps')
+            x = combine_data_in_seeds(seeds, x_to_use)
             y = combine_data_in_seeds(seeds, y_to_plot, smooth=DEFAULT_SMOOTH)
             if '_sim_' in y_to_plot:
                 y = 1-y
