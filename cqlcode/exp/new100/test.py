@@ -35,15 +35,18 @@ def main():
     variant = get_default_variant_dict() # this is a dictionary
     ###########################################################
     exp_prefix = 'cqlr3n'
+    exp_prefix = 'testonly'
     settings = [
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['none', 'q_sprime', ],
 
         'qf_hidden_layer', 'l', [1,],
+        'qf_hidden_unit', 'qfhd',[2],
 
+        'n_pretrain_epochs', '',[1],
         'n_train_step_per_epoch', '', [2],
-        'n_epochs', '', [22],
+        'n_epochs', '', [11],
         'eval_n_trajs', '', [1],
         'batch_size', '', [4],
         'eval_n_trajs', '', [1],
