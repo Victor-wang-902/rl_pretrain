@@ -663,7 +663,7 @@ def run_single_exp(variant):
         things_to_log = ['sac_log_pi', 'sac_policy_loss', 'sac_qf1_loss', 'sac_qf2_loss', 'sac_alpha_loss', 'sac_alpha',
                          'sac_average_qf1', 'sac_average_qf2', 'average_traj_length',
                          'sac_qf1_distill_loss', 'sac_qf2_distill_loss',
-                         'sac_combined_loss', 'sac_cql_conservative_loss']
+                         'sac_combined_loss', 'sac_cql_conservative_loss', 'sac_qf_average_loss']
         for m in things_to_log:
             if m not in viskit_metrics:
                 logger.log_tabular(m, 0)

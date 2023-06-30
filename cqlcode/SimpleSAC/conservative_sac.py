@@ -326,6 +326,7 @@ class ConservativeSAC(object):
             policy_loss=policy_loss.item(),
             qf1_loss=qf1_loss.item(),
             qf2_loss=qf2_loss.item(),
+            qf_average_loss=(qf1_loss.item() + qf2_loss.item())/2,
             alpha_loss=alpha_loss.item(),
             alpha=alpha.item(),
             average_qf1=q1_pred.mean().item(),
