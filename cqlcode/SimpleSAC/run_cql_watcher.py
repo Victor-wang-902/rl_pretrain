@@ -569,6 +569,9 @@ def run_single_exp(variant):
     print("D4RL dataset loaded for", env_full)
     dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
     dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
+    max_reward = max(dataset['rewards'])
+    print('max reward:', max_reward)
+    quit()
 
     best_agent = deepcopy(agent)
     prev_agent = deepcopy(agent)
