@@ -41,8 +41,8 @@ def main():
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['none', 'q_sprime', ],
 
-        'qf_hidden_layer', 'l', [1,],
-        'qf_hidden_unit', 'qfhd',[2],
+        'qf_hidden_layer', 'l', [2,],
+        'qf_hidden_unit', 'qfhd',[3],
 
         'n_pretrain_epochs', '',[1],
         'n_train_step_per_epoch', '', [2],
