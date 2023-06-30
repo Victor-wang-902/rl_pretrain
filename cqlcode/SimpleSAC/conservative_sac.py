@@ -298,8 +298,8 @@ class ConservativeSAC(object):
             else:
                 device = q1_pred.device
                 qf1_distill_loss, qf2_distill_loss = torch.zeros(1).to(device), torch.zeros(1).to(device)
-
-            qf_loss = qf1_loss + qf2_loss + cql_min_qf1_loss + cql_min_qf2_loss + qf1_distill_loss + qf2_distill_loss
+            conservative_loss = cql_min_qf1_loss + cql_min_qf2_loss + qf1_distill_loss + qf2_distill_loss
+            qf_loss = qf1_loss + qf2_loss + conservative_loss
 
 
         if self.config.use_automatic_entropy_tuning:
@@ -334,6 +334,7 @@ class ConservativeSAC(object):
             total_steps=self.total_steps,
             qf1_distill_loss=qf1_distill_loss.item(),
             qf2_distill_loss=qf2_distill_loss.item(),
+            combined_loss=qf_loss.item()
         )
 
         if self.config.use_cql:
@@ -352,6 +353,7 @@ class ConservativeSAC(object):
                 cql_q2_next_actions=cql_q2_next_actions.mean().item(),
                 alpha_prime_loss=alpha_prime_loss.item(),
                 alpha_prime=alpha_prime.item(),
+                conservative_loss=conservative_loss.item(),
             ), 'cql'))
 
         return metrics

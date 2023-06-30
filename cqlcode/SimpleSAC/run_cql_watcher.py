@@ -99,7 +99,7 @@ def get_default_variant_dict():
         mdppre_action_dim=20,
         mdppre_same_as_s_and_policy=False, # if True, then action hyper will be same as state, tt will be same as pt
 
-        hard_update_target_after_pretrain=False, # if True, hard update target networks after pretraining stage.
+        hard_update_target_after_pretrain=True, # if True, hard update target networks after pretraining stage.
     )
 
 def get_convergence_index(ret_list, threshold_gap=2):
@@ -640,12 +640,12 @@ def run_single_exp(variant):
                 # wandb_logger.save_pickle(save_data, 'model.pkl')
 
             if (epoch + 1) % 40 == 0:
-                additional_dict = get_additional_dict(additional_dict_with_list)
+                # additional_dict = get_additional_dict(additional_dict_with_list)
                 save_extra_dict(variant, logger, dataset,
                                 ret_list, ret_normalized_list, iter_list, step_list,
                                 agent_after_pretrain, agent_e20, agent, best_agent,
                                 best_return, best_return_normalized, best_step, best_iter,
-                                return_e20, return_normalized_e20, additional_dict=additional_dict)
+                                return_e20, return_normalized_e20)
 
         metrics['train_time'] = train_timer()
         metrics['eval_time'] = eval_timer()
@@ -661,30 +661,31 @@ def run_single_exp(variant):
 
         things_to_log = ['sac_log_pi', 'sac_policy_loss', 'sac_qf1_loss', 'sac_qf2_loss', 'sac_alpha_loss', 'sac_alpha',
                          'sac_average_qf1', 'sac_average_qf2', 'average_traj_length',
-                         'sac_qf1_distill_loss', 'sac_qf2_distill_loss']
+                         'sac_qf1_distill_loss', 'sac_qf2_distill_loss',
+                         'sac_combined_loss', 'sac_cql_conservative_loss']
         for m in things_to_log:
             if m not in viskit_metrics:
                 logger.log_tabular(m, 0)
             else:
                 logger.log_tabular(m, viskit_metrics[m])
 
-        feature_diff_last_iter, feature_sim_last_iter, _ = get_feature_diff(agent, prev_agent, dataset, variant['device'], ratio=0.005)
+        # feature_diff_last_iter, feature_sim_last_iter, _ = get_feature_diff(agent, prev_agent, dataset, variant['device'], ratio=0.005)
         weight_diff_last_iter, weight_sim_last_iter, wd0_li, ws0_li, wd1_li, ws1_li, wdfc_li, wsfc_li = get_weight_diff(agent, prev_agent)
 
-        additional_dict_with_list['feature_diff_last_iter'].append(feature_diff_last_iter)
-        additional_dict_with_list['feature_sim_last_iter'].append(feature_sim_last_iter)
-
-        additional_dict_with_list['weight_diff_last_iter'].append(weight_diff_last_iter)
-        additional_dict_with_list['weight_sim_last_iter'].append(weight_sim_last_iter)
-        additional_dict_with_list['wd0_li'].append(wd0_li)
-        additional_dict_with_list['ws0_li'].append(ws0_li)
-        additional_dict_with_list['wd1_li'].append(wd1_li)
-        additional_dict_with_list['ws1_li'].append(ws1_li)
-        additional_dict_with_list['wdfc_li'].append(wdfc_li)
-        additional_dict_with_list['wsfc_li'].append(wsfc_li)
-
-        for key in additional_dict_with_list:
-            logger.log_tabular(key, additional_dict_with_list[key][-1])
+        # additional_dict_with_list['feature_diff_last_iter'].append(feature_diff_last_iter)
+        # additional_dict_with_list['feature_sim_last_iter'].append(feature_sim_last_iter)
+        #
+        # additional_dict_with_list['weight_diff_last_iter'].append(weight_diff_last_iter)
+        # additional_dict_with_list['weight_sim_last_iter'].append(weight_sim_last_iter)
+        # additional_dict_with_list['wd0_li'].append(wd0_li)
+        # additional_dict_with_list['ws0_li'].append(ws0_li)
+        # additional_dict_with_list['wd1_li'].append(wd1_li)
+        # additional_dict_with_list['ws1_li'].append(ws1_li)
+        # additional_dict_with_list['wdfc_li'].append(wdfc_li)
+        # additional_dict_with_list['wsfc_li'].append(wsfc_li)
+        #
+        # for key in additional_dict_with_list:
+        #     logger.log_tabular(key, additional_dict_with_list[key][-1])
 
         logger.log_tabular("total_time", time.time()-st)
         logger.log_tabular("train_time", viskit_metrics["train_time"])
@@ -699,12 +700,12 @@ def run_single_exp(variant):
         # logger_other.dump_tabular(with_prefix=False, with_timestamp=False)
 
     """get extra dict"""
-    additional_dict = get_additional_dict(additional_dict_with_list)
+    # additional_dict = get_additional_dict(additional_dict_with_list)
     save_extra_dict(variant, logger, dataset,
                     ret_list, ret_normalized_list, iter_list, step_list,
                     agent_after_pretrain, agent_e20, agent, best_agent,
                     best_return, best_return_normalized, best_step, best_iter,
-                    return_e20, return_normalized_e20, additional_dict=additional_dict)
+                    return_e20, return_normalized_e20)
 
 
 if __name__ == '__main__':
