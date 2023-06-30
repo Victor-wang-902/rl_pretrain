@@ -570,8 +570,8 @@ def run_single_exp(variant):
     dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
     dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
     max_reward = max(dataset['rewards'])
+    safe_q_max = max_reward * 100 # when discount is 0.99
     print('max reward:', max_reward)
-    quit()
 
     best_agent = deepcopy(agent)
     prev_agent = deepcopy(agent)
@@ -605,6 +605,7 @@ def run_single_exp(variant):
                                                           ready_agent=ready_agent,
                                                           q_distill_weight=variant['q_distill_weight'],
                                                           distill_only=variant['distill_only'],
+                                                          safe_q_max=safe_q_max,
                                                           ), 'sac', connector_string='_'))
 
         with Timer() as eval_timer:

@@ -116,7 +116,8 @@ class ConservativeSAC(object):
         qf_loss.backward()
         self.qf_optimizer.step()
 
-    def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0, distill_only=False):
+    def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0, distill_only=False,
+              safe_q_max=None):
         self._total_steps += 1
 
         observations = batch['observations']
@@ -207,6 +208,8 @@ class ConservativeSAC(object):
                 self.target_qf1(next_observations, new_next_actions),
                 self.target_qf2(next_observations, new_next_actions),
             )
+            if safe_q_max is not None:
+                target_q_values[target_q_values > safe_q_max] = safe_q_max
 
         if self.config.backup_entropy:
             target_q_values = target_q_values - alpha * next_log_pi
