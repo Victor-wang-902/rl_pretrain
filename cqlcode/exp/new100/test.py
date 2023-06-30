@@ -39,7 +39,15 @@ def main():
         'env', '', MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['none', 'q_sprime', ],
-        'qf_hidden_layer', 'l', [2,],
+
+        'qf_hidden_layer', 'l', [1,],
+
+        'n_train_step_per_epoch', '', [2],
+        'n_epochs', '', [22],
+        'eval_n_trajs', '', [1],
+        'batch_size', '', [4],
+        'eval_n_trajs', '', [1],
+
         'seed', '', [0], # , 1, 2, 3, 4, 5, 6, 42, 666, 1024
     ] #
 

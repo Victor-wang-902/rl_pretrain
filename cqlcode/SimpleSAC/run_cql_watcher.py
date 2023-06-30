@@ -309,7 +309,8 @@ def run_single_exp(variant):
 
     set_random_seed(variant['seed'])
 
-    ready_agent = get_cqlr3_baseline_ready_agent_dict(variant['env'], variant['dataset'], variant['seed'])['agent']
+    # ready_agent = get_cqlr3_baseline_ready_agent_dict(variant['env'], variant['dataset'], variant['seed'])['agent']
+    ready_agent = None
 
     env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
 
