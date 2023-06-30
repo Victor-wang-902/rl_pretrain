@@ -571,6 +571,7 @@ def run_single_exp(variant):
     dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
     max_reward = max(dataset['rewards'])
     safe_q_max = max_reward * 100 # when discount is 0.99
+    safe_q_max = -100
     print('max reward:', max_reward)
 
     best_agent = deepcopy(agent)

@@ -210,6 +210,8 @@ class ConservativeSAC(object):
             )
             if safe_q_max is not None:
                 target_q_values[target_q_values > safe_q_max] = safe_q_max
+                print(target_q_values)
+                quit()
 
         if self.config.backup_entropy:
             target_q_values = target_q_values - alpha * next_log_pi
