@@ -24,6 +24,12 @@ base_measures = ['best_return_normalized', 'best_return',
          'final_weight_diff',
          'final_feature_sim',
          'final_weight_sim',
+
+         'best_5percent_normalized',
+         'best_10percent_normalized',
+         'best_25percent_normalized',
+         'best_50percent_normalized',
+         'best_100percent_normalized',
                  ]
 
 def get_extra_dict_multiple_seeds(datafolder_path):
@@ -61,7 +67,10 @@ def get_extra_dict_multiple_seeds(datafolder_path):
         if len(aggregate_dict[measure]) == 0:
             print(datafolder_path, 'has nothing for measure:',measure)
         aggregate_dict[measure] = [np.mean(aggregate_dict[measure]), np.std(aggregate_dict[measure])]
-    for measure in ['final_test_returns', 'final_test_normalized_returns', 'best_return', 'best_return_normalized']:
+    for measure in ['final_test_returns', 'final_test_normalized_returns', 'best_return', 'best_return_normalized',
+                    'best_5percent_normalized', 'best_10percent_normalized', 'best_25percent_normalized',
+                    'best_50percent_normalized', 'best_100percent_normalized',
+                    ]:
         aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1],]
     return aggregate_dict
 
@@ -95,74 +104,120 @@ def get_aggregated_value(alg_dataset_dict, alg, measure):
         value_list.append(extra_dict[measure][0]) # each entry is the value from a dataset
     return np.mean(value_list), np.std(value_list)
 
+
+OLD_ROWS = [
+    'best_return_normalized',
+    'best_return_normalized_std',
+
+    'best_feature_diff',
+    'best_weight_diff',
+    "best_0_weight_diff",
+    "best_1_weight_diff",
+
+    'best_feature_sim',
+    'best_weight_sim',
+    "best_0_weight_sim",
+    "best_1_weight_sim",
+
+    'convergence_iter',
+
+    'final_test_normalized_returns',
+    'final_feature_diff',
+    'final_weight_diff',
+    'final_feature_sim',
+    'final_weight_sim',
+]
+OLD_ROW_NAMES = ['Best Score',
+             'Best Std over Seeds',
+
+             'Best Feature Diff',
+             'Best Weight Diff',
+             'Best Weight Diff L0',
+             'Best Weight Diff L1',
+
+             'Best Feature Sim',
+             'Best Weight Sim',
+             'Best Weight Sim L0',
+             'Best Weight Sim L1',
+
+             'Convergence Iter',
+
+             'Final Score',
+             'Final Feature Diff',
+             'Final Weight Diff',
+             'Final Feature Sim',
+             'Final Weight Sim',
+             ]
+
+NEW_PERFORMANCE_ROWS = [
+    'best_return_normalized',
+    'best_5percent_normalized',
+    'best_10percent_normalized',
+    'best_25percent_normalized',
+    'best_50percent_normalized',
+    'best_100percent_normalized',
+]
+NEW_PERFORMANCE_ROW_NAMES = [
+    'Best Score',
+    'Best Score 5\\%',
+    'Best Score 10\\%',
+    'Best Score 25\\%',
+    'Best Score 50\\%',
+    'Best Score 100\\%',
+]
+
+change_std_rows = [
+    'best_return_normalized',
+    'best_5percent_normalized',
+    'best_10percent_normalized',
+    'best_25percent_normalized',
+    'best_50percent_normalized',
+    'best_100percent_normalized',
+]
+
+row_names_higher_is_better = [
+    'Best Score',
+    'Final Score',
+    'Best Weight Sim',
+    'Best Feature Sim',
+    'Best Weight Sim L0',
+    'Best Weight Sim L1',
+    'Best Weight Sim FC',
+    'Final Feature Sim',
+    'Final Weight Sim',
+    'Prev Feature Sim',
+    'Prev Weight Sim',
+    'Best Score 5\\%',
+    'Best Score 10\\%',
+    'Best Score 25\\%',
+    'Best Score 50\\%',
+    'Best Score 100\\%',
+]
+
+row_names_use_1_precision = [
+    'Best Score', 'Best Std over Seeds', 'Convergence Iter',
+    'Final Score',
+    'Best Score 5\\%',
+    'Best Score 10\\%',
+    'Best Score 25\\%',
+    'Best Score 50\\%',
+    'Best Score 100\\%',
+]
+
 """table generation"""
 def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05):
     print("\nNow generate latex table:\n")
     # each row is a measure, each column is an algorithm variant
-    rows = [
-        'best_return_normalized',
-        'best_return_normalized_std',
-
-        'best_feature_diff',
-        'best_weight_diff',
-        "best_0_weight_diff",
-        "best_1_weight_diff",
-
-        'best_feature_sim',
-        'best_weight_sim',
-        "best_0_weight_sim",
-        "best_1_weight_sim",
-
-        'convergence_iter',
-
-        'final_test_normalized_returns',
-        'final_feature_diff',
-        'final_weight_diff',
-        'final_feature_sim',
-        'final_weight_sim',
-    ]
-    row_names = ['Best Score',
-                 'Best Std over Seeds',
-
-                 'Best Feature Diff',
-                 'Best Weight Diff',
-                 'Best Weight Diff L0',
-                 'Best Weight Diff L1',
-
-                 'Best Feature Sim',
-                 'Best Weight Sim',
-                 'Best Weight Sim L0',
-                 'Best Weight Sim L1',
-
-                 'Convergence Iter',
-
-                 'Final Score',
-                 'Final Feature Diff',
-                 'Final Weight Diff',
-                 'Final Feature Sim',
-                 'Final Weight Sim',
-                 ]
-    row_names_higher_is_better = [
-        'Best Score',
-        'Final Score',
-        'Best Weight Sim',
-        'Best Feature Sim',
-        'Best Weight Sim L0',
-        'Best Weight Sim L1',
-        'Best Weight Sim FC',
-        'Final Feature Sim',
-        'Final Weight Sim',
-        'Prev Feature Sim',
-        'Prev Weight Sim',
-    ]
+    rows = NEW_PERFORMANCE_ROWS
+    row_names = NEW_PERFORMANCE_ROW_NAMES
 
     table = np.zeros((2, len(rows), len(algs)))
     # each iter we generate a row
     for i, row in enumerate(rows):
         for j, alg in enumerate(algs):
             table[0,i,j], table[1,i,j] = get_aggregated_value(alg_dataset_dict, alg, row)
-            if row == 'best_return_normalized':
-                std_mean, std_std = get_aggregated_value(alg_dataset_dict, alg, 'best_return_normalized_std')
+            if row in change_std_rows: # TODO
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, alg, row+'_std')
                 table[1, i, j] = std_mean
             if row == 'final_test_normalized_returns':
                 std_mean, std_std = get_aggregated_value(alg_dataset_dict, alg, 'final_test_normalized_returns_std')
@@ -192,14 +247,14 @@ def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bo
                 if bold:
                     if 'Prev' in row_name:
                         row_string += (' & \\textbf{%.6f}' % (mean,))
-                    elif row_name in ['Best Score', 'Best Std over Seeds', 'Convergence Iter']:
+                    elif row_name in row_names_use_1_precision:
                         row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
                     else:
                         row_string += (' & \\textbf{%.3f} $\pm$ %.1f' % (mean, std))
                 else:
                     if 'Prev' in row_name:
                         row_string += (' & %.6f' % (mean,))
-                    elif row_name in ['Best Score', 'Best Std over Seeds', 'Convergence Iter']:
+                    elif row_name in row_names_use_1_precision:
                         row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
                     else:
                         row_string += (' & %.3f $\pm$ %.1f' % (mean, std))
@@ -239,6 +294,29 @@ def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
         row_string += '\\\\'
         print(row_string)
 
+
+
+def generate_dt_first_table():
+    algs = [
+        dt,
+        chibiT,
+        dt_mc_1step_vocab100,
+    ]
+    col_names = ['Measures', 'DT', 'ChibiT', '1-MC Voc 100']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+MUJOCO_3_ENVS = [
+                # 'hopper',
+                 'halfcheetah',
+                # 'walker2d',
+]
+MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
+envs2 = []
+for e in MUJOCO_3_ENVS:
+    for dataset in MUJOCO_3_DATASETS:
+        envs2.append('%s_%s' % (e, dataset))
 
 
 def generate_table_nvocab_markov_chain():
@@ -684,6 +762,23 @@ def generate_table_cql_with_target_networks4():
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
+def generate_cql_section_table():
+    algs = [
+        cql_base,
+        cql_random_pretrain,
+        cql_random_1000_state,
+        cql_mdp_pretrain_same_dim_no_projection,
+    ]
+    col_names = ['Measures',
+                 'CQL',
+                 'CQL random',
+                 'CQL random 1000',
+                 'CQL MDP same-dim'
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
 
 
 
@@ -692,7 +787,7 @@ def generate_table_cql_with_target_networks4():
 # generate_table_markov_chain_compare_number_of_steps()
 # generate_dt_mc_table_compare_temperature()
 # generate_dt_mc_table_more1()
-# generate_dt_mc_table_more2()
+generate_dt_mc_table_more2()
 
 # generate_table_cql_cross_domain()
 
@@ -717,4 +812,11 @@ def generate_table_cql_with_target_networks4():
 # generate_table_cql_with_target_networks()
 # generate_table_cql_with_target_networks2()
 # generate_table_cql_with_target_networks3()
-generate_table_cql_with_target_networks4()
+# generate_table_cql_with_target_networks4()
+
+# TODO ICLR paper
+# generate_dt_first_table()
+
+# generate_cql_section_table()
+
+

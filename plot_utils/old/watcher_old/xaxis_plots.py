@@ -229,9 +229,9 @@ def plot_dt_perturb(): # TODO currently only DT later add other variants?
 data_path = '../../code/checkpoints/'
 save_folder_path = '../../figures/'
 
-plot_cql_pretrain_epochs()
+# plot_cql_pretrain_epochs()
 plot_cql_compare_layers()
-plot_dt_rl_datasize()
-plot_dt_modelsize()
-plot_dt_perturb()
+# plot_dt_rl_datasize()
+# plot_dt_modelsize()
+# plot_dt_perturb()
 
