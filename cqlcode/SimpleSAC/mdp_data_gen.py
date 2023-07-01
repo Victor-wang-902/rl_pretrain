@@ -60,9 +60,11 @@ transition_temperature = 1 # higher -> uniform random transition, close to 0 -> 
 # for temperature in [0.01, 0.1, 1, 10, 100]:
 #     gen_mdp_data(n_traj, max_length, 1000, 1000, temperature, temperature)
 
+n_state = 100
+n_action = 100
 # new ones with extreme temperature values
-for temperature in [0.0001, 0.001, 1000, 10000]:
-    gen_mdp_data(n_traj, max_length, 1000, 1000, temperature, temperature)
+for temperature in [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]:
+    gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
 
 
