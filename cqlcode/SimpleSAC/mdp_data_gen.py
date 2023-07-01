@@ -53,11 +53,15 @@ policy_temperature = 1 # higher temperature -> uniform random actions, close to 
 transition_temperature = 1 # higher -> uniform random transition, close to 0 -> deterministic transition
 
 # 1. different state-action space size
-for n_state_action in [1, 10, 100, 1000, 10000, 50257]:
-    gen_mdp_data(n_traj, max_length, n_state_action, n_state_action, policy_temperature, transition_temperature)
+# for n_state_action in [1, 10, 100, 1000, 10000, 50257]:
+#     gen_mdp_data(n_traj, max_length, n_state_action, n_state_action, policy_temperature, transition_temperature)
 
 # 2. different temperatures
-for temperature in [0.01, 0.1, 1, 10, 100]:
+# for temperature in [0.01, 0.1, 1, 10, 100]:
+#     gen_mdp_data(n_traj, max_length, 1000, 1000, temperature, temperature)
+
+# new ones with extreme temperature values
+for temperature in [0.0001, 0.001, 1000, 10000]:
     gen_mdp_data(n_traj, max_length, 1000, 1000, temperature, temperature)
 
 
