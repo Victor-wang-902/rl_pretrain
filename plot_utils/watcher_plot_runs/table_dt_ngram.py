@@ -262,6 +262,93 @@ def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bo
         print(row_string)
 
 
+def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05,
+                                   measure='best_return_normalized', row_name='Average (All Settings)'):
+    # each row is a measure, each column is an algorithm variant
+    rows = [measure]
+    row_names = [row_name]
+
+    table = np.zeros((2, len(rows), len(algs)))
+    # each iter we generate a row
+    for i, row in enumerate(rows):
+        for j, alg in enumerate(algs):
+            table[0,i,j], table[1,i,j] = get_aggregated_value(alg_dataset_dict, alg, row)
+            if row in change_std_rows: # TODO
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, alg, row+'_std')
+                table[1, i, j] = std_mean
+            if row == 'final_test_normalized_returns':
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, alg, 'final_test_normalized_returns_std')
+                table[1, i, j] = std_mean
+
+    max_values = np.max(table[0], axis=1)
+    min_values = np.min(table[0], axis=1)
+
+    print("		\\hline ")
+    for i, row_name in enumerate(row_names):
+        row_string = row_name
+        for j in range(len(algs)):
+            mean, std = table[0, i, j], table[1, i, j]
+            bold = False
+            if best_value_bold:
+                if mean >= (1-bold_threshold)*max_values[i]:
+                    bold = True
+                if bold:
+                    row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
+                else:
+                    row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
+        row_string += '\\\\'
+        print(row_string)
+
+# TODO add an aggregate score at the end
+def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05, measure='best_return_normalized'):
+    print("\nNow generate latex table:\n")
+    # measure = 'best_100percent_normalized'
+    # each row is a env-dataset pair, each column is an algorithm variant
+    rows = []
+    row_names = []
+    for dataset in ['medium-expert', 'medium', 'medium-replay', ]:
+        for e in ['halfcheetah', 'hopper', 'walker2d', ]:
+            rows.append('%s_%s' % (e, dataset))
+            row_names.append('%s-%s' % (e, dataset))
+
+    table = np.zeros((2, len(rows), len(algs)))
+    # each iter we generate a row
+    for i, row in enumerate(rows):
+        for j, alg in enumerate(algs):
+            table[0,i,j], table[1,i,j] = alg_dataset_dict[alg][row][measure]
+
+    max_values = np.max(table[0], axis=1)
+    min_values = np.min(table[0], axis=1)
+
+    col_name_line = ''
+    for col in column_names:
+        col_name_line += str(col) +' & '
+    col_name_line = col_name_line[:-2] + '\\\\'
+    print(col_name_line)
+    print("		\\hline ")
+    for i, row_name in enumerate(row_names):
+        row_string = row_name
+        for j in range(len(algs)):
+            mean, std = table[0, i, j], table[1, i, j]
+            bold = False
+            if best_value_bold:
+                if mean >= (1-bold_threshold)*max_values[i]:
+                    bold = True
+                if bold:
+                    row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
+                else:
+                    row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
+        row_string += '\\\\'
+        print(row_string)
+
+    # if add_aggregate_result_in_the_end:
+    #     print("		\\hline ")
+    #     agg_mean, agg_std = np.mean(table[0], axis=0), np.mean(table[1], axis=0)
+    #     print(agg_mean)
+    #     print(agg_std)
+
+
+
 def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
     # TODO need to fix the bold thing
     print("\nNow generate latex table:\n")
@@ -269,11 +356,10 @@ def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
     # each row is a env-dataset pair, each column is an algorithm variant
     rows = []
     row_names = []
-    for dataset in [ 'medium-expert', 'medium', 'medium-replay', ]:
+    for dataset in ['medium-expert', 'medium', 'medium-replay', ]:
         for e in ['halfcheetah', 'hopper', 'walker2d', ]:
             rows.append('%s_%s' % (e, dataset))
             row_names.append('%s-%s' % (e, dataset))
-
 
     table = np.zeros((2, len(rows), len(algs)))
     # each iter we generate a row
@@ -762,22 +848,195 @@ def generate_table_cql_with_target_networks4():
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
-def generate_cql_section_table():
+################################################## paper july
+def iclr_generate_dt_first_table_per_env():
+    algs = [
+        dt,
+        chibiT,
+        dt_mc_1step_vocab100,
+    ]
+    col_names = ['Best Score', 'DT', 'DT+Wiki', '1-MC S100']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized', row_name='Average Test (All)')
+
+    col_names = ['Average Score', 'DT', 'DT+Wiki', '1-MC S100']
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+def iclr_generate_dt_mc_table_100_states():
+    algs = [
+        dt,
+        dt_mc_1step_vocab100,
+        dt_mc_2step_vocab100,
+        dt_mc_3step_vocab100,
+        dt_mc_4step_vocab100,
+        dt_mc_5step_vocab100,
+    ]
+    col_names = ['Best Score',
+                 'DT',
+                 '1-MC S100', '2-MC S100','3-MC S100', '4-MC S100', '5-MC S100']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names = ['Average Score',
+                 'DT',
+                 '1-MC S100', '2-MC S100','3-MC S100', '4-MC S100', '5-MC S100']
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+
+def iclr_generate_dt_mc_table_different_number_of_states():
+    algs = [
+        dt,
+        dt_mc_1step_vocab10,
+        dt_mc_1step_vocab100,
+        dt_mc_1step_vocab1000,
+        dt_mc_1step_vocab10000,
+        dt_mc_1step_vocab100000,
+    ]
+    col_names = ['Best Score',
+                 'DT',
+                 '1-MC S10', '2-MC S100','3-MC S1000', '4-MC S10000', '5-MC S100000']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names = ['Average Score',
+                 'DT',
+                 '1-MC S10', '2-MC S100','3-MC S1000', '4-MC S10000', '5-MC S100000']
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+
+
+def iclr_generate_dt_mc_table_different_temperatures():
+    algs = [
+        dt,
+        dt_mc_temp0_1_vocab100,
+        dt_mc_temp0_2_vocab100,
+        dt_mc_temp0_4_vocab100,
+        # dt_mc_temp0_8_vocab100,
+        dt_mc_1step_vocab100,
+        dt_mc_temp10_0_vocab100,
+    ]
+    col_names = ['Best Score',
+                 'DT',
+                 '1-MC S100 t0.1', '1-MC S100 t0.2', '1-MC S100 t0.4', '1-MC S100 t1', '1-MC S100 t10',]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names = ['Average Score',
+                 'DT',
+                 '1-MC S100 t0.1', '1-MC S100 t0.2', '1-MC S100 t0.4', '1-MC S100 t1', '1-MC S100 t10',]
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+
+def iclr_generate_cql_section_table():
     algs = [
         cql_base,
-        cql_random_pretrain,
-        cql_random_1000_state,
-        cql_mdp_pretrain_same_dim_no_projection,
+        cql_mdp_pretrain_nstate100,
     ]
-    col_names = ['Measures',
+    col_names = ['Best Score',
                  'CQL',
-                 'CQL random',
-                 'CQL random 1000',
-                 'CQL MDP same-dim'
+                 'CQL MDP'
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
-    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+def iclr_generate_cql_mdp_compare_n_state():
+    algs = [
+        cql_base,
+        cql_mdp_pretrain_nstate1,
+        cql_mdp_pretrain_nstate10,
+        cql_mdp_pretrain_nstate100,
+        cql_mdp_pretrain_nstate1000,
+        cql_mdp_pretrain_nstate10000,
+    ]
+    col_names = ['Best Score',
+                 'CQL',
+                 'CQL MDP S1',
+                 'CQL MDP S10',
+                 'CQL MDP S100',
+                 'CQL MDP S1000',
+                 'CQL MDP S10000',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+
+def iclr_generate_cql_mdp_compare_temp():
+    algs = [
+        cql_base,
+        cql_mdp_pretrain_temperature0_01,
+        cql_mdp_pretrain_temperature0_1,
+        cql_mdp_pretrain_temperature1,
+        cql_mdp_pretrain_temperature10,
+        cql_mdp_pretrain_temperature100,
+    ]
+    col_names = ['Best Score',
+                 'CQL',
+                 'CQL MDP S1000 t0.01',
+                 'CQL MDP S1000 t0.1',
+                 'CQL MDP S1000 t1',
+                 'CQL MDP S1000 t10',
+                 'CQL MDP S1000 t100',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+
+def iclr_generate_same_task_pretrain():
+    algs = [
+        cql_base,
+        cql_mdp_pretrain_nstate100,
+        cql_fd_pretrain,
+    ]
+    col_names = ['Best Score',
+                 'CQL',
+                 'CQL MDP S100',
+                 'CQL same task',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
 
 
 
@@ -787,7 +1046,7 @@ def generate_cql_section_table():
 # generate_table_markov_chain_compare_number_of_steps()
 # generate_dt_mc_table_compare_temperature()
 # generate_dt_mc_table_more1()
-generate_dt_mc_table_more2()
+# generate_dt_mc_table_more2()
 
 # generate_table_cql_cross_domain()
 
@@ -814,9 +1073,16 @@ generate_dt_mc_table_more2()
 # generate_table_cql_with_target_networks3()
 # generate_table_cql_with_target_networks4()
 
-# TODO ICLR paper
-# generate_dt_first_table()
+# TODO ICLR paper run these
+# iclr_generate_dt_first_table_per_env()
+# iclr_generate_dt_mc_table_100_states()
+# iclr_generate_dt_mc_table_different_number_of_states()
+# iclr_generate_dt_mc_table_different_temperatures()
 
-# generate_cql_section_table()
+
+# iclr_generate_cql_section_table()
+# iclr_generate_cql_mdp_compare_n_state()
+# iclr_generate_cql_mdp_compare_temp()
+iclr_generate_same_task_pretrain()
 
 

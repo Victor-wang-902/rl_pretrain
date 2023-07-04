@@ -26,10 +26,11 @@ for temperature in [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000]:
     indices = np.arange(len(average_probs)).reshape(-1)
     plt.bar(indices, average_probs)
     # plt.title("Probability")
-    plt.xlabel("State", fontsize=20)
-    plt.ylabel("Probability", fontsize=20)
-    plt.yticks(fontsize=20)
-    plt.xticks(fontsize=20)
+    fontsize = 25
+    plt.xlabel("State", fontsize=fontsize)
+    plt.ylabel("Probability", fontsize=fontsize)
+    plt.yticks(fontsize=fontsize)
+    plt.xticks(fontsize=fontsize)
     save_folder_path = '../../figures/softmax'
     save_name = 'softmax_temp%s.png' % str(temperature)
     save_path = os.path.join(save_folder_path, save_name)
