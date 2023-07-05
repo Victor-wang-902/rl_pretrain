@@ -24,7 +24,7 @@ echo "SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 echo "Job ID: ${SLURM_ARRAY_TASK_ID}"
 
 module purge
-module load singularity
+module load singularity/3.11.3
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/rl_pretrain/cqlcode:/cqlcode -B /scratch/$USER/sing/cql-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/cql-sandbox bash -c "
 cd /cqlcode
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
