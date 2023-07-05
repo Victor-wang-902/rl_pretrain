@@ -66,11 +66,15 @@ n_traj, max_length = 1000, 1000
 # for temperature in [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]:
 #     gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
-for n_state in [1, 10, 100, 1000, 10000, 100000]:
+# for n_state in [1, 10, 100, 1000, 10000, 100000]:
+#     temperature = 1
+#     n_action = n_state
+#     gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+
+for n_state in [50257]:
     temperature = 1
     n_action = n_state
     gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
-
 
 
 
