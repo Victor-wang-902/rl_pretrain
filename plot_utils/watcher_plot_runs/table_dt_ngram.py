@@ -1032,6 +1032,27 @@ def iclr_generate_same_task_pretrain():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
+def july_test_only1():
+    algs = [
+        cql_base,
+        cql_fd_pretrain,
+        cql_jul_new,
+        cql_fd_pretrain_jul_new,
+    ]
+    col_names = ['Best Score',
+                 'CQL',
+                 'CQL same task',
+                 'CQL jul',
+                 'CQL same task jul',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
 
 
@@ -1072,7 +1093,7 @@ def iclr_generate_same_task_pretrain():
 # iclr_generate_dt_first_table_per_env()
 # iclr_generate_dt_mc_table_100_states_different_steps()
 # iclr_generate_dt_mc_table_different_number_of_states()
-iclr_generate_dt_mc_table_different_temperatures()
+# iclr_generate_dt_mc_table_different_temperatures()
 
 
 # iclr_generate_cql_section_table()
@@ -1081,3 +1102,5 @@ iclr_generate_dt_mc_table_different_temperatures()
 # iclr_generate_same_task_pretrain()
 
 
+# july new runs (more seeds, hard target update) test only
+july_test_only1()

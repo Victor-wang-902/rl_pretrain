@@ -197,3 +197,6 @@ cql_mdp_pretrain_same_dim_no_projection = 'cqlr3_premdp_same_noproj_l2_ns1000_pt
 cql_mdp_pretrain_same_dim_with_projection = 'cqlr3_premdp_same_proj_l2_ns1000_pt1_sameTrue'
 
 
+# new ones
+cql_jul_new = 'cqlr3n_prenone_l2'
+cql_fd_pretrain_jul_new = 'cqlr3n_preq_sprime_l2'
