@@ -1,5 +1,6 @@
 #!/bin/bash
 #SBATCH --verbose
+#SBATCH -p aquila,parallel # for sh cluster
 #SBATCH --time=48:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=8GB
@@ -13,6 +14,7 @@
 # #####################################################
 # #SBATCH --gres=gpu:1 # uncomment this line to request a gpu
 # #SBATCH --cpus-per-task=4
+#SBATCH --constraint=cpu # for sh cluster
 
 sleep $(( (RANDOM%10) + 1 )) # to avoid issues when submitting large amounts of jobs
 
