@@ -48,7 +48,7 @@ if do_sac_mdp:
     quick_plot_with_full_name( # labels, folder name prefix, envs
         labels,
         get_full_names_with_envs(base_names),
-        save_name='agg_sac',
+        save_name_prefix='agg_sac',
         base_data_folder_path=data_path,
         save_folder_path=save_path,
         y_value=standard_ys,

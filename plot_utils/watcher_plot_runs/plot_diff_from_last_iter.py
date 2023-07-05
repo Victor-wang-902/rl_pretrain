@@ -52,7 +52,7 @@ if do_cql:
     quick_plot_with_full_name( # labels, folder name prefix, envs
         labels,
         get_full_names_with_envs(base_names),
-        save_name='agg_cql',
+        save_name_prefix='agg_cql',
         base_data_folder_path=data_path,
         save_folder_path=save_path,
         y_value=standard_ys,
