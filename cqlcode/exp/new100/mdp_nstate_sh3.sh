@@ -14,7 +14,7 @@
 # #####################################################
 # #SBATCH --gres=gpu:1 # uncomment this line to request a gpu
 # #SBATCH --cpus-per-task=4
-#SBATCH --constraint=g6148 # for sh cluster g6148,g6132,g6248
+#SBATCH --constraint=g6248 # for sh cluster g6148,g6132,g6248
 sleep $(( (RANDOM%50) + 8 )) # to avoid issues when submitting large amounts of jobs
 
 echo "SLURM_JOBID: " $SLURM_JOBID
@@ -28,5 +28,5 @@ module load singularity/3.11.3
 singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/$USER/sing/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/sing/rl_pretrain/cqlcode:/cqlcode -B /scratch/$USER/sing/cql-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/sing/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/sing/cql-sandbox bash -c "
 cd /cqlcode
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
-python exp/new100/mdp_nstate_sh1.py --setting ${SLURM_ARRAY_TASK_ID}
+python exp/new100/mdp_nstate_sh3.py --setting ${SLURM_ARRAY_TASK_ID}
 "
