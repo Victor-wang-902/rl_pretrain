@@ -186,7 +186,7 @@ singularity build --sandbox cql-sandbox docker://cwatcherw/cql:0.1
 ```
 Run a CPU interactive job
 ```
-srun --pty --cpus-per-task=1 --mem 8000 -t 0-04:00 bash
+srun --pty --cpus-per-task=1 --mem 16000 -t 0-04:00 bash
 ```
 
 Or GPU interactive job
