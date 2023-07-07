@@ -98,6 +98,22 @@ def gen_cql_curves():
         ref_label,
     )
 
+    # combined loss
+    figure_names = []
+    for e in d4rl_9_datasets_envs:
+        figure_names.append('ind-cql_sac_combined_loss_%s.png' % e)
+
+    caption = 'Combined loss for CQL, CQL with same task RL data pretraining, and CQL with MDP pretraining.'
+    ref_label = 'fig:cql-combined-loss-curves'
+    print_figures_latex(
+        figure_folder,
+        figure_names,
+        subfigure_captions,
+        caption,
+        ref_label,
+    )
+
+
 def gen_dt_curves():
     figure_folder=  'figure-curves'
     figure_names = []
@@ -135,4 +151,4 @@ def gen_dt_curves():
 
 
 gen_cql_curves()
-gen_dt_curves()
+# gen_dt_curves()

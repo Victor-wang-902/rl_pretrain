@@ -130,23 +130,23 @@ def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COL
             seeds = []
             full_path = os.path.join(base_data_folder_path, full_name)
             print("check data folder:", full_path)
-            try:
-                for subdir, dirs, files in os.walk(full_path):
-                    if 'progress.txt' in files:
-                        progress_file_path = os.path.join(subdir, 'progress.txt')
-                    elif 'progress.csv' in files:
-                        progress_file_path = os.path.join(subdir, 'progress.csv')
-                    else:
-                        continue
-                    # load progress file
-                    seeds.append(pd.read_table(progress_file_path))
-                if len(seeds) > 0:
-                    print("Loaded %d seeds from: %s" % (len(seeds), full_path))
+            for subdir, dirs, files in os.walk(full_path):
+                if 'progress.txt' in files:
+                    progress_file_path = os.path.join(subdir, 'progress.txt')
+                elif 'progress.csv' in files:
+                    progress_file_path = os.path.join(subdir, 'progress.csv')
                 else:
-                    print("No seed loaded from: %s" % full_path)
-            except Exception as e:
-                print("Failed to load data from:", full_path)
-                print(e)
+                    continue
+                # load progress file
+                try:
+                    seeds.append(pd.read_table(progress_file_path))
+                except:
+                    print("Failed to load from progress:", progress_file_path)
+            if len(seeds) > 0:
+                print("Loaded %d seeds from: %s" % (len(seeds), full_path))
+            else:
+                print("No seed loaded from: %s" % full_path)
+
             seeds_all = seeds_all + seeds
         label2seeds[label] = seeds_all
 

@@ -30,6 +30,7 @@ base_measures = ['best_return_normalized', 'best_return',
          'best_25percent_normalized',
          'best_50percent_normalized',
          'best_100percent_normalized',
+         'best_later_half_normalized'
                  ]
 
 def get_extra_dict_multiple_seeds(datafolder_path):
@@ -69,7 +70,7 @@ def get_extra_dict_multiple_seeds(datafolder_path):
         aggregate_dict[measure] = [np.mean(aggregate_dict[measure]), np.std(aggregate_dict[measure])]
     for measure in ['final_test_returns', 'final_test_normalized_returns', 'best_return', 'best_return_normalized',
                     'best_5percent_normalized', 'best_10percent_normalized', 'best_25percent_normalized',
-                    'best_50percent_normalized', 'best_100percent_normalized',
+                    'best_50percent_normalized', 'best_100percent_normalized', 'best_later_half_normalized'
                     ]:
         aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1],]
     return aggregate_dict
@@ -173,6 +174,7 @@ change_std_rows = [
     'best_25percent_normalized',
     'best_50percent_normalized',
     'best_100percent_normalized',
+    'best_later_half_normalized',
 ]
 
 row_names_higher_is_better = [
@@ -315,7 +317,13 @@ def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_
     # each iter we generate a row
     for i, row in enumerate(rows):
         for j, alg in enumerate(algs):
-            table[0,i,j], table[1,i,j] = alg_dataset_dict[alg][row][measure]
+            try:
+                table[0,i,j], table[1,i,j] = alg_dataset_dict[alg][row][measure]
+            except:
+                print(alg)
+                print(row)
+                print(alg_dataset_dict[alg][row].keys())
+                quit()
 
     max_values = np.max(table[0], axis=1)
     min_values = np.min(table[0], axis=1)
@@ -942,8 +950,8 @@ def iclr_generate_dt_mc_table_different_temperatures():
 
 def iclr_generate_cql_section_table():
     algs = [
-        cql_base,
-        cql_mdp_pretrain_nstate100,
+        cql_jul,
+        cql_jul_mdp_noproj_s100_t1,
     ]
     col_names = ['Best Score',
                  'CQL',
@@ -958,14 +966,28 @@ def iclr_generate_cql_section_table():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
 def iclr_generate_cql_mdp_compare_n_state():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
     algs = [
-        cql_base,
-        cql_mdp_pretrain_nstate1,
-        cql_mdp_pretrain_nstate10,
-        cql_mdp_pretrain_nstate100,
-        cql_mdp_pretrain_nstate1000,
-        cql_mdp_pretrain_nstate10000,
+        cql_jul,
+        cql_jul_mdp_noproj_s1_t1,
+        cql_jul_mdp_noproj_s10_t1,
+        cql_jul_mdp_noproj_s100_t1,
+        cql_jul_mdp_noproj_s1000_t1,
+        cql_jul_mdp_noproj_s10000_t1,
+        cql_jul_mdp_noproj_s100000_t1,
     ]
     col_names = ['Best Score',
                  'CQL',
@@ -974,6 +996,7 @@ def iclr_generate_cql_mdp_compare_n_state():
                  'CQL MDP S100',
                  'CQL MDP S1000',
                  'CQL MDP S10000',
+                 'CQL MDP S100000',
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -983,24 +1006,35 @@ def iclr_generate_cql_mdp_compare_n_state():
     col_names[0] = 'Average Score'
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
 
 
 def iclr_generate_cql_mdp_compare_temp():
     algs = [
         cql_base,
-        cql_mdp_pretrain_temperature0_01,
-        cql_mdp_pretrain_temperature0_1,
-        cql_mdp_pretrain_temperature1,
-        cql_mdp_pretrain_temperature10,
-        cql_mdp_pretrain_temperature100,
+        cql_jul_mdp_noproj_s100_t0_0001,
+        cql_jul_mdp_noproj_s100_t0_001,
+        # cql_jul_mdp_noproj_s100_t0_01,
+        cql_jul_mdp_noproj_s100_t0_1,
+        cql_jul_mdp_noproj_s100_t1,
+        # cql_jul_mdp_noproj_s100_t10,
+        cql_jul_mdp_noproj_s100_t100,
+        cql_jul_mdp_noproj_s100_t1000,
     ]
     col_names = ['Best Score',
                  'CQL',
-                 'CQL MDP S1000 t0.01',
-                 'CQL MDP S1000 t0.1',
-                 'CQL MDP S1000 t1',
-                 'CQL MDP S1000 t10',
-                 'CQL MDP S1000 t100',
+                 'S100 t0.0001',
+                 'S100 t0.001',
+                 # 'S100 t0.01',
+                 'S100 t0.1',
+                 'S100 t1',
+                 # 'S100 t10',
+                 'S100 t100',
+                 'S100 t1000',
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -1011,16 +1045,20 @@ def iclr_generate_cql_mdp_compare_temp():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
 
 def iclr_generate_same_task_pretrain():
     algs = [
-        cql_base,
-        cql_mdp_pretrain_nstate100,
-        cql_fd_pretrain,
+        cql_jul,
+        cql_jul_mdp_noproj_s100_t1,
+        cql_jul_fd_pretrain,
     ]
     col_names = ['Best Score',
                  'CQL',
-                 'CQL MDP S100',
+                 'CQL MDP S100 t1',
                  'CQL same task',
                  ]
     envs = all_envs
@@ -1032,12 +1070,17 @@ def iclr_generate_same_task_pretrain():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
 def july_test_only1():
     algs = [
         cql_base,
         cql_fd_pretrain,
-        cql_jul_new,
-        cql_fd_pretrain_jul_new,
+        cql_jul,
+        cql_jul_fd_pretrain,
     ]
     col_names = ['Best Score',
                  'CQL',
@@ -1100,7 +1143,3 @@ def july_test_only1():
 # iclr_generate_cql_mdp_compare_n_state()
 # iclr_generate_cql_mdp_compare_temp()
 # iclr_generate_same_task_pretrain()
-
-
-# july new runs (more seeds, hard target update) test only
-july_test_only1()

@@ -198,5 +198,21 @@ cql_mdp_pretrain_same_dim_with_projection = 'cqlr3_premdp_same_proj_l2_ns1000_pt
 
 
 # new ones
-cql_jul_new = 'cqlr3n_prenone_l2'
-cql_fd_pretrain_jul_new = 'cqlr3n_preq_sprime_l2'
+cql_jul = 'cqlr3n_prenone_l2'
+cql_jul_fd_pretrain = 'cqlr3n_preq_sprime_l2'
+cql_jul_mdp_noproj_s1_t1 = 'cqlr3n_premdp_same_noproj_l2_ns1_pt1_sameTrue'
+cql_jul_mdp_noproj_s10_t1 = 'cqlr3n_premdp_same_noproj_l2_ns10_pt1_sameTrue'
+cql_jul_mdp_noproj_s100_t1 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1_sameTrue'
+cql_jul_mdp_noproj_s1000_t1 = 'cqlr3n_premdp_same_noproj_l2_ns1000_pt1_sameTrue'
+cql_jul_mdp_noproj_s10000_t1 = 'cqlr3n_premdp_same_noproj_l2_ns10000_pt1_sameTrue'
+cql_jul_mdp_noproj_s100000_t1 = 'cqlr3n_premdp_same_noproj_l2_ns100000_pt1_sameTrue'
+
+cql_jul_mdp_noproj_s100_t0_0001 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt0.0001_sameTrue'
+cql_jul_mdp_noproj_s100_t0_001 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt0.001_sameTrue'
+cql_jul_mdp_noproj_s100_t0_01 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt0.01_sameTrue'
+cql_jul_mdp_noproj_s100_t0_1 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt0.1_sameTrue'
+cql_jul_mdp_noproj_s100_t10 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt10_sameTrue'
+cql_jul_mdp_noproj_s100_t100 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt100_sameTrue'
+cql_jul_mdp_noproj_s100_t1000 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1000_sameTrue'
+
+
