@@ -33,35 +33,40 @@ caption_list = ['CQL with different forward dynamics pretraining epochs.',
 def print_figures_latex(figure_folder, figure_names, sub_figure_captions, caption='', ref_label=''):
     # 9 subfigures, each for one plot measure
     print("\\begin{figure}[htb]")
+    print("\\captionsetup[subfigure]{justification=centering}")
     print("\\centering")
     for i in range(len(figure_names)):
         figure_name = figure_names[i]
         sub_figure_caption = sub_figure_captions[i]
 
-        print('\\begin{subfigure}[t]{.3\\linewidth}')
+        print('\\begin{subfigure}[t]{.25\\linewidth}')
         print('\\centering')
         print('\\includegraphics[width=\\linewidth]{%s/%s}' % (figure_folder, figure_name))
         print('\\caption{%s}' % sub_figure_caption)
-        print('\\end{subfigure}')
+        if i in [2, 5]:
+            print('\\end{subfigure}\\\\')
+        else:
+            print('\\end{subfigure}')
+
     print('\\caption{%s}' % caption)
     print('\\label{%s}' % ref_label)
     print('\\end{figure}')
     print()
 
 
-MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah',  ]
-MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
+MUJOCO_3_ENVS = [ 'halfcheetah', 'hopper', 'walker2d', ]
+MUJOCO_3_DATASETS = ['medium-expert','medium','medium-replay',]
 d4rl_9_datasets_envs = []
-for e in MUJOCO_3_ENVS:
-    for d in MUJOCO_3_DATASETS:
+for d in MUJOCO_3_DATASETS:
+    for e in MUJOCO_3_ENVS:
         d4rl_9_datasets_envs.append('%s_%s' % (e, d))
 
-MUJOCO_3_ENVS_captions = ['Hopper', 'Walker', 'HalfCheetah',  ]
-MUJOCO_3_DATASETS_captions = ['medium','medium-replay','medium-expert',]
+MUJOCO_3_ENVS_captions = ['HalfCheetah', 'Hopper', 'Walker',  ]
+MUJOCO_3_DATASETS_captions = ['medium-expert','medium','medium-replay',]
 d4rl_9_datasets_envs_captions = []
-for e in MUJOCO_3_ENVS_captions:
-    for d in MUJOCO_3_DATASETS_captions:
-        d4rl_9_datasets_envs_captions.append('%s-%s' % (e, d))
+for d in MUJOCO_3_DATASETS_captions:
+    for e in MUJOCO_3_ENVS_captions:
+        d4rl_9_datasets_envs_captions.append('%s %s' % (e, d))
 
 
 def gen_cql_curves():
@@ -103,7 +108,7 @@ def gen_cql_curves():
     for e in d4rl_9_datasets_envs:
         figure_names.append('ind-cql_sac_combined_loss_%s.png' % e)
 
-    caption = 'Combined loss for CQL, CQL with same task RL data pretraining, and CQL with MDP pretraining.'
+    caption = 'Combined loss (Q loss and conservative loss) for CQL, CQL with same task RL data pretraining, and CQL with MDP pretraining.'
     ref_label = 'fig:cql-combined-loss-curves'
     print_figures_latex(
         figure_folder,
@@ -150,5 +155,5 @@ def gen_dt_curves():
 
 
 
-gen_cql_curves()
-# gen_dt_curves()
+# gen_cql_curves()
+gen_dt_curves()

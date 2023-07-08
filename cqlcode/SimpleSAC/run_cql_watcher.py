@@ -644,7 +644,7 @@ def run_single_exp(variant):
                 logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
                 # wandb_logger.save_pickle(save_data, 'model.pkl')
 
-            if (epoch + 1) % 40 == 0:
+            if (epoch + 1) % 20 == 0:
                 # additional_dict = get_additional_dict(additional_dict_with_list)
                 save_extra_dict(variant, logger, dataset,
                                 ret_list, ret_normalized_list, iter_list, step_list,
