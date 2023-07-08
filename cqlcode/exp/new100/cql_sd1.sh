@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --verbose
-#SBATCH -p aquila,parallel # for sh cluster
 #SBATCH --time=48:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=8GB
@@ -14,7 +13,6 @@
 # #####################################################
 # #SBATCH --gres=gpu:1 # uncomment this line to request a gpu
 # #SBATCH --cpus-per-task=4
-#SBATCH --constraint=g6132 # for sh cluster g6148,g6132,g6248
 sleep $(( (RANDOM%50) + 8 )) # to avoid issues when submitting large amounts of jobs
 
 echo "SLURM_JOBID: " $SLURM_JOBID
