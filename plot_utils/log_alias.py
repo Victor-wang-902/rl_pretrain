@@ -65,6 +65,8 @@ dt_mc_temp0_8_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature0.8'
 dt_mc_temp10_0_vocab100 = 'chibiT-rerun-syn_ngram1_nvocab100_temperature10.0'
 
 
+dt_same_data = 'same_new_ft'
+
 
 """
 CQL related

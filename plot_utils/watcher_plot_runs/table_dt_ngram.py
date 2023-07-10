@@ -948,6 +948,32 @@ def iclr_generate_dt_mc_table_different_temperatures():
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
 
+def iclr_generate_dt_same_data_table():
+    algs = [
+        dt,
+        chibiT,
+        dt_mc_1step_vocab100,
+        dt_same_data,
+    ]
+    col_names = ['Best Score',
+                 'DT',
+                 'DT + Wiki', 'DT + synthetic', 'DT + same data']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    # col_names[0] = 'Average Score'
+    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average 2nd Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
+
 def iclr_generate_cql_section_table():
     algs = [
         cql_jul,
@@ -1146,8 +1172,10 @@ def iclr_generate_same_task_pretrain():
 # iclr_generate_dt_mc_table_different_number_of_states()
 # iclr_generate_dt_mc_table_different_temperatures()
 
+iclr_generate_dt_same_data_table()
+
 
 # iclr_generate_cql_section_table()
 # iclr_generate_cql_mdp_compare_n_state()
-iclr_generate_cql_mdp_compare_temp()
+# iclr_generate_cql_mdp_compare_temp()
 # iclr_generate_same_task_pretrain()

@@ -202,11 +202,13 @@ def plot_dt_performance_curves():
         'DT',
         'DT Wiki',
         'DT MC',
+        'DT same data'
     ]
     base_names = [
         dt,
         chibiT,
         dt_mc_1step_vocab100,
+        dt_same_data,
         ]
 
     y = d4rl_test_performance_col_name
@@ -246,11 +248,13 @@ def plot_dt_loss_curves():
         'DT',
         'DT Wiki',
         'DT MC',
+        'DT same data'
     ]
     base_names = [
         dt,
         chibiT,
         dt_mc_1step_vocab100,
+        dt_same_data,
         ]
 
     y = d4rl_dt_loss_col_name
@@ -287,7 +291,7 @@ def plot_dt_loss_curves():
 
 
 # plot_cql_performance_curves()
-plot_cql_q_loss_curves()
-plot_cql_combined_loss_curves()
-# plot_dt_performance_curves()
-# plot_dt_loss_curves()
+# plot_cql_q_loss_curves()
+# plot_cql_combined_loss_curves()
+plot_dt_performance_curves()
+plot_dt_loss_curves()

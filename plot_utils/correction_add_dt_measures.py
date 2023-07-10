@@ -23,7 +23,7 @@ def get_other_score_measures(path):
 base_path = '../code/checkpoints'
 # base_path = '../code/testonly'
 for root, dirs, files in os.walk(base_path):
-    if 'dt' in root or 'chibiT' in root:
+    if 'dt' in root or 'chibiT' in root or 'same' in root:
         for dir in dirs:
             # Go through every subfolder in this folder
             subfolder = os.path.join(root, dir)
