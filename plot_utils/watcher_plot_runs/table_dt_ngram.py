@@ -1129,6 +1129,88 @@ def iclr_generate_same_task_pretrain():
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
 
+def iclr_generate_cql_iid():
+    algs = [
+        cql_jul,
+        cql_jul_mdp_noproj_s1_t1,
+        cql_jul_mdp_noproj_s100_t0_0001,
+        cql_jul_mdp_noproj_s100_t1,
+        cql_jul_mdp_noproj_s100_t1000,
+        cql_jul_mdp_noproj_s100000_t1,
+        # cql_jul_mdp_noproj_s100000_t0_0001,
+        # cql_jul_mdp_noproj_s100000_t1000,
+        # cql_jul_mdp_noproj_iid,
+    ]
+    col_names = ['Best Score',
+                 'CQL',
+                 'S1',
+                 'S100 t0.0001',
+                 'S100 t1',
+                 'S100 t1000',
+                 'S100000 t1',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
+
+def iclr_data_ratio1():
+    algs = [
+        cql_jul_pdr1_dr0_001,
+        cql_jul_pdr1_dr1,
+        cql_jul_same_data_pdr1_dr0_001,
+        cql_jul_same_data_pdr1_dr1,
+        cql_jul_mdp_pdr1_dr0_001,
+        cql_jul_mdp_pdr1_dr1,
+    ]
+    col_names = ['Best Score',
+                 'cql finetune 0.1\\%',
+                 'cql finetune 100\\%',
+                 'same finetune 0.1\\%',
+                 'same finetune 100\\%',
+                 'mdp finetune 0.1\\%',
+                 'mdp finetune 100\\%',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
+def iclr_data_ratio2():
+    algs = [
+        cql_jul_pdr1_dr1,
+        cql_jul_same_data_pdr0_001_dr1,
+        cql_jul_same_data_pdr1_dr1,
+        cql_jul_mdp_pdr0_001_dr1,
+        cql_jul_mdp_pdr1_dr1,
+    ]
+    col_names = ['Best Score',
+                 'cql',
+                 'same pretrain 0.1\\%',
+                 'same pretrain 100\\%',
+                 'mdp pretrain 0.1\\%',
+                 'mdp pretrain 100\\%',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
 
 ##################### table generation
 # generate_table_nvocab_markov_chain()
@@ -1172,10 +1254,16 @@ def iclr_generate_same_task_pretrain():
 # iclr_generate_dt_mc_table_different_number_of_states()
 # iclr_generate_dt_mc_table_different_temperatures()
 
-iclr_generate_dt_same_data_table()
+# iclr_generate_dt_same_data_table()
 
 
 # iclr_generate_cql_section_table()
 # iclr_generate_cql_mdp_compare_n_state()
 # iclr_generate_cql_mdp_compare_temp()
 # iclr_generate_same_task_pretrain()
+
+
+# TODO after july 10
+# iclr_generate_cql_iid()
+iclr_data_ratio1()
+iclr_data_ratio2()
