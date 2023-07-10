@@ -356,7 +356,7 @@ def experiment(
             "best_iter": best_iter
             }
 
-        with open(os.path.join(variant["outdir"], "extra_new.json"), "w") as f:
+        with open(os.path.join(variant["outdir"], "extra.json"), "w") as f:
             extra_dict = convert_json(extra_dict)
             json.dump(extra_dict, f, indent=4)
         return

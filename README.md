@@ -186,7 +186,7 @@ singularity build --sandbox cql-sandbox docker://cwatcherw/cql:0.1
 ```
 Run a CPU interactive job
 ```
-srun --pty --cpus-per-task=1 --mem 8000 -t 0-04:00 bash
+srun --pty --cpus-per-task=1 --mem 16000 -t 0-04:00 bash
 ```
 
 Or GPU interactive job
@@ -200,7 +200,7 @@ singularity exec --nv -B /scratch/$USER/sing/rl_pretrain/code:/code -B /scratch/
 After singulairty starts, run this to make path correct:
 ```
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
-cd /cqlcode/exp/
+cd /cqlcode/exp/cqlr3
 ```
 
 quick cql testing:
@@ -231,4 +231,11 @@ python sth.py > /dev/null 2>&1 &
 ```
 python experiment_watcherdebonly.py --env hopper --dataset medium --model_type dt --seed 666 --outdir "/checkpoints/ZZZdebug" --device cpu --embed_dim 3 --max_iters 3 --num_steps_per_iter 10 --batch_size 4 --calculate_extra
 
+```
+
+### git command to merge main into grid
+```
+git checkout grid
+git fetch
+git merge origin/main
 ```

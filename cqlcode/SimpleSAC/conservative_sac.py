@@ -43,7 +43,7 @@ class ConservativeSAC(object):
             config.update(ConfigDict(updates).copy_and_resolve_references())
         return config
 
-    def __init__(self, config, policy, qf1, qf2, target_qf1, target_qf2):
+    def __init__(self, config, policy, qf1, qf2, target_qf1, target_qf2, variant):
         self.config = ConservativeSAC.get_default_config(config)
         self.policy = policy
         self.qf1 = qf1
@@ -59,9 +59,19 @@ class ConservativeSAC(object):
         self.policy_optimizer = optimizer_class(
             self.policy.parameters(), self.config.policy_lr,
         )
-        self.qf_optimizer = optimizer_class(
-            list(self.qf1.parameters()) + list(self.qf2.parameters()), self.config.qf_lr
-        )
+
+        if variant['q_network_feature_lr_scale'] == 1:
+            self.qf_optimizer = optimizer_class(
+                list(self.qf1.parameters()) + list(self.qf2.parameters()), self.config.qf_lr
+            )
+        else:
+            reduced_lr = variant['q_network_feature_lr_scale'] * self.config.qf_lr
+            self.qf_optimizer = optimizer_class([
+                {"params": self.qf1.hidden_layers.parameters(), "lr": reduced_lr},
+                {"params": self.qf2.hidden_layers.parameters(), "lr": reduced_lr},
+                {"params": self.qf1.last_fc_layer.parameters(),},
+                {"params": self.qf2.last_fc_layer.parameters(),},
+            ], lr=self.config.qf_lr)
 
         if self.config.use_automatic_entropy_tuning:
             self.log_alpha = Scalar(0.0)
@@ -106,7 +116,8 @@ class ConservativeSAC(object):
         qf_loss.backward()
         self.qf_optimizer.step()
 
-    def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0):
+    def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0, distill_only=False,
+              safe_q_max=None):
         self._total_steps += 1
 
         observations = batch['observations']
@@ -114,6 +125,48 @@ class ConservativeSAC(object):
         rewards = batch['rewards']
         next_observations = batch['next_observations']
         dones = batch['dones']
+
+        if distill_only:
+            # distill Q
+            q1_pred = self.qf1(observations, actions)
+            q2_pred = self.qf2(observations, actions)
+
+            with torch.no_grad():
+                q1_ready = ready_agent.qf1(observations, actions)
+                q2_ready = ready_agent.qf2(observations, actions)
+            qf1_distill_loss = F.mse_loss(q1_pred, q1_ready)
+            qf2_distill_loss = F.mse_loss(q2_pred, q2_ready)
+
+            qf_loss = qf1_distill_loss + qf2_distill_loss
+
+            # distill policy
+            new_actions, log_pi = self.policy(observations)
+            with torch.no_grad():
+                actions_ready, log_pi_ready = ready_agent.policy(observations)
+            policy_loss = F.mse_loss(new_actions, actions_ready)
+
+            # optimizer
+            self.policy_optimizer.zero_grad()
+            policy_loss.backward()
+            self.policy_optimizer.step()
+
+            self.qf_optimizer.zero_grad()
+            qf_loss.backward()
+            self.qf_optimizer.step()
+
+            metrics = dict(
+                log_pi=log_pi.mean().item(),
+                policy_loss=policy_loss.item(),
+                qf1_loss=qf1_distill_loss.item(),
+                qf2_loss=qf2_distill_loss.item(),
+                average_qf1=q1_pred.mean().item(),
+                average_qf2=q2_pred.mean().item(),
+                total_steps=self.total_steps,
+                qf1_distill_loss=qf1_distill_loss.item(),
+                qf2_distill_loss=qf2_distill_loss.item(),
+            )
+
+            return metrics
 
         new_actions, log_pi = self.policy(observations)
 
@@ -155,6 +208,8 @@ class ConservativeSAC(object):
                 self.target_qf1(next_observations, new_next_actions),
                 self.target_qf2(next_observations, new_next_actions),
             )
+            if safe_q_max is not None:
+                target_q_values[target_q_values > safe_q_max] = safe_q_max
 
         if self.config.backup_entropy:
             target_q_values = target_q_values - alpha * next_log_pi
@@ -246,8 +301,8 @@ class ConservativeSAC(object):
             else:
                 device = q1_pred.device
                 qf1_distill_loss, qf2_distill_loss = torch.zeros(1).to(device), torch.zeros(1).to(device)
-
-            qf_loss = qf1_loss + qf2_loss + cql_min_qf1_loss + cql_min_qf2_loss + qf1_distill_loss + qf2_distill_loss
+            conservative_loss = cql_min_qf1_loss + cql_min_qf2_loss + qf1_distill_loss + qf2_distill_loss
+            qf_loss = qf1_loss + qf2_loss + conservative_loss
 
 
         if self.config.use_automatic_entropy_tuning:
@@ -274,6 +329,7 @@ class ConservativeSAC(object):
             policy_loss=policy_loss.item(),
             qf1_loss=qf1_loss.item(),
             qf2_loss=qf2_loss.item(),
+            qf_average_loss=(qf1_loss.item() + qf2_loss.item())/2,
             alpha_loss=alpha_loss.item(),
             alpha=alpha.item(),
             average_qf1=q1_pred.mean().item(),
@@ -282,6 +338,7 @@ class ConservativeSAC(object):
             total_steps=self.total_steps,
             qf1_distill_loss=qf1_distill_loss.item(),
             qf2_distill_loss=qf2_distill_loss.item(),
+            combined_loss=qf_loss.item()
         )
 
         if self.config.use_cql:
@@ -300,34 +357,63 @@ class ConservativeSAC(object):
                 cql_q2_next_actions=cql_q2_next_actions.mean().item(),
                 alpha_prime_loss=alpha_prime_loss.item(),
                 alpha_prime=alpha_prime.item(),
+                conservative_loss=conservative_loss.item(),
             ), 'cql'))
 
         return metrics
 
-    def pretrain(self, batch, pretrain_mode):
+    def pretrain(self, batch, pretrain_mode, mdppre_n_state):
         # pretrain mode:  q_sprime, 4. q_mc
         self._total_pretrain_steps += 1
 
         observations = batch['observations']
         actions = batch['actions']
-        rewards = batch['rewards']
+        # rewards = batch['rewards']
         next_observations = batch['next_observations']
-        dones = batch['dones']
+        # dones = batch['dones']
 
-        # TODO work on it here
-        if pretrain_mode == 'q_sprime':
+        if pretrain_mode in ['q_sprime', 'mdp_same_noproj', 'q_sprime_3x', 'random_fd_1000_state']:
             # here use both q networks to predict next obs
+            if int(mdppre_n_state) != 42:
+                obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
+                obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
+                pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+                pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+                pretrain_loss = pretrain_loss1 + pretrain_loss2
+            else:
+                observations = 2 * torch.rand(observations.shape, device=observations.device) - 1
+                actions = 2 * torch.rand(actions.shape, device=observations.device) - 1
+                next_observations = 2 * torch.rand(next_observations.shape, device=observations.device) - 1
+                obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
+                obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
+                pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+                pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+                pretrain_loss = pretrain_loss1 + pretrain_loss2
+        elif pretrain_mode in ['q_noact_sprime']:
+            actions = torch.zeros(actions.shape, device=actions.device)
             obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
             obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
             pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
-        elif pretrain_mode == 'q_mle':
-            obs_dist1 = self.qf1.predict_next_dist(observations, actions)
-            obs_dist2 = self.qf2.predict_next_dist(observations, actions)
-            pretrain_loss1 = - torch.sum(obs_dist1.log_prob(next_observations), dim=-1).mean()
-            pretrain_loss2 = - torch.sum(obs_dist2.log_prob(next_observations), dim=-1).mean()
+        elif pretrain_mode in ['proj0_q_sprime', 'proj1_q_sprime', 'proj2_q_sprime', 'mdp_q_sprime', 'mdp_same_proj',
+                               'proj0_q_sprime_3x', 'proj1_q_sprime_3x', 'proj2_q_sprime_3x']:
+            obs_next_q1 = self.qf1.get_pretrain_next_obs(observations, actions)
+            obs_next_q2 = self.qf2.get_pretrain_next_obs(observations, actions)
+            pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+            pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
+        elif pretrain_mode == 'rand_q_sprime':
+            observations= 2*torch.rand(observations.shape, device=observations.device) - 1
+            actions = 2*torch.rand(actions.shape, device=observations.device) - 1
+            next_observations = 2*torch.rand(next_observations.shape, device=observations.device) - 1
+            obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
+            obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
+            pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+            pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+            pretrain_loss = pretrain_loss1 + pretrain_loss2
+        else:
+            raise NotImplementedError
 
         self.qf_optimizer.zero_grad()
         pretrain_loss.backward()

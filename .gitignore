@@ -6,6 +6,8 @@ wandb
 figures/
 *.zip
 trials/
+cqlcode/mdpdata/
+code/testonly
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

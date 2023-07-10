@@ -6,6 +6,7 @@ import d4rl
 
 import numpy as np
 import torch
+import joblib
 
 
 class ReplayBuffer(object):
@@ -126,6 +127,49 @@ def get_d4rl_dataset_with_ratio(env, ratio=1, seed=0):
         rewards=dataset['rewards'][idxs],
         dones=dataset['terminals'][idxs].astype(np.float32),
     )
+
+def get_d4rl_dataset_from_multiple_envs(envs):
+    n_data = 0
+    d = None
+    for env in envs:
+        dataset = d4rl.qlearning_dataset(env)
+        dataset['dones'] = dataset['terminals']
+        del dataset['terminals']
+        n_data += dataset['observations'].shape[0]
+        if not d:
+            d = dict(
+                observations = dataset['observations'],
+                actions = dataset['actions'],
+                next_observations = dataset['next_observations'],
+                rewards = dataset['rewards'],
+                dones = dataset['dones'].astype(np.float32),
+            )
+        else:
+            for key in d:
+                d[key] = np.concatenate((d[key], dataset[key]), axis=0)
+    return d
+
+def get_mdp_dataset_with_ratio(n_traj, n_state, n_action, policy_temperature, transition_temperature,
+                               ratio=1, seed=0, verbose=True):
+    data_name = 'mdp_traj%d_ns%d_na%d_pt%s_tt%s.pkl' % (n_traj, n_state, n_action,
+                                                        str(policy_temperature), str(transition_temperature))
+    save_name = '/cqlcode/mdpdata/%s' % data_name
+
+    dataset = joblib.load(save_name)
+    if verbose:
+        print("MDP pretrain data loaded from:", save_name)
+
+    n_data = dataset['observations'].shape[0]
+    use_size = int(n_data * ratio)
+    np.random.seed(seed)
+    idxs = np.random.choice(n_data, use_size, replace=False)
+
+    return dict(
+        observations=dataset['observations'][idxs],
+        actions=dataset['actions'][idxs],
+        next_observations=dataset['next_observations'][idxs],
+    )
+
 
 
 def index_batch(batch, indices):

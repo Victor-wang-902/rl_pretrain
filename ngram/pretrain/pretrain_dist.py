@@ -4,7 +4,7 @@ from transformers import GPT2LMHeadModel
 from transformers import GPT2Tokenizer
 from torch.utils.data import DataLoader
 from transformers import AdamW, get_linear_schedule_with_warmup
-from data import get_dataloader, GPT2Dataset, GPT2Collator, worker_init_fn, load_synthetic_dataset, SyntheticTokenizer
+from data import get_dataloader, GPT2Dataset, GPT2Collator, worker_init_fn, load_synthetic_dataset, SyntheticTokenizer, SyntheticDataset
 import math
 import csv
 import time
@@ -41,9 +41,11 @@ def eval(args, dataloader, model, device, accelerator):
 def main(args):  # add argparser
     accelerator = Accelerator()
     device = accelerator.device
-    nvocab = args.dataset,split("_")[4]
+    nvocab = int(os.path.basename(args.dataset).split("_")[4]) #hack
+    #nvocab = args.dataset.split("_")[4] #hack
     #tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
     tokenizer = SyntheticTokenizer(nvocab)
+    #print(nvocab, args.embed_dim)
     config = GPT2Config(
         vocab_size=nvocab,
         n_embd=args.embed_dim,
@@ -67,8 +69,8 @@ def main(args):  # add argparser
 
     with accelerator.main_process_first():
 
-        valid_dataset = SyntheticDataset(valid_data, tokenizer, split="valid")
-        test_dataset = SyntheticDataset(test_data, tokenizer, split="test")
+        valid_dataset = SyntheticDataset(valid_data, split="valid")
+        test_dataset = SyntheticDataset(test_data, split="test")
 
     collator = GPT2Collator()
 
@@ -101,9 +103,8 @@ def main(args):  # add argparser
             writer.writerow(["current_train_time", "current_eval_time", "total_time", "steps", "train_loss", "train_ppl", "eval_ppl"])
     accelerator.wait_for_everyone()
     if not args.eval_only:
-        train_data = data["train"]
         with accelerator.main_process_first():
-            train_dataset = SyntheticDataset(train_data, tokenizer, seed=args.seed, data_size=args.data_size)
+            train_dataset = SyntheticDataset(train_data, seed=args.seed, data_size=args.data_size)
 
         train_data_loader = get_dataloader(
             train_dataset,
@@ -159,6 +160,8 @@ def main(args):  # add argparser
                 #    attention_mask=batch["attention_mask"].to(device), 
                 #    labels=batch["input_ids"].detach().clone().long().to(device)
                 #    )  # fix here
+                #print(batch["input_ids"].shape)
+                #raise Exception
                 outputs = model(
                     batch['input_ids'], 
                     attention_mask=batch["attention_mask"], 

@@ -19,6 +19,8 @@ y_to_y_label = {
     'TestEpNormRet':'Normalized Score',
     'TestEpRet': 'Score',
     'total_time': 'Hours',
+'sac_qf1_loss': 'Standard Q Loss',
+'current_itr_train_loss_mean': 'DT Training Loss',
 }
 
 # TODO we provide a number of things to a function to do plotting
@@ -114,7 +116,10 @@ def quick_plot(labels, data_folders, colors=DEFAULT_COLORS, linestyles=DEFAULT_L
                 plt.show()
 
 def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COLORS, linestyles=DEFAULT_LINESTYLES, base_data_folder_path=DEFAULT_BASE_PATH,
-               save_name='test_save_figure', save_folder_path=DEFAULT_SAVE_PATH, y_value=DEFAULT_Y_VALUE, verbose=True, ymin=None, ymax=None):
+                              save_name_prefix='test_save_figure', save_name_suffix=None, save_folder_path=DEFAULT_SAVE_PATH,
+                              y_value=DEFAULT_Y_VALUE, verbose=True, ymin=None, ymax=None,
+                              y_use_log=None, x_to_use='Steps', xlabel='Number of Updates', axis_font_size=20,
+                              y_log_scale=False, x_always_scientific=True, smooth=1):
     # this plots
     label2seeds = OrderedDict()
     for label, data_folder_full_name_list in zip(labels, data_folder_full_names):
@@ -125,23 +130,23 @@ def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COL
             seeds = []
             full_path = os.path.join(base_data_folder_path, full_name)
             print("check data folder:", full_path)
-            try:
-                for subdir, dirs, files in os.walk(full_path):
-                    if 'progress.txt' in files:
-                        progress_file_path = os.path.join(subdir, 'progress.txt')
-                    elif 'progress.csv' in files:
-                        progress_file_path = os.path.join(subdir, 'progress.csv')
-                    else:
-                        continue
-                    # load progress file
-                    seeds.append(pd.read_table(progress_file_path))
-                if len(seeds) > 0:
-                    print("Loaded %d seeds from: %s" % (len(seeds), full_path))
+            for subdir, dirs, files in os.walk(full_path):
+                if 'progress.txt' in files:
+                    progress_file_path = os.path.join(subdir, 'progress.txt')
+                elif 'progress.csv' in files:
+                    progress_file_path = os.path.join(subdir, 'progress.csv')
                 else:
-                    print("No seed loaded from: %s" % full_path)
-            except Exception as e:
-                print("Failed to load data from:", full_path)
-                print(e)
+                    continue
+                # load progress file
+                try:
+                    seeds.append(pd.read_table(progress_file_path))
+                except:
+                    print("Failed to load from progress:", progress_file_path)
+            if len(seeds) > 0:
+                print("Loaded %d seeds from: %s" % (len(seeds), full_path))
+            else:
+                print("No seed loaded from: %s" % full_path)
+
             seeds_all = seeds_all + seeds
         label2seeds[label] = seeds_all
 
@@ -150,15 +155,28 @@ def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COL
 
     for y_to_plot in y_value:
         for i, (label, seeds) in enumerate(label2seeds.items()):
-            x = combine_data_in_seeds(seeds, 'Steps')
-            y = combine_data_in_seeds(seeds, y_to_plot, smooth=DEFAULT_SMOOTH)
+            x = combine_data_in_seeds(seeds, x_to_use)
+            y = combine_data_in_seeds(seeds, y_to_plot, smooth=smooth)
+            if '_sim_' in y_to_plot:
+                y = 1-y
             if y_to_plot == 'total_time':
                 y = y / 3600
             ax = sns.lineplot(x=x, y=y, n_boot=20, label=label, color=colors[i], linestyle=linestyles[i], linewidth = 2)
-        plt.xlabel('Number of Data')
+        plt.xlabel(xlabel, fontsize=axis_font_size)
         y_label = y_to_y_label[y_to_plot] if y_to_plot in y_to_y_label else y_to_plot
-        plt.ylabel(y_label)
-        ax.set_ylim([ymin, ymax])
+        plt.ylabel(y_label, fontsize=axis_font_size)
+        if ymin is not None:
+            ax.set_ylim(ymin=ymin)
+        if ymax is not None:
+            ax.set_ylim(ymax=ymax)
+        if y_log_scale or (isinstance(y_use_log, list) and y_to_plot in y_use_log):
+            plt.yscale('log')
+        if x_always_scientific:
+            plt.ticklabel_format(style='sci', axis='x', scilimits=(0, 0))
+
+        plt.yticks(fontsize=axis_font_size)
+        plt.xticks(fontsize=axis_font_size)
+        plt.legend(fontsize=axis_font_size)
         plt.tight_layout()
         plt.tight_layout()
         save_folder_path_with_y = os.path.join(save_folder_path, y_to_plot)
@@ -166,7 +184,12 @@ def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COL
             if not os.path.isdir(save_folder_path_with_y):
                 path = Path(save_folder_path_with_y)
                 path.mkdir(parents=True)
-            save_path_full = os.path.join(save_folder_path_with_y, save_name + '_' + y_to_plot + '.png')
+            if save_name_suffix:
+                suffix = '_' + save_name_suffix + '.png'
+            else:
+                suffix = '.png'
+            save_path_full = os.path.join(save_folder_path_with_y, save_name_prefix + '_' + y_to_plot + suffix)
+
             plt.savefig(save_path_full)
             if verbose:
                 print(save_path_full)

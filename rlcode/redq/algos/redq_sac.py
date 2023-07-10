@@ -34,8 +34,6 @@ class REDQSACAgent(object):
                  start_steps=5000, delay_update_steps='auto',
                  utd_ratio=20, num_Q=10, num_min=2, q_target_mode='min',
                  policy_update_delay=20,
-                 ensemble_decay_n_data=20000, # wait for how many data to reduce number of ensemble (e.g. 20,000 data)
-                 safe_q_target_factor=0.5,
                  ):
         # set up networks
         self.policy_net = TanhGaussianPolicy(obs_dim, act_dim, hidden_sizes, action_limit=act_limit).to(device)
@@ -90,11 +88,6 @@ class REDQSACAgent(object):
         self.policy_update_delay = policy_update_delay
         self.device = device
 
-        self.ensemble_decay_n_data = ensemble_decay_n_data
-        self.max_reward_per_step = 0.1
-        self.safe_q_threshold = 100
-        self.safe_q_target_factor = safe_q_target_factor
-
     def __get_current_num_data(self):
         # used to determine whether we should get action from policy or take random starting actions
         return self.replay_buffer.size
@@ -141,7 +134,6 @@ class REDQSACAgent(object):
 
     def store_data(self, o, a, r, o2, d):
         # store one transition to the buffer
-        self.update_safe_q(r)
         self.replay_buffer.store(o, a, r, o2, d)
 
     def sample_data(self, batch_size):
@@ -169,9 +161,6 @@ class REDQSACAgent(object):
                     q_prediction_next_list.append(q_prediction_next)
                 q_prediction_next_cat = torch.cat(q_prediction_next_list, 1)
                 min_q, min_indices = torch.min(q_prediction_next_cat, dim=1, keepdim=True)
-                if self.safe_q_target_factor < 1: # TODO currently only for min mode
-                    min_q[min_q > (self.safe_q_threshold + 1)] = self.safe_q_threshold + (min_q[min_q > (
-                                self.safe_q_threshold + 1)] - self.safe_q_threshold) ** self.safe_q_target_factor
                 next_q_with_log_prob = min_q - self.alpha * log_prob_a_tilda_next
                 y_q = rews_tensor + self.gamma * (1 - done_tensor) * next_q_with_log_prob
             if self.q_target_mode == 'ave':
@@ -201,25 +190,11 @@ class REDQSACAgent(object):
                 y_q = rews_tensor + self.gamma * (1 - done_tensor) * next_q_with_log_prob
         return y_q, sample_idxs
 
-    def update_n_ensemble(self, i_update, ensemble_decay_n_data):
-        if ensemble_decay_n_data > 0:
-            n_removed_ensemble = int(i_update / ensemble_decay_n_data)
-            self.num_Q = max(self.init_num_Q - n_removed_ensemble, 2)
-
-    def update_safe_q(self, reward):
-        if self.safe_q_target_factor < 1:
-            self.max_reward_per_step = max(self.max_reward_per_step, reward)
-            # set threshold to be 2x current max value to have some flexibility
-            self.safe_q_threshold = self.max_reward_per_step / (1-self.gamma) * 2
-
     def train(self, logger):
         # this function is called after each datapoint collected.
         # when we only have very limited data, we don't make updates
         num_update = 0 if self.__get_current_num_data() <= self.delay_update_steps else self.utd_ratio
         for i_update in range(num_update):
-            """adaptive ensemble"""
-            self.update_n_ensemble(i_update, self.ensemble_decay_n_data)
-
             obs_tensor, obs_next_tensor, acts_tensor, rews_tensor, done_tensor = self.sample_data(self.batch_size)
 
             """Q loss"""

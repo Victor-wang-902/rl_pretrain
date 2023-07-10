@@ -280,6 +280,91 @@ class FullyConnectedQFunctionPretrain(nn.Module):
     #     return q_values
 
 
+class FullyConnectedQFunctionPretrain2(nn.Module):
+    # this version can support pretraining on data from a different task, with a projection layer...
+
+    def __init__(self, obs_dim, action_dim, pre_obs_dim, pre_act_dim, arch='256-256', orthogonal_init=False):
+        super().__init__()
+        self.obs_dim = obs_dim
+        self.action_dim = action_dim
+        self.output_dim = 1
+        self.arch = arch
+        self.orthogonal_init = orthogonal_init
+
+        self.pre_obs_dim = pre_obs_dim
+        self.pre_act_dim = pre_act_dim
+
+        self.hidden_layers = nn.ModuleList()
+        self.hidden_activation = F.relu
+        d = obs_dim + action_dim
+
+        hidden_sizes = [int(h) for h in arch.split('-')]
+        for hidden_size in hidden_sizes:
+            fc = nn.Linear(d, hidden_size)
+            if orthogonal_init:
+                nn.init.orthogonal_(fc.weight, gain=np.sqrt(2))
+                nn.init.constant_(fc.bias, 0.0)
+            self.hidden_layers.append(fc)
+            d = hidden_size
+
+        self.last_fc_layer = nn.Linear(d, self.output_dim)
+        if orthogonal_init:
+            nn.init.orthogonal_(self.last_fc_layer.weight, gain=1e-2)
+        else:
+            nn.init.xavier_uniform_(self.last_fc_layer.weight, gain=1e-2)
+
+        nn.init.constant_(self.last_fc_layer.bias, 0.0)
+
+        # pretrain mode: proj_q_sprime
+        # use a linear layer to project whatever pretraining task data dim into downstream task input dim.
+        # this proj layer is not used in downstream task
+        self.proj = nn.Linear(pre_obs_dim + pre_act_dim, obs_dim + action_dim)
+
+        # pretrain mode: q_sprime
+        self.hidden_to_next_obs = nn.Linear(d, pre_obs_dim)
+        # pretrain mode: q_mc
+        self.hidden_to_value = nn.Linear(d, 1)
+
+        if orthogonal_init:
+            nn.init.orthogonal_(self.hidden_to_next_obs.weight, gain=1e-2)
+            nn.init.orthogonal_(self.hidden_to_value.weight, gain=1e-2)
+            nn.init.orthogonal_(self.proj.weight, gain=1e-2)
+        else:
+            nn.init.xavier_uniform_(self.hidden_to_next_obs.weight, gain=1e-2)
+            nn.init.xavier_uniform_(self.hidden_to_value.weight, gain=1e-2)
+            nn.init.xavier_uniform_(self.proj.weight, gain=1e-2)
+
+        nn.init.constant_(self.hidden_to_next_obs.bias, 0.0)
+        nn.init.constant_(self.hidden_to_value.bias, 0.0)
+        nn.init.constant_(self.proj.bias, 0.0)
+
+    def get_feature(self, observations, actions):
+        h = torch.cat([observations, actions], dim=-1)
+        for fc_layer in self.hidden_layers:
+            h = self.hidden_activation(fc_layer(h))
+        return h
+
+    def get_pretrain_next_obs(self, observations, actions):
+        h = torch.cat([observations, actions], dim=-1)
+        h = self.proj(h)
+        for fc_layer in self.hidden_layers:
+            h = self.hidden_activation(fc_layer(h))
+        return self.hidden_to_next_obs(h)
+
+    def predict_next_obs(self, observations, actions):
+        h = self.get_feature(observations, actions)
+        return self.hidden_to_next_obs(h)
+
+    def predict_value(self, observations, actions):
+        h = self.get_feature(observations, actions)
+        return self.hidden_to_value(h)
+
+    @multiple_action_q_function
+    def forward(self, observations, actions):
+        h = self.get_feature(observations, actions)
+        return torch.squeeze(self.last_fc_layer(h), dim=-1)
+
+
 class Scalar(nn.Module):
     def __init__(self, init_value):
         super().__init__()
