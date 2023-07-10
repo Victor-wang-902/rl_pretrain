@@ -2,6 +2,7 @@ import os.path
 import numpy as np
 import pandas as pd
 import json
+
 # use this to generate the main table
 
 # def get_final_performance_seeds(datafolder_path):
@@ -22,20 +23,28 @@ import json
 #         performance_list.append(final_performance)
 #     return performance_list
 
-base_measures = ['best_return_normalized', 'best_return',
-                 'final_test_returns', 'final_test_normalized_returns',
-        'best_weight_diff',
-        'best_weight_sim',
+base_measures = [
+    'best_return',
+    'best_return_normalized',
 
-        'best_feature_diff',
-        'best_feature_sim',
+    'final_test_returns',
+    'final_test_normalized_returns',
 
-        "best_0_weight_diff",
-        "best_1_weight_diff",
-        "best_0_weight_sim",
-        "best_1_weight_sim",
+    'best_weight_diff',
+    'best_weight_sim',
 
-        'convergence_iter',]
+    'final_weight_diff',
+    'final_weight_sim',
+
+    'best_feature_diff',
+    'best_feature_sim',
+
+    'final_feature_diff',
+    'final_feature_sim',
+
+    'convergence_iter'
+]
+
 
 def get_extra_dict_multiple_seeds(datafolder_path):
     # for a alg-dataset variant, obtain a dictionary with key-value pairs as measure:[avg across seeds, std across seeds]
@@ -46,7 +55,7 @@ def get_extra_dict_multiple_seeds(datafolder_path):
     measures = base_measures
     for measure in measures:
         aggregate_dict[measure] = []
-    aggregate_dict['weight_diff_100k'] = [] # TODO might want to extend later...
+    aggregate_dict['weight_diff_100k'] = []  # TODO might want to extend later...
     aggregate_dict['feature_diff_100k'] = []
 
     for subdir, dirs, files in os.walk(datafolder_path):
@@ -73,13 +82,14 @@ def get_extra_dict_multiple_seeds(datafolder_path):
             print(measure, 0)
         aggregate_dict[measure] = [np.mean(aggregate_dict[measure]), np.std(aggregate_dict[measure])]
     for measure in ['final_test_returns', 'final_test_normalized_returns', 'best_return', 'best_return_normalized']:
-        aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1],]
+        aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1], ]
     return aggregate_dict
 
-data_path = '../../code/checkpoints/'
 
-MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah',  ]
-MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
+data_path = '../../code/checkpoints/sendbackcql/'
+
+MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah', ]
+MUJOCO_3_DATASETS = ['medium', 'medium-replay', 'medium-expert', ]
 envs = []
 for e in MUJOCO_3_ENVS:
     for dataset in MUJOCO_3_DATASETS:
@@ -87,9 +97,8 @@ for e in MUJOCO_3_ENVS:
 
 # final table: for each variant name, for each measure, compute relevant values
 alg_dataset_dict = {}
-algs = [ # 'dt', 'chibiT',
-         'cqlr3_prenone_l2', 'cqlr3_preq_sprime_l2', 'dt-rerun-data_size_dt_1.0',
-   'chibiT-rerun'
+algs = [
+    'cqlr3_prenone_l2', 'cqlr3_preq_sprime_l2', 'cqlr3_preq_mle_l2',
 ]
 
 # load extra dict for all alg, all envs, all seeds
@@ -99,16 +108,20 @@ for alg in algs:
         folderpath = os.path.join(data_path, '%s_%s' % (alg, env))
         alg_dataset_dict[alg][env] = get_extra_dict_multiple_seeds(folderpath)
 
+
 # TODO compute performance gain from pretraining for ones use pretraining (compared to no pretrain baseline)
 
 def get_aggregated_value(alg_dataset_dict, alg, measure):
     # for an alg-measure pair, aggregate over all datasets
     value_list = []
     for dataset, extra_dict in alg_dataset_dict[alg].items():
-        value_list.append(extra_dict[measure][0]) # each entry is the value from a dataset
+        value_list.append(extra_dict[measure][0])  # each entry is the value from a dataset
     return np.mean(value_list), np.std(value_list)
 
+
 """table generation"""
+
+
 def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
     print("\nNow generate latex table:\n")
     # each row is a measure, each column is an algorithm variant
@@ -116,46 +129,56 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
         'best_return_normalized',
         'best_return_normalized_std',
 
-        'best_feature_diff',
+        'final_test_normalized_returns',
+        'final_test_normalized_returns_std',
+
         'best_weight_diff',
-        "best_0_weight_diff",
-        "best_1_weight_diff",
-
-        'best_feature_sim',
         'best_weight_sim',
-        "best_0_weight_sim",
-        "best_1_weight_sim",
 
-        'convergence_iter',
-            ]
+        'final_weight_diff',
+        'final_weight_sim',
+
+        'best_feature_diff',
+        'best_feature_sim',
+
+        'final_feature_diff',
+        'final_feature_sim',
+
+        'convergence_iter'
+    ]
     row_names = ['Best Score',
                  'Best Std over Seeds',
 
-                 'Best Feature Diff',
-                 'Best Weight Diff',
-                 'Best Weight Diff L0',
-                 'Best Weight Diff L1',
+                 'Final Score',
+                 'Final Std over Seeds',
 
-                 'Best Feature Sim',
+                 'Best Weight Diff',
                  'Best Weight Sim',
-                 'Best Weight Sim L0',
-                 'Best Weight Sim L1',
+
+                 'Final Weight Diff',
+                 'Final Weight Sim',
+
+                 'Best Feature Diff',
+                 'Best Feature Sim',
+
+                 'Final Feature Diff',
+                 'Final Feature Sim',
 
                  'Convergence Iter']
     row_names_higher_is_better = [
         'Best Score',
+        'Final Score',
         'Best Weight Sim',
         'Best Feature Sim',
-        'Best Weight Sim L0',
-        'Best Weight Sim L1',
-        'Best Weight Sim FC',
+        'Final Weight Sim',
+        'Final Feature Sim',
     ]
 
     table = np.zeros((2, len(rows), len(algs)))
     # each iter we generate a row
     for i, row in enumerate(rows):
         for j, alg in enumerate(algs):
-            table[0,i,j], table[1,i,j] = get_aggregated_value(alg_dataset_dict, alg, row)
+            table[0, i, j], table[1, i, j] = get_aggregated_value(alg_dataset_dict, alg, row)
 
     max_values = np.max(table[0], axis=1)
     min_values = np.min(table[0], axis=1)
@@ -167,10 +190,10 @@ def generate_aggregate_table(algs, best_value_bold=True, bold_threshold=0.05):
             bold = False
             if best_value_bold:
                 if row_name not in row_names_higher_is_better:
-                    if mean < (1+bold_threshold)*min_values[i]:
+                    if mean < (1 + bold_threshold) * min_values[i]:
                         bold = True
                 else:
-                    if mean > (1-bold_threshold)*max_values[i]:
+                    if mean > (1 - bold_threshold) * max_values[i]:
                         bold = True
                 if bold:
                     if row_name in ['Best Score', 'Best Std over Seeds', 'Convergence Iter']:
@@ -193,17 +216,16 @@ def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
     # each row is a env-dataset pair, each column is an algorithm variant
     rows = []
     row_names = []
-    for dataset in [ 'medium-expert', 'medium', 'medium-replay', ]:
+    for dataset in ['medium-expert', 'medium', 'medium-replay', ]:
         for e in ['halfcheetah', 'hopper', 'walker2d', ]:
             rows.append('%s_%s' % (e, dataset))
             row_names.append('%s-%s' % (e, dataset))
-
 
     table = np.zeros((2, len(rows), len(algs)))
     # each iter we generate a row
     for i, row in enumerate(rows):
         for j, alg in enumerate(algs):
-            table[0,i,j], table[1,i,j] = alg_dataset_dict[alg][row][measure]
+            table[0, i, j], table[1, i, j] = alg_dataset_dict[alg][row][measure]
 
     max_values = np.max(table[0], axis=1)
 
@@ -211,12 +233,13 @@ def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
         row_string = row_name
         for j in range(len(algs)):
             mean, std = table[0, i, j], table[1, i, j]
-            if max_value_bold and mean > bold_threshold*max_values[i]:
+            if max_value_bold and mean > bold_threshold * max_values[i]:
                 row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
             else:
                 row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
         row_string += '\\\\'
         print(row_string)
+
 
 generate_aggregate_table(algs)
 # generate_per_env_score_table()

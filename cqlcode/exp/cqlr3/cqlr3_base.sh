@@ -28,3 +28,21 @@ cd /cqlcode
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
 python exp/cqlr3/cqlr3_base.py --setting ${SLURM_ARRAY_TASK_ID}
 "
+
+
+##!/bin/bash
+##SBATCH --verbose
+##SBATCH --time=48:00:00
+##SBATCH --nodes=1
+##SBATCH --mem=32GB
+##SBATCH --cpus-per-task=4
+##SBATCH --gres=gpu:1 # uncomment this line to request a gpu
+#
+##SBATCH --output=./logs/%A_%a.out # %A is SLURM_ARRAY_JOB_ID, %a is SLURM_ARRAY_TASK_ID,
+##SBATCH --error=./logs/%A_%a.err # MAKE SURE WHEN YOU RUN THIS, ../logs IS A VALID PATH
+#
+#singularity exec --nv --bind /scratch/$USER --overlay /scratch/$USER/overlay-25GB-500K.ext3:ro /scratch/$USER/cuda11.4.2-cudnn8.2.4-devel-ubuntu20.04.3.sif /bin/bash -c "
+#source /ext3/env.sh;
+#conda activate dt-atari;
+#python run_dt_atari.py --seed 666 --context_length 30 --epochs 5 --model_type 'reward_conditioned' --num_steps 500000 --num_buffers 50 --game 'Breakout' --batch_size 128
+#"
