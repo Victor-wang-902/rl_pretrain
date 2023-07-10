@@ -362,7 +362,7 @@ class ConservativeSAC(object):
 
         return metrics
 
-    def pretrain(self, batch, pretrain_mode):
+    def pretrain(self, batch, pretrain_mode, mdppre_n_state):
         # pretrain mode:  q_sprime, 4. q_mc
         self._total_pretrain_steps += 1
 
@@ -374,11 +374,21 @@ class ConservativeSAC(object):
 
         if pretrain_mode in ['q_sprime', 'mdp_same_noproj', 'q_sprime_3x', 'random_fd_1000_state']:
             # here use both q networks to predict next obs
-            obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
-            obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
-            pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
-            pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
-            pretrain_loss = pretrain_loss1 + pretrain_loss2
+            if int(mdppre_n_state) != 42:
+                obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
+                obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
+                pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+                pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+                pretrain_loss = pretrain_loss1 + pretrain_loss2
+            else:
+                observations = 2 * torch.rand(observations.shape, device=observations.device) - 1
+                actions = 2 * torch.rand(actions.shape, device=observations.device) - 1
+                next_observations = 2 * torch.rand(next_observations.shape, device=observations.device) - 1
+                obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
+                obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
+                pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+                pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+                pretrain_loss = pretrain_loss1 + pretrain_loss2
         elif pretrain_mode in ['q_noact_sprime']:
             actions = torch.zeros(actions.shape, device=actions.device)
             obs_next_q1 = self.qf1.predict_next_obs(observations, actions)

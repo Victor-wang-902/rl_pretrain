@@ -506,7 +506,7 @@ def run_single_exp(variant):
                         batch['next_observations'] = index2state[rand_next_obs]
 
                     batch = batch_to_torch(batch, variant['device'])
-                    metrics.update(agent.pretrain(batch, variant['pretrain_mode']))
+                    metrics.update(agent.pretrain(batch, variant['pretrain_mode'], variant['mdppre_n_state']))
 
                 pretrain_logger.log_tabular("PretrainIteration", epoch + 1)
                 pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * variant['n_train_step_per_epoch'])
