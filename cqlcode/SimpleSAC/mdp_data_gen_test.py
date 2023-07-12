@@ -6,24 +6,6 @@ from torch.nn import functional as F
 from tqdm import tqdm
 import joblib
 
-import os
-import psutil
-def get_memory_usage_in_GB():
-    process = psutil.Process(os.getpid())
-    mem_info = process.memory_info()
-    return mem_info.rss / (1024 ** 3)
-
-m1 = get_memory_usage_in_GB()
-x = np.random.rand(10000000 * 20)
-m2 = get_memory_usage_in_GB()
-print(m1, m2)
-print("mem used:",m2-m1)
-
-quit()
-
-
-
-
 def softmax_with_torch(x, temperature):
     return F.softmax(Tensor(x/temperature), dim=0).numpy()
 
@@ -61,12 +43,14 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
             'next_observations': next_states}
     data_name = 'mdp_traj%d_ns%d_na%d_pt%s_tt%s.pkl' % (n_traj, n_state, n_action,
                                                         str(policy_temperature), str(transition_temperature))
-    save_name = '/cqlcode/mdpdata/%s' % data_name
-    joblib.dump(data_dict, save_name)
-    print("Data saved to:", save_name)
+    for i in range(10):
+        print(data_dict['observations'][i*10:(i+1)*10])
+    # save_name = '/cqlcode/mdpdata/%s' % data_name
+    # joblib.dump(data_dict, save_name)
+    # print("Data saved to:", save_name)
 
 # generate 1M data, each trajectory has 1000 steps
-n_traj, max_length = 1000, 1000
+n_traj, max_length = 10, 10
 # policy_temperature = 1 # higher temperature -> uniform random actions, close to 0 temperature -> deterministic action
 # transition_temperature = 1 # higher -> uniform random transition, close to 0 -> deterministic transition
 
@@ -84,11 +68,15 @@ n_traj, max_length = 1000, 1000
 # for temperature in [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]:
 #     gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
-for n_state in [1, 10, 100, 1000, 10000, 100000]:
-    temperature = 1
-    n_action = n_state
-    gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+# for n_state in [1, 10, 100, 1000, 10000, 100000]:
+#     temperature = 1
+#     n_action = n_state
+#     gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
+for n_state in [100]:
+    for temperature in [1]:
+        n_action = n_state
+        gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
 
 
