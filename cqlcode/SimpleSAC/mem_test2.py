@@ -27,6 +27,16 @@ print(x.shape)
 m2 = get_memory_usage_in_GB()
 print(m2-m1)
 
+import sys
+
+def memory_usage(obj):
+    return sys.getsizeof(obj)
+
+# example usage
+print(memory_usage(10))  # small integer
+print(memory_usage(10**100))  # large integer
+print(memory_usage(10.0))  # float
+
 quit()
 
 
