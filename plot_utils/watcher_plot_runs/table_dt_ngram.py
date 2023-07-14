@@ -1129,17 +1129,14 @@ def iclr_generate_same_task_pretrain():
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
 
-def iclr_generate_cql_iid():
+def iclr_generate_cql_iid1():
     algs = [
         cql_jul,
         cql_jul_mdp_noproj_s1_t1,
         cql_jul_mdp_noproj_s100_t0_0001,
         cql_jul_mdp_noproj_s100_t1,
         cql_jul_mdp_noproj_s100_t1000,
-        cql_jul_mdp_noproj_s100000_t1,
-        # cql_jul_mdp_noproj_s100000_t0_0001,
-        # cql_jul_mdp_noproj_s100000_t1000,
-        # cql_jul_mdp_noproj_iid,
+        cql_jul_mdp_noproj_s100_iid,
     ]
     col_names = ['Best Score',
                  'CQL',
@@ -1147,7 +1144,33 @@ def iclr_generate_cql_iid():
                  'S100 t0.0001',
                  'S100 t1',
                  'S100 t1000',
-                 'S100000 t1',
+                 'S100 IID',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_iid2():
+    algs = [
+        cql_jul_mdp_noproj_s100000_t0_0001,
+        cql_jul_mdp_noproj_s100000_t1,
+        cql_jul_mdp_noproj_s100000_t1000,
+        cql_jul_mdp_noproj_s100000_iid,
+        cql_jul_mdp_noproj_s10000000_iid,
+        cql_jul_mdp_noproj_sinf_iid,
+    ]
+    col_names = ['Best Score',
+                 'S100K t0.0001',
+                 'S100K t1',
+                 'S100K t1000',
+                 'S100K IID',
+                 'S10M IID',
+                 'Sinf IID',
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -1264,6 +1287,8 @@ def iclr_data_ratio2():
 
 
 # TODO after july 10
-# iclr_generate_cql_iid()
-iclr_data_ratio1()
-iclr_data_ratio2()
+# iclr_data_ratio1()
+# iclr_data_ratio2()
+
+# iclr_generate_cql_iid1()
+iclr_generate_cql_iid2()
