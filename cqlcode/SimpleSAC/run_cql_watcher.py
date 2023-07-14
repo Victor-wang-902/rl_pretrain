@@ -558,6 +558,7 @@ def run_single_exp(variant):
             else:
                 print("Pretrained model not saved. Already exist:", pretrain_full_path)
     sys.stdout.flush()
+    dataset = None
     if variant['do_pretrain_only']:
         return
 

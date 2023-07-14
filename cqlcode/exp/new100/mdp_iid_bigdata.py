@@ -40,8 +40,8 @@ def main():
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['mdp_same_noproj'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
-        'mdppre_n_traj', 'nt', [20000], #
-        'mdppre_n_state', 'ns', [40000000],
+        'mdppre_n_traj', 'nt', [40000], #
+        'mdppre_n_state', 'ns', [80000000],
         'mdppre_policy_temperature', 'pt', [9999999],
         'mdppre_same_as_s_and_policy', 'same', [True],
         'seed', '', [42, 666, 1024, 0, 1, 2, 3, 4, 5, 6,],
