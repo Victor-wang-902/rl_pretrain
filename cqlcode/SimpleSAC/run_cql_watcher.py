@@ -19,6 +19,7 @@ import pprint
 import gym
 import torch
 import d4rl
+import psutil
 
 import absl.app
 import absl.flags
@@ -45,6 +46,11 @@ def get_dictionary_from_kwargs(**kwargs):
     for key, val in kwargs.items():
         d[key] = val
     return d
+
+def get_memory_usage_in_GB():
+    process = psutil.Process(os.getpid())
+    mem_info = process.memory_info()
+    return mem_info.rss / (1024 ** 3)
 
 def get_default_variant_dict():
     # returns a dictionary that contains all the default hyperparameters
@@ -487,6 +493,7 @@ def run_single_exp(variant):
                 index2state = 2 * np.random.rand(1000, pretrain_obs_dim) - 1
                 index2action = 2 * np.random.rand(1000, pretrain_act_dim) - 1
                 index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)
+            print("pretrain data loaded, current process memory use:", get_memory_usage_in_GB())
 
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch+1}
