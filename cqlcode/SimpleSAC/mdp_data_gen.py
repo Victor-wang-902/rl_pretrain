@@ -21,33 +21,43 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
     next_states = np.zeros(n_data, dtype=int)
     i = 0
 
-    for i_traj in tqdm(range(n_traj)):
-        np.random.seed(i_traj)
-        state = np.random.randint(n_state)
-        for t in range(max_length):
-            states[i] = state
-            # for each step, an action is taken, and a next state is decided.
-            # if we assume a fixed policy is generating the data, then the action probability only depends on the state
-            if not iid:
-                np.random.seed(state)
-                action_probs = softmax_with_torch(np.random.rand(n_action), policy_temperature)
+    if n_state == 12345678 and temperature >= 9999999:
+        # 1m data, infinite state space, iid
+        print("generate finite data, inf state space, iid.")
+        np.random.seed(0)
+        states_actions_next_states = np.random.choice(n_state, size=n_data*3, replace=False)
+        states = states_actions_next_states[:n_data]
+        actions = states_actions_next_states[n_data:n_data*2]
+        next_states = states_actions_next_states[n_data*2:]
+    else:
+        for i_traj in tqdm(range(n_traj)):
+            np.random.seed(i_traj)
+            state = np.random.randint(n_state)
+            for t in range(max_length):
+                states[i] = state
+                # for each step, an action is taken, and a next state is decided.
+                # if we assume a fixed policy is generating the data, then the action probability only depends on the state
+                if not iid:
+                    np.random.seed(state)
+                    action_probs = softmax_with_torch(np.random.rand(n_action), policy_temperature)
 
-                np.random.seed(42 + i_traj * 1000 + t * 333)
-                action = np.random.choice(n_action, p=action_probs)
+                    np.random.seed(42 + i_traj * 1000 + t * 333)
+                    action = np.random.choice(n_action, p=action_probs)
 
-                np.random.seed(state * 888 + action * 777)
-                next_state_probs = softmax_with_torch(np.random.rand(n_state), transition_temperature)
+                    np.random.seed(state * 888 + action * 777)
+                    next_state_probs = softmax_with_torch(np.random.rand(n_state), transition_temperature)
 
-                np.random.seed(666 + i_traj * 1000 + t * 333)
-                next_state = np.random.choice(n_state, p=next_state_probs)
-            else:
-                action = np.random.randint(n_action)
-                next_state = np.random.randint(n_state)
+                    np.random.seed(666 + i_traj * 1000 + t * 333)
+                    next_state = np.random.choice(n_state, p=next_state_probs)
+                else:
+                    action = np.random.randint(n_action)
+                    next_state = np.random.randint(n_state)
 
-            next_states[i] = next_state
-            actions[i]=action
-            state = next_state
-            i += 1
+                next_states[i] = next_state
+                actions[i]=action
+                state = next_state
+                i += 1
+
     data_dict = {'observations': states,
             'actions': actions,
             'next_observations': next_states}
@@ -60,21 +70,25 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
 # generate 1M data, each trajectory has 1000 steps
 n_traj, max_length = 1000, 1000
 
-for n_state in [100, 100000, 10000000]:
+# for n_state in [100, 100000, 10000000]:
+#     for temperature in [9999999]:
+#         n_action = n_state
+#         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+#
+# for n_state in [42]: # in the newest cql main code, when see 42 they will do state space inf IID transition pretrain
+#     for temperature in [42]:
+#         n_action = n_state
+#         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+#
+# for n_state in [100000]:
+#     for temperature in [1000]:
+#         n_action = n_state
+#         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+
+for n_state in [12345678]:
     for temperature in [9999999]:
         n_action = n_state
         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
-
-for n_state in [42]: # in the newest cql main code, when see 42 they will do state space inf IID transition pretrain
-    for temperature in [42]:
-        n_action = n_state
-        gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
-
-for n_state in [100000]:
-    for temperature in [1000]:
-        n_action = n_state
-        gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
-
 
 
 
