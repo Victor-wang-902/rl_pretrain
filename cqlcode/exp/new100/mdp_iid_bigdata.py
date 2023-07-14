@@ -36,7 +36,7 @@ def main():
     ###########################################################
     exp_prefix = 'cqlr3n'
     settings = [
-        'env', '', MUJOCO_3_ENVS,
+        'env', '', MUJOCO_3_ENVS[2:],
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['mdp_same_noproj'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
