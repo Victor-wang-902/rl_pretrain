@@ -21,14 +21,14 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
     next_states = np.zeros(n_data, dtype=int)
     i = 0
 
-    if n_state == 12345678 and temperature >= 9999999:
+    if n_state in [12345678, int(2e4) * 1000 * 2] and temperature >= 9999999:
         # 1m data, infinite state space, iid
         print("generate finite data, inf state space, iid.")
         np.random.seed(0)
-        states_actions_next_states = np.random.choice(n_state, size=n_data*3, replace=False)
-        states = states_actions_next_states[:n_data]
-        actions = states_actions_next_states[n_data:n_data*2]
-        next_states = states_actions_next_states[n_data*2:]
+        states_next_states = np.random.choice(n_state, size=n_data*2, replace=False)
+        states = states_next_states[:n_data]
+        next_states = states_next_states[n_data:]
+        actions = np.random.choice(n_state, size=n_data, replace=False)
         print(states.shape, actions.shape, next_states.shape)
     else:
         for i_traj in tqdm(range(n_traj)):
@@ -86,11 +86,11 @@ n_traj, max_length = 1000, 1000
 #         n_action = n_state
 #         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
-for n_traj in [int(5e4), int(3e5)]:
-    for n_state in [12345678]:
-        for temperature in [9999999]:
-            n_action = n_state
-            gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+for n_traj in [int(1e4), int(2e4)]:
+    n_state = int(2e4) * 1000 * 2
+    temperature = 9999999
+    n_action = n_state
+    gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
 
 
