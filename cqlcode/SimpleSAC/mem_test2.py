@@ -12,9 +12,15 @@ def get_memory_usage_in_GB():
     process = psutil.Process(os.getpid())
     mem_info = process.memory_info()
     return mem_info.rss / (1024 ** 3)
+size = int(1e7)
 
 m1 = get_memory_usage_in_GB()
-x = np.random.randint(0, 99999999, size=9*int(1e8))
+x = np.random.randint(0, size * 3, size= 3 * size)
+m2 = get_memory_usage_in_GB()
+print(m2-m1)
+
+m1 = get_memory_usage_in_GB()
+x = np.random.rand(3 * size)
 m2 = get_memory_usage_in_GB()
 print(m2-m1)
 
