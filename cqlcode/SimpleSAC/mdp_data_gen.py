@@ -29,6 +29,7 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
         states = states_actions_next_states[:n_data]
         actions = states_actions_next_states[n_data:n_data*2]
         next_states = states_actions_next_states[n_data*2:]
+        print(states.shape, actions.shape, next_states.shape)
     else:
         for i_traj in tqdm(range(n_traj)):
             np.random.seed(i_traj)
