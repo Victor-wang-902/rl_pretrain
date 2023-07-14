@@ -21,6 +21,7 @@ print(x.shape)
 m2 = get_memory_usage_in_GB()
 print(m2-m1)
 
+x = None
 m1 = get_memory_usage_in_GB()
 x = np.random.rand(3 * size)
 print(x.shape)
