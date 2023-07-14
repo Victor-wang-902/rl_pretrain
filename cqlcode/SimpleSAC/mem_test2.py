@@ -34,7 +34,7 @@ def memory_usage(obj):
 
 # example usage
 print(memory_usage(10))  # small integer
-print(memory_usage(10**100))  # large integer
+print(memory_usage(int(1e8)))  # large integer
 print(memory_usage(10.0))  # float
 
 quit()
