@@ -21,7 +21,7 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
     next_states = np.zeros(n_data, dtype=int)
     i = 0
 
-    if n_state in [12345678, int(2e4) * 1000 * 2, int(4e4) * 1000 * 2] and temperature >= 9999999:
+    if n_state in [12345678, int(2e4) * 1000 * 2, int(4e4) * 1000 * 2, int(3e4) * 1000 * 2] and temperature >= 9999999:
         # 1m data, infinite state space, iid
         print("generate finite data, inf state space, iid.")
         np.random.seed(0)
