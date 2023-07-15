@@ -1162,7 +1162,7 @@ def iclr_generate_cql_iid2():
         cql_jul_mdp_noproj_s100000_t1000,
         cql_jul_mdp_noproj_s100000_iid,
         cql_jul_mdp_noproj_s10000000_iid,
-        cql_jul_mdp_noproj_sinf_iid,
+        cql_jul_mdp_noproj_datainf_sinf_iid,
     ]
     col_names = ['Best Score',
                  'S100K t0.0001',
@@ -1171,6 +1171,28 @@ def iclr_generate_cql_iid2():
                  'S100K IID',
                  'S10M IID',
                  'Sinf IID',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_iid3():
+    algs = [
+        cql_jul_mdp_noproj_1mdata_sinf_iid,
+        cql_jul_mdp_noproj_10mdata_sinf_iid,
+        cql_jul_mdp_noproj_20mdata_sinf_iid,
+        cql_jul_mdp_noproj_datainf_sinf_iid,
+    ]
+    col_names = ['Best Score',
+                 '1M-data Sinf IID',
+                 '10M-data Sinf IID',
+                 '20M-data Sinf IID',
+                 'inf-data Sinf IID',
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -1291,4 +1313,5 @@ def iclr_data_ratio2():
 # iclr_data_ratio2()
 
 # iclr_generate_cql_iid1()
-iclr_generate_cql_iid2()
+# iclr_generate_cql_iid2()
+iclr_generate_cql_iid3()
