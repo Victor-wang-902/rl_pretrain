@@ -87,7 +87,7 @@ n_traj, max_length = 1000, 1000
 #         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
 for n_traj in [int(2e3), int(5e3)]: # int(1e4), int(4e4),
-    n_state = int(3e4) * 1000 * 2
+    n_state = 40000000
     temperature = 9999999
     n_action = n_state
     gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
