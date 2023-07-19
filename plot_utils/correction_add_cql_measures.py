@@ -20,7 +20,7 @@ def get_other_score_measures(path):
         }
     return d
 
-base_path = '../code/checkpoints'
+base_path = '../code/checkpoints/sendbackcql'
 # base_path = '../code/testonly'
 for root, dirs, files in os.walk(base_path):
     if 'cqlr3n' in root:

@@ -86,7 +86,7 @@ def get_extra_dict_multiple_seeds(datafolder_path):
     return aggregate_dict
 
 
-data_path = '../../code/checkpoints/sendbackcql/'
+data_path = '../../../code/checkpoints/sendbackcql/'
 
 MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah', ]
 MUJOCO_3_DATASETS = ['medium', 'medium-replay', 'medium-expert', ]

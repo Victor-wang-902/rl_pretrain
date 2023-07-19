@@ -233,3 +233,21 @@ cql_jul_mdp_pdr0_001_dr1 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1_sameTrue_pdr0
 cql_jul_mdp_pdr1_dr0_001 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1_sameTrue_pdr1_dr0.001'
 cql_jul_mdp_pdr1_dr1 = cql_jul_mdp_noproj_s100_t1
 
+# 07/13/2023 exps:
+cql_1x = 'cqlr3n_prenone_l2_ep200'
+cql_2x = 'cqlr3n_prenone_l2_ep400'
+
+cql_mdp_t0001 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt0.001_sameTrue'
+cql_mdp_t001 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt0.01_sameTrue'
+cql_mdp_t01 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt0.1_sameTrue'
+cql_mdp_t1 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1_sameTrue'
+cql_mdp_t100 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt100_sameTrue'
+cql_mdp_t1000 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1000_sameTrue'
+cql_mdp_tinf = 'cqlr3n_premdp_same_noproj_l2_ns100_ptinf_sameTrue'
+cql_mdp_tinf2 = 'cqlr3n_premdp_same_noproj_l2_ns100_ptinf2_sameTrue'
+
+cql_same_mse = 'cqlr3_preq_sprime_l2'
+cql_same_mle = 'cqlr3_preq_mle_l2'
+
+# same pretraining from Watcher:
+cql_same_new = 'cqlr3n_preq_sprime_l2'

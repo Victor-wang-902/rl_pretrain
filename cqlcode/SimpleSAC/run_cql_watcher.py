@@ -639,7 +639,7 @@ def run_single_exp(variant):
                 agent_e20 = deepcopy(agent)
                 return_e20, return_normalized_e20 = metrics['average_return'], metrics['average_normalizd_return']
 
-            if variant['save_model'] and (epoch + 1) in (10, 20, 50, 100, 200):
+            if variant['save_model'] and (epoch + 1) in (10, 20, 50, 100, 200, 300, 350):
                 save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch+1}
                 logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
                 # wandb_logger.save_pickle(save_data, 'model.pkl')

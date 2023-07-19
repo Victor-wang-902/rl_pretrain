@@ -17,7 +17,11 @@ MUJOCO_9 = ['halfcheetah-medium-v2', 'halfcheetah-medium-replay-v2', 'halfcheeta
             'walker2d-medium-v2', 'walker2d-medium-replay-v2', 'walker2d-medium-expert-v2',
             'hopper-medium-v2', 'hopper-medium-replay-v2', 'hopper-medium-expert-v2',
             ] # the ones prsented in IQL
-
+MUJOCO_4_ENVS = ['hopper', 'walker2d', 'halfcheetah', 'ant']
+MUJOCO_12 = ['halfcheetah-medium-v2', 'halfcheetah-medium-replay-v2', 'halfcheetah-medium-expert-v2',
+            'walker2d-medium-v2', 'walker2d-medium-replay-v2', 'walker2d-medium-expert-v2',
+            'hopper-medium-v2', 'hopper-medium-replay-v2', 'hopper-medium-expert-v2', 'ant-medium-v2',
+             'ant-medium-replay-v2', 'ant-medium-expert-v2']
 
 def setup_logger_kwargs_dt(exp_name, seed=None, data_dir=None, datestamp=False):
     # Datestamp forcing

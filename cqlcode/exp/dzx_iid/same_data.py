@@ -36,11 +36,11 @@ def main():
     ###########################################################
     exp_prefix = 'cqlr3'
     settings = [
-        'env', '', MUJOCO_3_ENVS,
+        'env', '', MUJOCO_4_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
-        'pretrain_mode', 'pre', ['none', 'q_sprime', 'q_mle'],
+        'pretrain_mode', 'pre', ['q_sprime'],
         'qf_hidden_layer', 'l', [2,],
-        'seed', '', [42, 666, 1024],
+        'seed', '', [42, 666, 1024, 2048, 4096],
     ] #
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting)

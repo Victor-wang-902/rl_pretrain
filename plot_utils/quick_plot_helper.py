@@ -11,8 +11,8 @@ from pathlib import Path
 DEFAULT_BASE_PATH = '../code/checkpints/'
 DEFAULT_SAVE_PATH = '../figures/'
 DEFAULT_ENVS = ('hopper',)
-DEFAULT_LINESTYLES = tuple(['solid' for _ in range(6)])
-DEFAULT_COLORS = ('tab:red', 'tab:orange', 'tab:blue', 'tab:brown', 'tab:pink','tab:grey')
+DEFAULT_LINESTYLES = tuple(['solid' for _ in range(8)])
+DEFAULT_COLORS = ('tab:red', 'tab:orange', 'tab:blue', 'tab:brown', 'tab:pink', 'tab:olive', 'tab:green', 'tab:purple')
 DEFAULT_Y_VALUE = 'AverageTestEpRet'
 DEFAULT_SMOOTH = 1
 y_to_y_label = {
@@ -118,7 +118,7 @@ def quick_plot(labels, data_folders, colors=DEFAULT_COLORS, linestyles=DEFAULT_L
 def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COLORS, linestyles=DEFAULT_LINESTYLES, base_data_folder_path=DEFAULT_BASE_PATH,
                               save_name_prefix='test_save_figure', save_name_suffix=None, save_folder_path=DEFAULT_SAVE_PATH,
                               y_value=DEFAULT_Y_VALUE, verbose=True, ymin=None, ymax=None,
-                              y_use_log=None, x_to_use='Steps', xlabel='Number of Updates', axis_font_size=20,
+                              y_use_log=None, x_to_use='Steps', xlabel='Number of Updates', axis_font_size=10,
                               y_log_scale=False, x_always_scientific=True, smooth=1):
     # this plots
     label2seeds = OrderedDict()
