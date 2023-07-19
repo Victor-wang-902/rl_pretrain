@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --verbose
-#SBATCH --time=48:00:00
+#SBATCH --time=72:00:00
 #SBATCH --nodes=1
 #SBATCH --mem=8GB
 #SBATCH --mail-type=ALL # select which email types will be sent
