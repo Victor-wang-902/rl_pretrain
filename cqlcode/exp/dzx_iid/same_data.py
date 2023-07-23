@@ -36,8 +36,8 @@ def main():
     ###########################################################
     exp_prefix = 'cqlr3n'
     settings = [
-        'env', '', MUJOCO_4_ENVS,
-        'dataset', '', MUJOCO_3_DATASETS,
+        'env', '', ['ant'],# MUJOCO_4_ENVS,
+        'dataset', '', ['medium-expert'],# MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['q_sprime'],
         'qf_hidden_layer', 'l', [2,],
         'seed', '', [42, 666, 1024, 2048, 4096],
