@@ -483,6 +483,8 @@ def run_single_exp(variant):
                 index2state = 2 * np.random.rand(variant['mdppre_n_state'], variant['mdppre_state_dim']) - 1
                 index2action = 2 * np.random.rand(variant['mdppre_n_action'], variant['mdppre_action_dim']) - 1
                 index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)
+                if variant['mdppre_policy_temperature'] == variant['mdppre_transition_temperature'] == 'mean_sprime':
+                    mean_sprime = index2state[dataset['next_observations']].mean(axis=0)
             if variant['pretrain_mode'] == 'random_fd_1000_state':
                 index2state = 2 * np.random.rand(1000, pretrain_obs_dim) - 1
                 index2action = 2 * np.random.rand(1000, pretrain_act_dim) - 1
@@ -496,7 +498,10 @@ def run_single_exp(variant):
                     if not pretrain_env_name:
                         batch['observations'] = index2state[batch['observations']]
                         batch['actions'] = index2action[batch['actions']]
-                        batch['next_observations'] = index2state[batch['next_observations']]
+                        if variant['mdppre_policy_temperature'] == variant['mdppre_transition_temperature'] == 'mean_sprime':
+                            batch['next_observations'] = np.tile(mean_sprime, (variant['batch_size'], 1))
+                        else:
+                            batch['next_observations'] = index2state[batch['next_observations']]
                     if variant['pretrain_mode'] == 'random_fd_1000_state':
                         rand_obs = np.random.choice(1000, size=variant['batch_size'])
                         rand_acts = np.random.choice(1000, size=variant['batch_size'])
