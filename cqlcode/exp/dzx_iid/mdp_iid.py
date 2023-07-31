@@ -36,12 +36,12 @@ def main():
     ###########################################################
     exp_prefix = 'cqlr3n'
     settings = [
-        'env', '', ['ant'],#MUJOCO_3_ENVS,
+        'env', '', MUJOCO_4_ENVS,#MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['mdp_same_noproj'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
         'mdppre_n_state', 'ns', [100],
-        'mdppre_policy_temperature', 'pt', [0.001, 0.01, 0.1, 1, 10, 100, 1000, 'inf', 'inf2'],
+        'mdppre_policy_temperature', 'pt', ['mean_sprime', 'fix_sprime'],
         'mdppre_same_as_s_and_policy', 'same', [True],
         'seed', '', [42, 666, 1024, 2048, 4069],
     ] #
