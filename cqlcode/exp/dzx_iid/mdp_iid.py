@@ -41,7 +41,7 @@ def main():
         'pretrain_mode', 'pre', ['mdp_same_noproj'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
         'mdppre_n_state', 'ns', [100],
-        'mdppre_policy_temperature', 'pt', ['mean_sprime', 'fix_sprime'],
+        'mdppre_policy_temperature', 'pt', ['sigma0.01S', 'sigma0.1S', 'sigma1S', 'sigma2S', 'sigma0.01N', 'sigma0.1N', 'sigma1N', 'sigma2N'],
         'mdppre_same_as_s_and_policy', 'same', [True],
         'seed', '', [42, 666, 1024, 2048, 4069],
     ] #

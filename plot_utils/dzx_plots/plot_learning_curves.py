@@ -22,6 +22,13 @@ for e in MUJOCO_3_ENVS:
     for d in MUJOCO_3_DATASETS:
         d4rl_9_datasets_envs.append('%s_%s' % (e, d))
 
+MUJOCO_4_ENVS = ['hopper', 'walker2d', 'halfcheetah', 'ant']
+MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
+d4rl_12_datasets_envs = []
+for e in MUJOCO_4_ENVS:
+    for d in MUJOCO_3_DATASETS:
+        d4rl_12_datasets_envs.append('%s_%s' % (e, d))
+
 d4rl_q_loss_maxs = [60, 60, 60, 120, 120, 120, 175, 175, 175]
 d4rl_combined_loss_maxs = [None for _ in range(9)]
 d4rl_combined_loss_mins = [None for _ in range(9)]
@@ -78,7 +85,7 @@ def plot_cql_performance_curves(labels, base_names):
     aggregate_name = 'agg-cql'
     quick_plot_with_full_name(  # labels, folder name prefix, envs
         labels,
-        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        get_full_names_with_envs(base_names, d4rl_12_datasets_envs),
         save_name_prefix=aggregate_name,
         base_data_folder_path=data_path,
         save_folder_path=save_path,
@@ -89,7 +96,7 @@ def plot_cql_performance_curves(labels, base_names):
     )
 
     # separate
-    for env_dataset_name in d4rl_9_datasets_envs:
+    for env_dataset_name in d4rl_12_datasets_envs:
         quick_plot_with_full_name(  # labels, folder name prefix, envs
             labels,
             get_full_names_with_envs(base_names, [env_dataset_name]),
@@ -123,7 +130,7 @@ def plot_cql_q_loss_curves(labels, base_names):
     aggregate_name = 'agg-cql'
     quick_plot_with_full_name(  # labels, folder name prefix, envs
         labels,
-        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        get_full_names_with_envs(base_names, d4rl_12_datasets_envs),
         save_name_prefix=aggregate_name,
         base_data_folder_path=data_path,
         save_folder_path=save_path,
@@ -135,7 +142,7 @@ def plot_cql_q_loss_curves(labels, base_names):
     )
 
     # separate
-    for env_dataset_name, ymax in zip(d4rl_9_datasets_envs, d4rl_q_loss_maxs):
+    for env_dataset_name, ymax in zip(d4rl_12_datasets_envs, d4rl_q_loss_maxs):
         quick_plot_with_full_name(  # labels, folder name prefix, envs
             labels,
             get_full_names_with_envs(base_names, [env_dataset_name]),
@@ -169,7 +176,7 @@ def plot_cql_combined_loss_curves(labels, base_names):
     aggregate_name = 'agg-cql'
     quick_plot_with_full_name(  # labels, folder name prefix, envs
         labels,
-        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        get_full_names_with_envs(base_names, d4rl_12_datasets_envs),
         save_name_prefix=aggregate_name,
         base_data_folder_path=data_path,
         save_folder_path=save_path,
@@ -181,7 +188,7 @@ def plot_cql_combined_loss_curves(labels, base_names):
     )
 
     # separate
-    for env_dataset_name, ymax, ymin in zip(d4rl_9_datasets_envs, d4rl_combined_loss_maxs, d4rl_combined_loss_mins):
+    for env_dataset_name, ymax, ymin in zip(d4rl_12_datasets_envs, d4rl_combined_loss_maxs, d4rl_combined_loss_mins):
         quick_plot_with_full_name(  # labels, folder name prefix, envs
             labels,
             get_full_names_with_envs(base_names, [env_dataset_name]),
@@ -291,89 +298,48 @@ def plot_dt_loss_curves():
 
 
 # labels = [
-#     'CQL',
-#     'CQL same',
-#     'CQL MDP1',
-#     'CQL MDP1000',
-#     'CQL IID1',
-#     'CQL IID2'
+#     'CQL_Baseline',
+#     'CQL_Same',
+#     'CQL_MDP',
 # ]
+#
+# base_names = [
+#     cql_2x,
+#     cql_same,
+#     cql_mdp_t1
+# ]
+
+# labels = [
+#     'CQL_Baseline',
+#     'CQL_Same',
+#     'CQL_MDP0.001',
+#     'CQL_MDP1',
+#     'CQL_MDP1000',
+#     'CQL_MDP_IID'
+# ]
+#
 # base_names = [
 #     cql_1x,
-#     cql_same_mse,
+#     cql_same,
+#     cql_mdp_t0001,
 #     cql_mdp_t1,
 #     cql_mdp_t1000,
-#     cql_mdp_tinf,
 #     cql_mdp_tinf2
 # ]
 
-# labels = [
-#     'CQL',
-#     'CQL Same MSE',
-#     'CQL Same MLE',
-#     'CQL MDP1',
-# ]
-# base_names = [
-#     cql_2x,
-#     cql_same_mse,
-#     cql_same_mle,
-#     cql_mdp_t1,
-# ]
-
-# labels = [
-#     'CQL',
-#     'CQL Same',
-#     'CQL MDP0.001',
-#     'CQL MDP0.01',
-#     'CQL MDP0.1',
-#     'CQL MDP1',
-#     'CQL MDP100',
-#     'CQL MDP1000',
-# ]
-#
-# base_names = [
-#     cql_1x,
-#     cql_same_mse,
-#     cql_mdp_t0001,
-#     cql_mdp_t001,
-#     cql_mdp_t01,
-#     cql_mdp_t1,
-#     cql_mdp_t100,
-#     cql_mdp_t1000,
-# ]
-
-# labels = [
-#     'CQL',
-#     'CQL Same',
-#     'CQL MDP1',
-#     'CQL MDP1000',
-# ]
-#
-# base_names = [
-#     cql_2x,
-#     cql_same_mse,
-#     cql_mdp_t1,
-#     cql_mdp_t1000,
-# ]
-
 labels = [
-    'CQL',
-    'CQL_SAME_OLD',
-    'CQL_SAME_NEW',
-    'CQL_MDP1',
-    'CQL_MDP1000'
+    'CQL_MDP_IID',
+    'CQL_FixTarg',
+    'CQL_MeanTarg'
 ]
-
 base_names = [
-    cql_1x,
-    cql_same_mse,
-    cql_same_new,
-    cql_mdp_t1,
-    cql_mdp_t1000
+    cql_mdp_tinf2,
+    cql_mdp_tfix,
+    cql_mdp_tmean
 ]
 
 plot_cql_performance_curves(labels, base_names)
 plot_cql_q_loss_curves(labels, base_names)
-# plot_cql_combined_loss_curves(labels, base_names)
+plot_cql_combined_loss_curves(labels, base_names)
 # plot_dt_performance_curves()
 # plot_dt_loss_curves()

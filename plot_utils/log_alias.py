@@ -251,3 +251,8 @@ cql_same_mle = 'cqlr3_preq_mle_l2'
 
 # same pretraining from Watcher:
 cql_same_new = 'cqlr3n_preq_sprime_l2'
+
+# 08/02/2023 ant + fix_sprime:
+cql_mdp_tfix = 'cqlr3n_premdp_same_noproj_l2_ns100_ptfix_sprime_sameTrue'
+cql_mdp_tmean = 'cqlr3n_premdp_same_noproj_l2_ns100_ptmean_sprime_sameTrue'
+cql_same = 'cqlr3n_preq_sprime_l2'

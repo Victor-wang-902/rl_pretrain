@@ -480,9 +480,20 @@ def run_single_exp(variant):
                                                      variant['mdppre_transition_temperature'],
                                                      ratio=variant['pretrain_data_ratio'])
                 np.random.seed(0)
-                index2state = 2 * np.random.rand(variant['mdppre_n_state'], variant['mdppre_state_dim']) - 1
-                index2action = 2 * np.random.rand(variant['mdppre_n_action'], variant['mdppre_action_dim']) - 1
-                index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)
+                if str(variant['mdppre_policy_temperature']).startswith('sigma'):
+                    num_per_cluster = variant['mdppre_n_state'] // 5
+                    sigma = float(variant['mdppre_policy_temperature'][5:-1])
+                    state_clusters = [(0.4*i - 0.8) + sigma * np.random.randn(num_per_cluster, variant['mdppre_state_dim'])
+                                for i in range(5)]
+                    index2state = np.concatenate(state_clusters, axis=0, dtype=np.float32)
+                    action_clusters = [(0.4*i - 0.8) + sigma * np.random.randn(num_per_cluster, variant['mdppre_action_dim'])
+                                for i in range(5)]
+                    index2action = np.concatenate(action_clusters, axis=0, dtype=np.float32)
+                else:
+                    index2state = 2 * np.random.rand(variant['mdppre_n_state'], variant['mdppre_state_dim']) - 1
+                    index2action = 2 * np.random.rand(variant['mdppre_n_action'], variant['mdppre_action_dim']) - 1
+                    index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)
+
                 if variant['mdppre_policy_temperature'] == variant['mdppre_transition_temperature'] == 'mean_sprime':
                     mean_sprime = index2state[dataset['next_observations']].mean(axis=0)
             if variant['pretrain_mode'] == 'random_fd_1000_state':

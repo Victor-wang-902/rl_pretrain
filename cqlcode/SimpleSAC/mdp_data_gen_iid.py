@@ -49,6 +49,29 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
 
         np.random.seed(47)
         actions = np.random.randint(n_action, size=n_data)
+    elif str(policy_temperature).startswith('sigma') and str(policy_temperature)[-1] == 'S':
+        np.random.seed(0)
+        origin = np.random.randint(n_state)
+
+        np.random.seed(13)
+        states = np.random.randint(n_state, size=n_data, dtype=int)
+        next_states = states.copy()
+        next_states = np.concatenate((next_states[1:], np.random.randint(n_state, size=1)), dtype=int)
+        states[[i * 1000 for i in range(n_traj)]] = origin
+
+        np.random.seed(47)
+        actions = np.random.randint(n_action, size=n_data)
+    elif str(policy_temperature).startswith('sigma') and str(policy_temperature)[-1] == 'N':
+        np.random.seed(13)
+        states = np.concatenate(
+            [np.random.randint(n_state//5*i, n_state//5*(i+1), n_data//5) for i in range(5)], axis=None)
+        next_states = np.concatenate((states[1:], np.random.randint(n_state, size=1)), dtype=int)
+        for i in range(5):
+            next_states[(i+1) * n_data//5 - 1] = np.random.randint(n_state//5*i, n_state//5*(i+1), size=1)
+
+        np.random.seed(47)
+        actions = np.concatenate(
+            [np.random.randint(n_action // 5 * i, n_state // 5 * (i + 1), n_data // 5) for i in range(5)], axis=None)
     else:
         states = np.zeros(n_data, dtype=int)
         actions = np.zeros(n_data, dtype=int)
@@ -116,7 +139,7 @@ n_traj, max_length = 1000, 1000
 #     gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
 for n_state in [100]:
-    for temperature in ['mean_sprime', 'fix_sprime']:
+    for temperature in ['sigma0.01S', 'sigma0.1S', 'sigma1S', 'sigma2S', 'sigma0.01N', 'sigma0.1N', 'sigma1N', 'sigma2N']:
         n_action = n_state
         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
