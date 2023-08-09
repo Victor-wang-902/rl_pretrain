@@ -1,5 +1,7 @@
 from plot_utils.quick_plot_helper import quick_plot, quick_plot_with_full_name
 from plot_utils.log_alias import *
+
+
 # standard plotting, might not be useful for us...
 
 
@@ -15,15 +17,16 @@ def get_full_names_with_envs(base_names, envs):
         to_return.append(new_list)
     return to_return
 
-MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah',  ]
-MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
+
+MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah', ]
+MUJOCO_3_DATASETS = ['medium', 'medium-replay', 'medium-expert', ]
 d4rl_9_datasets_envs = []
 for e in MUJOCO_3_ENVS:
     for d in MUJOCO_3_DATASETS:
         d4rl_9_datasets_envs.append('%s_%s' % (e, d))
 
 MUJOCO_4_ENVS = ['hopper', 'walker2d', 'halfcheetah', 'ant']
-MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
+MUJOCO_3_DATASETS = ['medium', 'medium-replay', 'medium-expert', ]
 d4rl_12_datasets_envs = []
 for e in MUJOCO_4_ENVS:
     for d in MUJOCO_3_DATASETS:
@@ -40,13 +43,11 @@ online_mujoco_5 = ['Hopper-v2', 'HalfCheetah-v2', 'Walker2d-v2', 'Ant-v2', 'Huma
 data_path = '../../code/checkpoints/sendbackcql'
 save_path = '../../figures/'
 
-
-twocolordoulbe = ['tab:blue', 'tab:orange', 'tab:blue', 'tab:orange',]
-twosoliddashed = ['dashed', 'dashed',  'solid', 'solid', ]
+twocolordoulbe = ['tab:blue', 'tab:orange', 'tab:blue', 'tab:orange', ]
+twosoliddashed = ['dashed', 'dashed', 'solid', 'solid', ]
 threecolordoulbe = ['tab:blue', 'tab:orange', 'tab:red', 'tab:blue', 'tab:orange', 'tab:red']
 threesoliddashed = ['dashed', 'dashed', 'dashed', 'solid', 'solid', 'solid', ]
-standard_6_colors = ('tab:red', 'tab:orange', 'tab:blue', 'tab:brown', 'tab:pink','tab:grey')
-
+standard_6_colors = ('tab:red', 'tab:orange', 'tab:blue', 'tab:brown', 'tab:pink', 'tab:grey')
 
 standard_ys = ['TestEpRet', 'weight_diff_last_iter',
                'feature_diff_last_iter',
@@ -65,6 +66,7 @@ d4rl_dt_loss_col_name = 'current_itr_train_loss_mean'
 default_performance_smooth = 5
 default_cql_q_smooth = 5
 default_cql_combined_loss_smooth = 5
+
 
 def plot_cql_performance_curves(labels, base_names):
     # labels = [
@@ -107,7 +109,7 @@ def plot_cql_performance_curves(labels, base_names):
             x_to_use=d4rl_x_axis_col_name,
             ymax=ymax,
             save_name_suffix=env_dataset_name,
-        smooth=default_performance_smooth
+            smooth=default_performance_smooth
         )
 
 
@@ -154,8 +156,9 @@ def plot_cql_q_loss_curves(labels, base_names):
             ymax=ymax,
             ymin=ymin,
             save_name_suffix=env_dataset_name,
-        smooth=default_cql_q_smooth,
+            smooth=default_cql_q_smooth,
         )
+
 
 def plot_cql_combined_loss_curves(labels, base_names):
     # labels = [
@@ -200,9 +203,10 @@ def plot_cql_combined_loss_curves(labels, base_names):
             ymax=ymax,
             ymin=ymin,
             save_name_suffix=env_dataset_name,
-        smooth=default_cql_combined_loss_smooth,
+            smooth=default_cql_combined_loss_smooth,
 
         )
+
 
 def plot_dt_performance_curves():
     labels = [
@@ -216,7 +220,7 @@ def plot_dt_performance_curves():
         chibiT,
         dt_mc_1step_vocab100,
         dt_same_data,
-        ]
+    ]
 
     y = d4rl_test_performance_col_name
     ymax = None
@@ -247,8 +251,9 @@ def plot_dt_performance_curves():
             x_to_use=d4rl_x_axis_col_name,
             ymax=ymax,
             save_name_suffix=env_dataset_name,
-        smooth=default_performance_smooth
+            smooth=default_performance_smooth
         )
+
 
 def plot_dt_loss_curves():
     labels = [
@@ -262,7 +267,7 @@ def plot_dt_loss_curves():
         chibiT,
         dt_mc_1step_vocab100,
         dt_same_data,
-        ]
+    ]
 
     y = d4rl_dt_loss_col_name
     ymax = None
@@ -297,6 +302,7 @@ def plot_dt_loss_curves():
         )
 
 
+# CQL Main Results
 # labels = [
 #     'CQL_Baseline',
 #     'CQL_Same',
@@ -309,6 +315,7 @@ def plot_dt_loss_curves():
 #     cql_mdp_t1
 # ]
 
+# CQL MDP Temp Ablation
 # labels = [
 #     'CQL_Baseline',
 #     'CQL_Same',
@@ -327,15 +334,75 @@ def plot_dt_loss_curves():
 #     cql_mdp_tinf2
 # ]
 
+# CQL Fix-prediction
+# labels = [
+#     'CQL_MDP_IID',
+#     'CQL_FixTarg',
+#     'CQL_MeanTarg'
+# ]
+# base_names = [
+#     cql_mdp_tinf2,
+#     cql_mdp_tfix,
+#     cql_mdp_tmean
+# ]
+
+# CQL Cluster-Prediction
+# labels = [
+#     'CQL_IID',
+#     'CQL_FixTarg',
+#     'CQL_001N',
+#     'CQL_01N',
+#     'CQL_1N',
+#     'CQL_2N'
+# ]
+#
+# base_names = [
+#     cql_mdp_tinf2,
+#     cql_mdp_tfix,
+#     cql_mdp_sigma001N,
+#     cql_mdp_sigma01N,
+#     cql_mdp_sigma1N,
+#     cql_mdp_sigma2N,
+# ]
+
+# labels = [
+#     'CQL_IID',
+#     'CQL_FixTarg',
+#     'CQL_001S',
+#     'CQL_01S',
+#     'CQL_1S',
+#     'CQL_2S'
+# ]
+#
+# base_names = [
+#     cql_mdp_tinf2,
+#     cql_mdp_tfix,
+#     cql_mdp_sigma001S,
+#     cql_mdp_sigma01S,
+#     cql_mdp_sigma1S,
+#     cql_mdp_sigma2S,
+# ]
+
 labels = [
-    'CQL_MDP_IID',
     'CQL_FixTarg',
-    'CQL_MeanTarg'
+    'CQL_001S',
+    'CQL_01S',
+    'CQL_1S',
+    'CQL_001N',
+    'CQL_01N',
+    'CQL_1N',
+
 ]
+
 base_names = [
-    cql_mdp_tinf2,
     cql_mdp_tfix,
-    cql_mdp_tmean
+    cql_mdp_sigma001S,
+    cql_mdp_sigma01S,
+    cql_mdp_sigma1S,
+    cql_mdp_sigma001N,
+    cql_mdp_sigma01N,
+    cql_mdp_sigma1N,
+
 ]
 
 plot_cql_performance_curves(labels, base_names)

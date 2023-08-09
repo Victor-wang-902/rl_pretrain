@@ -256,3 +256,13 @@ cql_same_new = 'cqlr3n_preq_sprime_l2'
 cql_mdp_tfix = 'cqlr3n_premdp_same_noproj_l2_ns100_ptfix_sprime_sameTrue'
 cql_mdp_tmean = 'cqlr3n_premdp_same_noproj_l2_ns100_ptmean_sprime_sameTrue'
 cql_same = 'cqlr3n_preq_sprime_l2'
+
+# 08/07/2023 cluster results:
+cql_mdp_sigma001N = 'cqlr3n_premdp_same_noproj_l2_ns100_ptsigma0.01N_sameTrue'
+cql_mdp_sigma01N = 'cqlr3n_premdp_same_noproj_l2_ns100_ptsigma0.1N_sameTrue'
+cql_mdp_sigma1N = 'cqlr3n_premdp_same_noproj_l2_ns100_ptsigma1N_sameTrue'
+cql_mdp_sigma2N = 'cqlr3n_premdp_same_noproj_l2_ns100_ptsigma2N_sameTrue'
+cql_mdp_sigma001S = 'cqlr3n_premdp_same_noproj_l2_ns100_ptsigma0.01S_sameTrue'
+cql_mdp_sigma01S = 'cqlr3n_premdp_same_noproj_l2_ns100_ptsigma0.1S_sameTrue'
+cql_mdp_sigma1S = 'cqlr3n_premdp_same_noproj_l2_ns100_ptsigma1S_sameTrue'
+cql_mdp_sigma2S = 'cqlr3n_premdp_same_noproj_l2_ns100_ptsigma2S_sameTrue'
