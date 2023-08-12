@@ -79,6 +79,7 @@ def get_default_variant_dict():
         # q_sprime, proj0_q_sprime, proj1_q_sprime, proj2_q_sprime
         # 'mdp_same_proj', 'mdp_same_noproj', q_sprime_3x, proj0_q_sprime_3x, proj1_q_sprime_3x, q_noact_sprime
         pretrain_mode='none',
+        n_pretrain_step_per_epoch=5000,
         n_train_step_per_epoch=5000,
         eval_period=1,
         eval_n_trajs=10,
@@ -438,22 +439,23 @@ def run_single_exp(variant):
                 dataset_name_string = variant['dataset']
             else:
                 dataset_name_string = '%s_%s' % (variant['dataset'], str(variant['pretrain_data_ratio']))
-            pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s_%s.pth' % (
+            pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s_%s_%s.pth' % (
                 'cql', variant['env'], dataset_name_string, variant['pretrain_mode'],
-                variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'], variant['seed'])
+                variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'],
+                variant['n_pretrain_step_per_epoch'], variant['seed'])
         else:  # mdp pretrain
             if variant['pretrain_data_ratio'] == 1:
                 dataset_name_string = variant['mdppre_n_traj']
             else:
                 dataset_name_string = '%d_%s' % (variant['mdppre_n_traj'], str(variant['pretrain_data_ratio']))
-            pretrain_model_name = '%s_%s_%s_%d_%d_%s_%s_%d_%d_%s_%d_%d_%s_%s.pth' % (
+            pretrain_model_name = '%s_%s_%s_%d_%d_%s_%s_%d_%d_%s_%d_%d_%s_%s_%s.pth' % (
                 'cql', variant['env'],
                 # downstream task env is needed here because pretrain projection will be different for each task
                 dataset_name_string, variant['mdppre_n_state'], variant['mdppre_n_action'],
                 str(variant['mdppre_policy_temperature']), str(variant['mdppre_transition_temperature']),
                 variant['mdppre_state_dim'], variant['mdppre_action_dim'],
                 variant['pretrain_mode'], variant['qf_hidden_layer'], variant['qf_hidden_unit'],
-                variant['n_pretrain_epochs'], variant['seed'])
+                variant['n_pretrain_epochs'], variant['n_pretrain_step_per_epoch'], variant['seed'])
 
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         if os.path.exists(pretrain_full_path):
@@ -528,7 +530,7 @@ def run_single_exp(variant):
 
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch + 1}
-                for i_pretrain in range(variant['n_train_step_per_epoch']):
+                for i_pretrain in range(variant['n_pretrain_step_per_epoch']):
                     batch = subsample_batch(dataset, variant['batch_size'])
 
                     if not pretrain_env_name:
@@ -551,7 +553,7 @@ def run_single_exp(variant):
                     metrics.update(agent.pretrain(batch, variant['pretrain_mode'], variant['mdppre_n_state']))
 
                 pretrain_logger.log_tabular("PretrainIteration", epoch + 1)
-                pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * variant['n_train_step_per_epoch'])
+                pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * variant['n_pretrain_step_per_epoch'])
                 pretrain_logger.log_tabular("pretrain_loss", metrics['pretrain_loss'])
                 pretrain_logger.log_tabular("total_pretrain_steps", metrics['total_pretrain_steps'])
                 pretrain_logger.log_tabular("current_hours", (time.time() - st) / 3600)

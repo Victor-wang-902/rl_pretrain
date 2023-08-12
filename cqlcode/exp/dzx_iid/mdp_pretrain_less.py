@@ -40,7 +40,8 @@ def main():
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['mdp_same_noproj'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'pretrain_data_ratio', 'preRatio', [1, 0.75, 0.5, 0.25, 0.1, 0.05, 0.01, 0.005, 0.001],
-        'n_pretrain_epochs', 'preEp', [1, 3, 5, 7, 10],# [200, 150, 100, 50, 25],
+        'n_pretrain_step_per_epoch', 'preStep', [1000],
+        'n_pretrain_epochs', 'preEp', [1, 5, 10, 20, 50],# [200, 150, 100, 50, 25],
         'qf_hidden_layer', 'l', [2],
         'mdppre_n_state', 'ns', [100],
         'mdppre_policy_temperature', 'pt', [1],
