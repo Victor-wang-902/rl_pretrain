@@ -289,7 +289,7 @@ def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bo
 
 
 def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05,
-                                   measure='best_return_normalized', row_name='Average (All Settings)'):
+                                   measure='best_return_normalized', row_name='Average over datasets'):
     # each row is a measure, each column is an algorithm variant
     rows = [measure]
     row_names = [row_name]
@@ -1235,23 +1235,54 @@ def dzx_generate_cql_main():
 def dzx_generate_cql_mdp_temp():
     algs = [
         cql_1x,
-        cql_mdp_tinf2,
-        cql_mdp_t0001,
         cql_mdp_t001,
         cql_mdp_t01,
         cql_mdp_t1,
+        cql_mdp_t10,
         cql_mdp_t100,
-        cql_mdp_t1000,
+        cql_mdp_tinf2
     ]
     col_names = ['Best Score',
                  'CQL',
-                 'CQL+IID',
-                 't0.001',
                  't0.01',
                  't0.1',
                  't1',
+                 't10',
                  't100',
-                 't1000',
+                 'CQL+IID',
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    # col_names[0] = 'Average Later Half'
+    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Final Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+
+
+def dzx_generate_cql_mdp_ns():
+    algs = [
+        cql_1x,
+        cql_mdp_ns1,
+        cql_mdp_ns10,
+        cql_mdp_ns100,
+        cql_mdp_ns1000,
+        cql_mdp_ns10000,
+        cql_mdp_ns100000
+    ]
+    col_names = ['Best Score',
+                 'CQL',
+                 'S1',
+                 'S10',
+                 'S100',
+                 'S1000',
+                 'S10000',
+                 'S100000'
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -1355,4 +1386,5 @@ def dzx_generate_cql_fix_target():
 # 08/02/2023 CQL results:
 # dzx_generate_cql_main()
 # dzx_generate_cql_mdp_temp()
+dzx_generate_cql_mdp_ns()
 # dzx_generate_cql_fix_target()

@@ -45,7 +45,7 @@ def main():
         'mdppre_n_state', 'ns', [100],
         'mdppre_policy_temperature', 'pt', [1],
         'mdppre_same_as_s_and_policy', 'same', [True],
-        'seed', '', [42, 666, 1024],
+        'seed', '', [2048, 4096]# [42, 666, 1024],
     ] #
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting)
