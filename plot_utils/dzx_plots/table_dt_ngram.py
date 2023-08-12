@@ -381,37 +381,77 @@ def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_
     #     print(agg_mean)
     #     print(agg_std)
 
-
-def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
-    # TODO need to fix the bold thing
+def generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, column_names, best_value_bold=True, bold_threshold=0.05,
+                                   measure='best_return_normalized'):
     print("\nNow generate latex table:\n")
-    measure = 'best_return_normalized'
-    # each row is a env-dataset pair, each column is an algorithm variant
-    rows = []
-    row_names = []
-    for dataset in ['medium-expert', 'medium', 'medium-replay']:
-        for e in ['halfcheetah', 'hopper', 'walker2d', 'ant']:
-            rows.append('%s_%s' % (e, dataset))
-            row_names.append('%s-%s' % (e, dataset))
 
-    table = np.zeros((2, len(rows), len(algs)))
-    # each iter we generate a row
-    for i, row in enumerate(rows):
-        for j, alg in enumerate(algs):
-            table[0, i, j], table[1, i, j] = alg_dataset_dict[alg][row][measure]
+    tables = np.zeros((2, len(algs), len(algs[0])))
+    for i in range(len(algs)):
+        for j in range(len(algs[0])):
+            tables[0, i, j], tables[1, i, j] = get_aggregated_value(alg_dataset_dict, algs[i][j], measure)
+            if measure in change_std_rows:  # TODO
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, algs[i][j], measure + '_std')
+                tables[1, i, j] = std_mean
+            if measure == 'final_test_normalized_returns':
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, algs[i][j], 'final_test_normalized_returns_std')
+                tables[1, i, j] = std_mean
 
-    max_values = np.max(table[0], axis=1)
 
+    max_values = np.max(tables[0], axis=1)
+    min_values = np.min(tables[0], axis=1)
+
+    col_name_line = ''
+    for col in column_names:
+        col_name_line += str(col) + ' & '
+    col_name_line = col_name_line[:-2] + '\\\\'
+    print(col_name_line)
+    print("		\\hline ")
     for i, row_name in enumerate(row_names):
         row_string = row_name
-        for j in range(len(algs)):
-            mean, std = table[0, i, j], table[1, i, j]
-            if max_value_bold and mean > bold_threshold * max_values[i]:
-                row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
-            else:
-                row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
+        for j in range(len(algs[i])):
+            mean, std = tables[0, i, j], tables[1, i, j]
+            bold = False
+            if best_value_bold:
+                if mean >= (1 - bold_threshold) * max_values[i]:
+                    bold = True
+                if bold:
+                    row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
+                else:
+                    row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
         row_string += '\\\\'
         print(row_string)
+
+
+# def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
+#     # TODO need to fix the bold thing
+#     print("\nNow generate latex table:\n")
+#     measure = 'best_return_normalized'
+#     # each row is a env-dataset pair, each column is an algorithm variant
+#     rows = []
+#     row_names = []
+#     for dataset in ['medium-expert', 'medium', 'medium-replay']:
+#         for e in ['halfcheetah', 'hopper', 'walker2d', 'ant']:
+#             rows.append('%s_%s' % (e, dataset))
+#             row_names.append('%s-%s' % (e, dataset))
+#
+#     table = np.zeros((2, len(rows), len(algs)))
+#     # each iter we generate a row
+#     for i, row in enumerate(rows):
+#         for j, alg in enumerate(algs):
+#             table[0, i, j], table[1, i, j] = alg_dataset_dict[alg][row][measure]
+#
+#     max_values = np.max(table[0], axis=1)
+#
+#     for i, row_name in enumerate(row_names):
+#         row_string = row_name
+#         for j in range(len(algs)):
+#             mean, std = table[0, i, j], table[1, i, j]
+#             if max_value_bold and mean > bold_threshold * max_values[i]:
+#                 row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
+#             else:
+#                 row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
+#         row_string += '\\\\'
+#         print(row_string)
 
 
 def generate_dt_first_table():
@@ -1328,6 +1368,76 @@ def dzx_generate_cql_fix_target():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
 
+def dzx_generate_cql_less_pretraining_partial():
+    algs = [
+        cql_pR1_pE25,
+        cql_pR1_pE50,
+        cql_pR1_pE100,
+        cql_pR1_pE150,
+        cql_pR1_pE200
+    ]
+    col_names = [
+        'Best',
+        'preStep 125K',
+        'preStep 250K',
+        'preStep 500K',
+        'preStep 750K',
+        'preStep 1M'
+    ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    # col_names[0] = 'Average Later Half'
+    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Final Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+
+def dzx_generate_cql_less_pretraining_full():
+    algs = [
+        [cql_pR0001_pE25, cql_pR0001_pE50, cql_pR0001_pE100, cql_pR0001_pE150, cql_pR0001_pE200],
+        [cql_pR0005_pE25, cql_pR0005_pE50, cql_pR0005_pE100, cql_pR0005_pE150, cql_pR0005_pE200],
+        [cql_pR001_pE25, cql_pR001_pE50, cql_pR001_pE100, cql_pR001_pE150, cql_pR001_pE200],
+        [cql_pR005_pE25, cql_pR005_pE50, cql_pR005_pE100, cql_pR005_pE150, cql_pR005_pE200],
+        [cql_pR01_pE25, cql_pR01_pE50, cql_pR01_pE100, cql_pR01_pE150, cql_pR01_pE200],
+        [cql_pR025_pE25, cql_pR025_pE50, cql_pR025_pE100, cql_pR025_pE150, cql_pR025_pE200],
+        [cql_pR05_pE25, cql_pR05_pE50, cql_pR05_pE100, cql_pR05_pE150, cql_pR05_pE200],
+        [cql_pR075_pE25, cql_pR075_pE50, cql_pR075_pE100, cql_pR075_pE150, cql_pR075_pE200],
+        [cql_pR1_pE25, cql_pR1_pE50, cql_pR1_pE100, cql_pR1_pE150, cql_pR1_pE200],
+    ]
+
+    row_names = [
+        'preDataRatio0.001',
+        'preDataRatio0.005',
+        'preDataRatio0.01',
+        'preDataRatio0.05',
+        'preDataRatio0.1',
+        'preDataRatio0.25',
+        'preDataRatio0.5',
+        'preDataRatio0.75',
+        'preDataRatio1',
+    ]
+
+    column_names = [
+        'Best',
+        'preStep 125K',
+        'preStep 250K',
+        'preStep 500K',
+        'preStep 750K',
+        'preStep 1M'
+    ]
+
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(sum(algs, []), envs)
+    generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, column_names)
+
+    column_names[0] = 'Average Final Four'
+    generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, column_names, measure='last_four_normalized')
+
 ##################### table generation
 # generate_table_nvocab_markov_chain()
 # generate_table_markov_chain_compare_number_of_steps()
@@ -1386,5 +1496,10 @@ def dzx_generate_cql_fix_target():
 # 08/02/2023 CQL results:
 # dzx_generate_cql_main()
 # dzx_generate_cql_mdp_temp()
-dzx_generate_cql_mdp_ns()
+# dzx_generate_cql_mdp_ns()
 # dzx_generate_cql_fix_target()
+
+# 08/12/2023 less training:
+# dzx_generate_cql_less_pretraining_partial()
+dzx_generate_cql_less_pretraining_full()
+

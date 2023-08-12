@@ -275,3 +275,67 @@ cql_mdp_ns100 = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1_sameTrue'
 cql_mdp_ns1000 = 'cqlr3n_premdp_same_noproj_l2_ns1000_pt1_sameTrue'
 cql_mdp_ns10000 = 'cqlr3n_premdp_same_noproj_l2_ns10000_pt1_sameTrue'
 cql_mdp_ns100000 = 'cqlr3n_premdp_same_noproj_l2_ns100000_pt1_sameTrue'
+
+# 08/12/2023 less pretraining:
+cql_pR0001_pE25, cql_pR0001_pE50, cql_pR0001_pE100, cql_pR0001_pE150, cql_pR0001_pE200 = \
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preEp25_l2_ns100_pt1_sameTrue',\
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preEp50_l2_ns100_pt1_sameTrue',\
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preEp100_l2_ns100_pt1_sameTrue',\
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preEp150_l2_ns100_pt1_sameTrue',\
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preEp200_l2_ns100_pt1_sameTrue',
+
+cql_pR0005_pE25, cql_pR0005_pE50, cql_pR0005_pE100, cql_pR0005_pE150, cql_pR0005_pE200 = \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp25_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp50_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp100_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp150_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp200_l2_ns100_pt1_sameTrue',
+
+cql_pR001_pE25, cql_pR001_pE50, cql_pR001_pE100, cql_pR001_pE150, cql_pR001_pE200 = \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preEp25_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preEp50_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preEp100_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preEp150_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preEp200_l2_ns100_pt1_sameTrue',
+
+cql_pR005_pE25, cql_pR005_pE50, cql_pR005_pE100, cql_pR005_pE150, cql_pR005_pE200 = \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp25_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp50_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp100_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp150_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preEp200_l2_ns100_pt1_sameTrue',
+
+cql_pR01_pE25, cql_pR01_pE50, cql_pR01_pE100, cql_pR01_pE150, cql_pR01_pE200 = \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preEp25_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preEp50_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preEp100_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preEp150_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preEp200_l2_ns100_pt1_sameTrue',
+
+cql_pR025_pE25, cql_pR025_pE50, cql_pR025_pE100, cql_pR025_pE150, cql_pR025_pE200 = \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preEp25_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preEp50_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preEp100_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preEp150_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preEp200_l2_ns100_pt1_sameTrue',
+
+cql_pR05_pE25, cql_pR05_pE50, cql_pR05_pE100, cql_pR05_pE150, cql_pR05_pE200 = \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preEp25_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preEp50_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preEp100_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preEp150_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preEp200_l2_ns100_pt1_sameTrue',
+
+cql_pR075_pE25, cql_pR075_pE50, cql_pR075_pE100, cql_pR075_pE150, cql_pR075_pE200 = \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preEp25_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preEp50_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preEp100_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preEp150_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preEp200_l2_ns100_pt1_sameTrue',
+
+cql_pR1_pE25, cql_pR1_pE50, cql_pR1_pE100, cql_pR1_pE150, cql_pR1_pE200 = \
+    'cqlr3n_premdp_same_noproj_preRatio1_preEp25_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio1_preEp50_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio1_preEp100_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio1_preEp150_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio1_preEp200_l2_ns100_pt1_sameTrue',
