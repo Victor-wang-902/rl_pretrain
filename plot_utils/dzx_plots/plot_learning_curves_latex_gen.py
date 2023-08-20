@@ -84,7 +84,7 @@ for e in MUJOCO_4_ENVS_captions:
 
 
 def gen_cql_curves():
-    figure_folder= 'dzx_figures/cql_mdp_cluster/non-shuffle'
+    figure_folder= 'dzx_figures/cql_slow_finetune'
     figure_names = []
     subfigure_captions = d4rl_12_datasets_envs_captions
 
@@ -127,6 +127,28 @@ def gen_cql_curves():
     # )
     #
     # # combined loss
+    print("\\begin{figure}[htb]")
+    print("\\centering")
+    print('\\includegraphics[width=\\linewidth]{%s/%s}' % (figure_folder, 'agg-cql_sac_combined_loss.png'))
+    print('\\caption{%s}' % 'Combined Loss curve of each setting averaged over 12 datasets.')
+    print('\\label{%s}' % 'fig:cql-combined-loss-agg-curves')
+    print('\\end{figure}')
+    print()
+
+    # performance-individual
+    figure_names = []
+    for e in d4rl_12_datasets_envs:
+        figure_names.append('ind-cql_sac_combined_loss_%s.png' % e)
+
+    caption = 'Combined loss (Q loss and conservative loss) for CQL, CQL with same task RL data pretraining, and CQL with MDP pretraining.'
+    ref_label = 'fig:cql-combined-loss-curves'
+    print_figures_latex(
+        figure_folder,
+        figure_names,
+        subfigure_captions,
+        caption,
+        ref_label,
+    )
     # figure_names = []
     # for e in d4rl_9_datasets_envs:
     #     figure_names.append('ind-cql_sac_combined_loss_%s.png' % e)

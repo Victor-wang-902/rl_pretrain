@@ -100,16 +100,20 @@ class ConservativeSAC(object):
 
     def update_qf_feature_lr(self, scale):
         if scale != 1:
-            new_lr = self.config.qf_lr * scale
-            self.qf_optimizer = {
-                'adam': torch.optim.Adam,
-                'sgd': torch.optim.SGD,
-            }[self.config.optimizer_type]([
-                {"params": self.qf1.hidden_layers.parameters(), "lr": new_lr},
-                {"params": self.qf2.hidden_layers.parameters(), "lr": new_lr},
-                {"params": self.qf1.last_fc_layer.parameters(),},
-                {"params": self.qf2.last_fc_layer.parameters(),},
-            ], lr=self.config.qf_lr)
+            if scale == 0:
+                self.qf_optimizer = {
+                    'adam': torch.optim.Adam,
+                    'sgd': torch.optim.SGD,
+                }[self.config.optimizer_type]([
+                    {"params": self.qf1.hidden_layers.parameters(), "lr": 0.},
+                    {"params": self.qf2.hidden_layers.parameters(), "lr": 0.},
+                    {"params": self.qf1.last_fc_layer.parameters(), },
+                    {"params": self.qf2.last_fc_layer.parameters(), },
+                ], lr=self.config.qf_lr)
+            else:
+                new_lr = self.config.qf_lr * scale
+                for p in self.qf_optimizer.param_groups:
+                    p['lr'] = new_lr
 
     def update_target_network(self, soft_target_update_rate):
         soft_target_update(self.qf1, self.target_qf1, soft_target_update_rate)

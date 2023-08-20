@@ -3,6 +3,7 @@ import pandas as pd
 import json
 import numpy as np
 
+
 def get_other_score_measures(path):
     # return a dictionary
     with open(path, "r") as f:
@@ -21,8 +22,8 @@ def get_other_score_measures(path):
         }
     return d
 
+
 base_path = '../code/checkpoints/sendbackcql'
-# base_path = '../code/testonly'
 for root, dirs, files in os.walk(base_path):
     if 'cqlr3n' in root:
         for dir in dirs:
@@ -45,3 +46,16 @@ for root, dirs, files in os.walk(base_path):
                                 json.dump(extra_dict, ex_file)
                     except Exception as e:
                         print(e)
+
+# import shutil
+# for pE in [200, 150, 100, 50, 25]:
+#     for pR in [1, 0.75, 0.5, 0.25, 0.1, 0.05, 0.01, 0.005, 0.001]:
+#         for e in ['hopper', 'walker2d', 'halfcheetah', 'ant']:
+#             for d in ['medium','medium-replay','medium-expert']:
+#                 folder = base_path + f'/cqlr3n_premdp_same_noproj_preRatio{pR}_preEp{pE}_l2_ns100_pt1_sameTrue_{e}_{d}'
+#                 for s in [2048, 4096]:
+#                     path = folder + f'/cqlr3n_premdp_same_noproj_preRatio{pR}_preEp{pE}_l2_ns100_pt1_sameTrue_{e}_{d}_s{s}'
+#                     try:
+#                         shutil.rmtree(path)
+#                     except:
+#                         print(path)

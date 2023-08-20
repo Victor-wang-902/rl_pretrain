@@ -277,65 +277,137 @@ cql_mdp_ns10000 = 'cqlr3n_premdp_same_noproj_l2_ns10000_pt1_sameTrue'
 cql_mdp_ns100000 = 'cqlr3n_premdp_same_noproj_l2_ns100000_pt1_sameTrue'
 
 # 08/12/2023 less pretraining:
-cql_pR0001_pE25, cql_pR0001_pE50, cql_pR0001_pE100, cql_pR0001_pE150, cql_pR0001_pE200 = \
+cql_pR0001_pT125k, cql_pR0001_pT250k, cql_pR0001_pT500k, cql_pR0001_pT750k, cql_pR0001_pT1m = \
     'cqlr3n_premdp_same_noproj_preRatio0.001_preEp25_l2_ns100_pt1_sameTrue',\
     'cqlr3n_premdp_same_noproj_preRatio0.001_preEp50_l2_ns100_pt1_sameTrue',\
     'cqlr3n_premdp_same_noproj_preRatio0.001_preEp100_l2_ns100_pt1_sameTrue',\
     'cqlr3n_premdp_same_noproj_preRatio0.001_preEp150_l2_ns100_pt1_sameTrue',\
     'cqlr3n_premdp_same_noproj_preRatio0.001_preEp200_l2_ns100_pt1_sameTrue',
 
-cql_pR0005_pE25, cql_pR0005_pE50, cql_pR0005_pE100, cql_pR0005_pE150, cql_pR0005_pE200 = \
+cql_pR0005_pT125k, cql_pR0005_pT250k, cql_pR0005_pT500k, cql_pR0005_pT750k, cql_pR0005_pT1m = \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp25_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp50_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp100_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp150_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp200_l2_ns100_pt1_sameTrue',
 
-cql_pR001_pE25, cql_pR001_pE50, cql_pR001_pE100, cql_pR001_pE150, cql_pR001_pE200 = \
+cql_pR001_pT125k, cql_pR001_pT250k, cql_pR001_pT500k, cql_pR001_pT750k, cql_pR001_pT1m = \
     'cqlr3n_premdp_same_noproj_preRatio0.01_preEp25_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.01_preEp50_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.01_preEp100_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.01_preEp150_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.01_preEp200_l2_ns100_pt1_sameTrue',
 
-cql_pR005_pE25, cql_pR005_pE50, cql_pR005_pE100, cql_pR005_pE150, cql_pR005_pE200 = \
+cql_pR005_pT125k, cql_pR005_pT250k, cql_pR005_pT500k, cql_pR005_pT750k, cql_pR005_pT1m = \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp25_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp50_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp100_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp150_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.005_preEp200_l2_ns100_pt1_sameTrue',
 
-cql_pR01_pE25, cql_pR01_pE50, cql_pR01_pE100, cql_pR01_pE150, cql_pR01_pE200 = \
+cql_pR01_pT125k, cql_pR01_pT250k, cql_pR01_pT500k, cql_pR01_pT750k, cql_pR01_pT1m = \
     'cqlr3n_premdp_same_noproj_preRatio0.1_preEp25_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.1_preEp50_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.1_preEp100_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.1_preEp150_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.1_preEp200_l2_ns100_pt1_sameTrue',
 
-cql_pR025_pE25, cql_pR025_pE50, cql_pR025_pE100, cql_pR025_pE150, cql_pR025_pE200 = \
+cql_pR025_pT125k, cql_pR025_pT250k, cql_pR025_pT500k, cql_pR025_pT750k, cql_pR025_pT1m = \
     'cqlr3n_premdp_same_noproj_preRatio0.25_preEp25_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.25_preEp50_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.25_preEp100_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.25_preEp150_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.25_preEp200_l2_ns100_pt1_sameTrue',
 
-cql_pR05_pE25, cql_pR05_pE50, cql_pR05_pE100, cql_pR05_pE150, cql_pR05_pE200 = \
+cql_pR05_pT125k, cql_pR05_pT250k, cql_pR05_pT500k, cql_pR05_pT750k, cql_pR05_pT1m = \
     'cqlr3n_premdp_same_noproj_preRatio0.5_preEp25_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.5_preEp50_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.5_preEp100_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.5_preEp150_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.5_preEp200_l2_ns100_pt1_sameTrue',
 
-cql_pR075_pE25, cql_pR075_pE50, cql_pR075_pE100, cql_pR075_pE150, cql_pR075_pE200 = \
+cql_pR075_pT125k, cql_pR075_pT250k, cql_pR075_pT500k, cql_pR075_pT750k, cql_pR075_pT1m = \
     'cqlr3n_premdp_same_noproj_preRatio0.75_preEp25_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.75_preEp50_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.75_preEp100_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.75_preEp150_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio0.75_preEp200_l2_ns100_pt1_sameTrue',
 
-cql_pR1_pE25, cql_pR1_pE50, cql_pR1_pE100, cql_pR1_pE150, cql_pR1_pE200 = \
+cql_pR1_pT125k, cql_pR1_pT250k, cql_pR1_pT500k, cql_pR1_pT750k, cql_pR1_pT1m = \
     'cqlr3n_premdp_same_noproj_preRatio1_preEp25_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio1_preEp50_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio1_preEp100_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio1_preEp150_l2_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_preRatio1_preEp200_l2_ns100_pt1_sameTrue',
+
+# 08/19/2023:
+cql_pR0001_pT1k, cql_pR0001_pT5k, cql_pR0001_pT10k, cql_pR0001_pT20k, cql_pR0001_pT50k = \
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preStep1000_preEp1_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preStep1000_preEp5_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preStep1000_preEp10_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preStep1000_preEp20_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.001_preStep1000_preEp50_l2_ns100_pt1_sameTrue',
+
+cql_pR0005_pT1k, cql_pR0005_pT5k, cql_pR0005_pT10k, cql_pR0005_pT20k, cql_pR0005_pT50k = \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preStep1000_preEp1_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preStep1000_preEp5_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preStep1000_preEp10_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preStep1000_preEp20_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.005_preStep1000_preEp50_l2_ns100_pt1_sameTrue',
+
+cql_pR001_pT1k, cql_pR001_pT5k, cql_pR001_pT10k, cql_pR001_pT20k, cql_pR001_pT50k = \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preStep1000_preEp1_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preStep1000_preEp5_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preStep1000_preEp10_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preStep1000_preEp20_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.01_preStep1000_preEp50_l2_ns100_pt1_sameTrue',
+
+cql_pR005_pT1k, cql_pR005_pT5k, cql_pR005_pT10k, cql_pR005_pT20k, cql_pR005_pT50k = \
+    'cqlr3n_premdp_same_noproj_preRatio0.05_preStep1000_preEp1_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.05_preStep1000_preEp5_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.05_preStep1000_preEp10_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.05_preStep1000_preEp20_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.05_preStep1000_preEp50_l2_ns100_pt1_sameTrue',
+
+cql_pR01_pT1k, cql_pR01_pT5k, cql_pR01_pT10k, cql_pR01_pT20k, cql_pR01_pT50k = \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preStep1000_preEp1_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preStep1000_preEp5_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preStep1000_preEp10_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preStep1000_preEp20_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.1_preStep1000_preEp50_l2_ns100_pt1_sameTrue',
+
+cql_pR025_pT1k, cql_pR025_pT5k, cql_pR025_pT10k, cql_pR025_pT20k, cql_pR025_pT50k = \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preStep1000_preEp1_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preStep1000_preEp5_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preStep1000_preEp10_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preStep1000_preEp20_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.25_preStep1000_preEp50_l2_ns100_pt1_sameTrue',
+
+cql_pR05_pT1k, cql_pR05_pT5k, cql_pR05_pT10k, cql_pR05_pT20k, cql_pR05_pT50k = \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preStep1000_preEp1_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preStep1000_preEp5_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preStep1000_preEp10_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preStep1000_preEp20_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.5_preStep1000_preEp50_l2_ns100_pt1_sameTrue',
+
+cql_pR075_pT1k, cql_pR075_pT5k, cql_pR075_pT10k, cql_pR075_pT20k, cql_pR075_pT50k = \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preStep1000_preEp1_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preStep1000_preEp5_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preStep1000_preEp10_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preStep1000_preEp20_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio0.75_preStep1000_preEp50_l2_ns100_pt1_sameTrue',
+
+cql_pR1_pT1k, cql_pR1_pT5k, cql_pR1_pT10k, cql_pR1_pT20k, cql_pR1_pT50k = \
+    'cqlr3n_premdp_same_noproj_preRatio1_preStep1000_preEp1_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio1_preStep1000_preEp5_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio1_preStep1000_preEp10_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio1_preStep1000_preEp20_l2_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_preRatio1_preStep1000_preEp50_l2_ns100_pt1_sameTrue',
+
+cql_mdp_2x = 'cqlr3n_premdp_same_noproj_l2_ep400_ns100_pt1_sameTrue'
+
+cql_finetune_slow067, cql_finetune_slow033, cql_finetune_slow01, cql_finetune_slow001 = \
+    'cqlr3n_premdp_same_noproj_l2_lr0.67_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_l2_lr0.33_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_l2_lr0.1_ns100_pt1_sameTrue', \
+    'cqlr3n_premdp_same_noproj_l2_lr0.01_ns100_pt1_sameTrue',

@@ -32,9 +32,9 @@ for e in MUJOCO_4_ENVS:
     for d in MUJOCO_3_DATASETS:
         d4rl_12_datasets_envs.append('%s_%s' % (e, d))
 
-d4rl_q_loss_maxs = [60, 60, 60, 120, 120, 120, 175, 175, 175]
-d4rl_combined_loss_maxs = [None for _ in range(9)]
-d4rl_combined_loss_mins = [None for _ in range(9)]
+d4rl_q_loss_maxs = [60, 60, 60, 120, 120, 120, 175, 175, 175, 200, 200, 200]
+d4rl_combined_loss_maxs = [None for _ in range(12)]
+d4rl_combined_loss_mins = [None for _ in range(12)]
 d4rl_combined_loss_mins[7] = 0
 d4rl_combined_loss_maxs[7] = 150
 
@@ -383,28 +383,54 @@ def plot_dt_loss_curves():
 #     cql_mdp_sigma2S,
 # ]
 
+# labels = [
+#     'CQL_FixTarg',
+#     'CQL_001S',
+#     'CQL_01S',
+#     'CQL_1S',
+#     'CQL_001N',
+#     'CQL_01N',
+#     'CQL_1N',
+#
+# ]
+#
+# base_names = [
+#     cql_mdp_tfix,
+#     cql_mdp_sigma001S,
+#     cql_mdp_sigma01S,
+#     cql_mdp_sigma1S,
+#     cql_mdp_sigma001N,
+#     cql_mdp_sigma01N,
+#     cql_mdp_sigma1N,
+#
+# ]
+
+# CQL MDP 2x:
+# labels = [
+#     'CQL_2x',
+#     'CQL_MDP_2x'
+# ]
+#
+# base_names = [
+#     cql_2x,
+#     cql_mdp_2x
+# ]
+
+# CQL Slow Finetune:
 labels = [
-    'CQL_FixTarg',
-    'CQL_001S',
-    'CQL_01S',
-    'CQL_1S',
-    'CQL_001N',
-    'CQL_01N',
-    'CQL_1N',
-
+    'CQL_MDP',
+    'CQL_MDP_Slow0.67',
+    'CQL_MDP_Slow0.33',
+    'CQL_MDP_Slow0.1',
+    'CQL_MDP_Slow0.01',
 ]
-
 base_names = [
-    cql_mdp_tfix,
-    cql_mdp_sigma001S,
-    cql_mdp_sigma01S,
-    cql_mdp_sigma1S,
-    cql_mdp_sigma001N,
-    cql_mdp_sigma01N,
-    cql_mdp_sigma1N,
-
+    cql_mdp_t1,
+    cql_finetune_slow067,
+    cql_finetune_slow033,
+    cql_finetune_slow01,
+    cql_finetune_slow001
 ]
-
 plot_cql_performance_curves(labels, base_names)
 plot_cql_q_loss_curves(labels, base_names)
 plot_cql_combined_loss_curves(labels, base_names)
