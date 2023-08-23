@@ -1,5 +1,6 @@
 import os
 import sys
+
 # with new logger
 ld_library_path = os.environ.get('LD_LIBRARY_PATH', '')
 ld_library_path += ':/workspace/.mujoco/mujoco210/bin:/usr/local/nvidia/lib:/usr/lib/nvidia'
@@ -20,11 +21,13 @@ from SimpleSAC.run_cql_watcher import run_single_exp, get_default_variant_dict
 from SimpleSAC.conservative_sac import ConservativeSAC
 from SimpleSAC.utils import WandBLogger
 import argparse
+
 CUDA_AVAILABLE = torch.cuda.is_available()
 if CUDA_AVAILABLE:
     DEVICE = 'cuda'
 else:
     DEVICE = 'cpu'
+
 
 def main():
     parser = argparse.ArgumentParser()
@@ -32,22 +35,22 @@ def main():
     args = parser.parse_args()
     setting = args.setting
 
-    variant = get_default_variant_dict() # this is a dictionary
+    variant = get_default_variant_dict()  # this is a dictionary
     ###########################################################
     exp_prefix = 'cqlr3n'
     settings = [
-        'env', '', MUJOCO_4_ENVS,#MUJOCO_3_ENVS,
+        'env', '', MUJOCO_4_ENVS,  # MUJOCO_3_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['mdp_same_noproj'],  # 'none', 'q_sprime', 'mdp_q_sprime'
-        'pretrain_data_ratio', 'preRatio', [1, 0.75, 0.5, 0.25, 0.1, 0.05, 0.01, 0.005, 0.001],
-        'n_pretrain_step_per_epoch', 'preStep', [1000],
-        'n_pretrain_epochs', 'preEp', [1, 5, 10, 20, 50],# [200, 150, 100, 50, 25],
+        'pretrain_data_ratio', 'preRatio', [1, 0.5, 0.1, 0.01, 0.001],
+        'n_pretrain_step_per_epoch', 'preStep', [1],
+        'n_pretrain_epochs', 'preEp', [1, 5, 10, 25, 50, 100, 500],  # 1000[1, 5, 10, 20, 50],# 5000[200, 150, 100, 50, 25],
         'qf_hidden_layer', 'l', [2],
         'mdppre_n_state', 'ns', [100],
         'mdppre_policy_temperature', 'pt', [1],
         'mdppre_same_as_s_and_policy', 'same', [True],
         'seed', '', [42, 666, 1024],
-    ] #
+    ]  #
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting)
     exp_name_full = get_auto_exp_name(actual_setting, hyper2logname, exp_prefix)

@@ -161,7 +161,14 @@ def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COL
                 y = 1-y
             if y_to_plot == 'total_time':
                 y = y / 3600
-            ax = sns.lineplot(x=x, y=y, n_boot=20, label=label, color=colors[i], linestyle=linestyles[i], linewidth = 2)
+            if label == 'CQL_MDP':
+                print('MDP 1x')
+                x = np.concatenate((x, x+float(1e6)))
+                y = np.concatenate(([0 for _ in range(len(y))], y))
+                ax = sns.lineplot(x=x, y=y, n_boot=20, label=label, color=colors[i], linestyle=linestyles[i], linewidth = 2)
+            else:
+                ax = sns.lineplot(x=x, y=y, n_boot=20, label=label, color=colors[i], linestyle=linestyles[i],
+                                  linewidth=2)
         plt.xlabel(xlabel, fontsize=axis_font_size)
         y_label = y_to_y_label[y_to_plot] if y_to_plot in y_to_y_label else y_to_plot
         plt.ylabel(y_label, fontsize=axis_font_size)

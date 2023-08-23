@@ -1369,15 +1369,23 @@ def dzx_generate_cql_fix_target():
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
 
 def dzx_generate_cql_less_pretraining_partial():
-    algs = [
-        cql_pR1_pE25,
-        cql_pR1_pE50,
-        cql_pR1_pE100,
-        cql_pR1_pE150,
-        cql_pR1_pE200
-    ]
+    algs = [cql_pR1_pT1k,
+            cql_pR1_pT5k,
+            cql_pR1_pT10k,
+            cql_pR1_pT20k,
+            cql_pR1_pT50k,
+            cql_pR1_pT125k,
+            cql_pR1_pT250k,
+            cql_pR1_pT500k,
+            cql_pR1_pT750k,
+            cql_pR1_pT1m]
     col_names = [
         'Best',
+        'preStep 1K',
+        'preStep 5K',
+        'preStep 10K',
+        'preStep 20K',
+        'preStep 50K',
         'preStep 125K',
         'preStep 250K',
         'preStep 500K',
@@ -1399,15 +1407,24 @@ def dzx_generate_cql_less_pretraining_partial():
 
 def dzx_generate_cql_less_pretraining_full():
     algs = [
-        [cql_pR0001_pE25, cql_pR0001_pE50, cql_pR0001_pE100, cql_pR0001_pE150, cql_pR0001_pE200],
-        [cql_pR0005_pE25, cql_pR0005_pE50, cql_pR0005_pE100, cql_pR0005_pE150, cql_pR0005_pE200],
-        [cql_pR001_pE25, cql_pR001_pE50, cql_pR001_pE100, cql_pR001_pE150, cql_pR001_pE200],
-        [cql_pR005_pE25, cql_pR005_pE50, cql_pR005_pE100, cql_pR005_pE150, cql_pR005_pE200],
-        [cql_pR01_pE25, cql_pR01_pE50, cql_pR01_pE100, cql_pR01_pE150, cql_pR01_pE200],
-        [cql_pR025_pE25, cql_pR025_pE50, cql_pR025_pE100, cql_pR025_pE150, cql_pR025_pE200],
-        [cql_pR05_pE25, cql_pR05_pE50, cql_pR05_pE100, cql_pR05_pE150, cql_pR05_pE200],
-        [cql_pR075_pE25, cql_pR075_pE50, cql_pR075_pE100, cql_pR075_pE150, cql_pR075_pE200],
-        [cql_pR1_pE25, cql_pR1_pE50, cql_pR1_pE100, cql_pR1_pE150, cql_pR1_pE200],
+        [cql_pR0001_pT1k, cql_pR0001_pT5k, cql_pR0001_pT10k, cql_pR0001_pT20k, cql_pR0001_pT50k, cql_pR0001_pT125k,
+         cql_pR0001_pT250k, cql_pR0001_pT500k, cql_pR0001_pT750k, cql_pR0001_pT1m],
+        [cql_pR0005_pT1k, cql_pR0005_pT5k, cql_pR0005_pT10k, cql_pR0005_pT20k, cql_pR0005_pT50k, cql_pR0005_pT125k,
+         cql_pR0005_pT250k, cql_pR0005_pT500k, cql_pR0005_pT750k, cql_pR0005_pT1m],
+        [cql_pR001_pT1k, cql_pR001_pT5k, cql_pR001_pT10k, cql_pR001_pT20k, cql_pR001_pT50k, cql_pR001_pT125k,
+         cql_pR001_pT250k, cql_pR001_pT500k, cql_pR001_pT750k, cql_pR001_pT1m],
+        [cql_pR005_pT1k, cql_pR005_pT5k, cql_pR005_pT10k, cql_pR005_pT20k, cql_pR005_pT50k, cql_pR005_pT125k,
+         cql_pR005_pT250k, cql_pR005_pT500k, cql_pR005_pT750k, cql_pR005_pT1m],
+        [cql_pR01_pT1k, cql_pR01_pT5k, cql_pR01_pT10k, cql_pR01_pT20k, cql_pR01_pT50k, cql_pR01_pT125k,
+         cql_pR01_pT250k, cql_pR01_pT500k, cql_pR01_pT750k, cql_pR01_pT1m],
+        [cql_pR025_pT1k, cql_pR025_pT5k, cql_pR025_pT10k, cql_pR025_pT20k, cql_pR025_pT50k, cql_pR025_pT125k,
+         cql_pR025_pT250k, cql_pR025_pT500k, cql_pR025_pT750k, cql_pR025_pT1m],
+        [cql_pR05_pT1k, cql_pR05_pT5k, cql_pR05_pT10k, cql_pR05_pT20k, cql_pR05_pT50k, cql_pR05_pT125k,
+         cql_pR05_pT250k, cql_pR05_pT500k, cql_pR05_pT750k, cql_pR05_pT1m],
+        [cql_pR075_pT1k, cql_pR075_pT5k, cql_pR075_pT10k, cql_pR075_pT20k, cql_pR075_pT50k, cql_pR075_pT125k,
+         cql_pR075_pT250k, cql_pR075_pT500k, cql_pR075_pT750k, cql_pR075_pT1m],
+        [cql_pR1_pT1k, cql_pR1_pT5k, cql_pR1_pT10k, cql_pR1_pT20k, cql_pR1_pT50k, cql_pR1_pT125k,
+         cql_pR1_pT250k, cql_pR1_pT500k, cql_pR1_pT750k, cql_pR1_pT1m],
     ]
 
     row_names = [
@@ -1424,6 +1441,11 @@ def dzx_generate_cql_less_pretraining_full():
 
     column_names = [
         'Best',
+        'preStep 1K',
+        'preStep 5K',
+        'preStep 10K',
+        'preStep 20K',
+        'preStep 50K',
         'preStep 125K',
         'preStep 250K',
         'preStep 500K',
@@ -1500,6 +1522,6 @@ def dzx_generate_cql_less_pretraining_full():
 # dzx_generate_cql_fix_target()
 
 # 08/12/2023 less training:
-# dzx_generate_cql_less_pretraining_partial()
-dzx_generate_cql_less_pretraining_full()
+dzx_generate_cql_less_pretraining_partial()
+# dzx_generate_cql_less_pretraining_full()
 

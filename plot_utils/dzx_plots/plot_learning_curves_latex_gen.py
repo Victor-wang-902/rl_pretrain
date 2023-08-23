@@ -84,7 +84,7 @@ for e in MUJOCO_4_ENVS_captions:
 
 
 def gen_cql_curves():
-    figure_folder= 'dzx_figures/cql_slow_finetune'
+    figure_folder= 'dzx_figures/cql_step_comparison'
     figure_names = []
     subfigure_captions = d4rl_12_datasets_envs_captions
 
