@@ -42,10 +42,10 @@ def main():
         'pretrain_mode', 'pre', ['mdp_same_noproj'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
         'mdppre_n_state', 'ns', [100],
-        'mdppre_policy_temperature', 'pt', [1, 'inf3'],
+        'mdppre_policy_temperature', 'pt', [1],
         'mdppre_same_as_s_and_policy', 'same', [True],
         'n_pretrain_step_per_epoch', 'preUps', [5000],
-        'n_pretrain_epochs', 'preEp', [20, 200],
+        'n_pretrain_epochs', 'preEp', [10, 5],
         'seed', '', [42, 666, 1024, 2048, 4069] + list(range(15)),
     ]
 
