@@ -24,6 +24,12 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
 
         np.random.seed(47)
         actions = np.random.randint(n_action, size=n_data)
+
+    elif policy_temperature == transition_temperature == 'inf3':
+        states = np.random.randint(n_state, size=n_data, dtype=int)
+        next_states = np.concatenate((states[1:], np.random.randint(n_state, size=1)), dtype=int)
+        actions = np.random.randint(n_action, size=n_data, dtype=int)
+
     elif policy_temperature == transition_temperature == 'fix_sprime':
         np.random.seed(0)
         origin = np.random.randint(n_state)
@@ -133,16 +139,16 @@ n_traj, max_length = 1000, 1000
 # for temperature in [0.0001, 0.001, 0.01, 0.1, 1, 10, 100, 1000, 10000]:
 #     gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
-for n_state in [1, 10, 1000, 10000, 100000]:
-    temperature = 1
-    n_action = n_state
-    gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+# for n_state in [1, 10, 1000, 10000, 100000]:
+#     temperature = 1
+#     n_action = n_state
+#     gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
 
-# for n_state in [100]:
-#     for temperature in [10]:
-#         n_action = n_state
-#         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+for n_state in [100]:
+    for temperature in ['inf3']:
+        n_action = n_state
+        gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 
 # for n_state in [100]:
 #     for temperature in ['sigma0.01S', 'sigma0.1S', 'sigma1S', 'sigma2S', 'sigma0.01N', 'sigma0.1N', 'sigma1N', 'sigma2N']:

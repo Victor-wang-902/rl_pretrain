@@ -416,21 +416,21 @@ def plot_dt_loss_curves():
 #     cql_mdp_2x
 # ]
 
-# CQL Slow Finetune:
-labels = [
-    'CQL_MDP_baseline',
-    'CQL_MDP_Slow0.67',
-    'CQL_MDP_Slow0.33',
-    'CQL_MDP_Slow0.1',
-    'CQL_MDP_Slow0.01',
-]
-base_names = [
-    cql_mdp_t1,
-    cql_finetune_slow067,
-    cql_finetune_slow033,
-    cql_finetune_slow01,
-    cql_finetune_slow001
-]
+# # CQL Slow Finetune:
+# labels = [
+#     'CQL_MDP_baseline',
+#     'CQL_MDP_Slow0.67',
+#     'CQL_MDP_Slow0.33',
+#     'CQL_MDP_Slow0.1',
+#     'CQL_MDP_Slow0.01',
+# ]
+# base_names = [
+#     cql_mdp_t1,
+#     cql_finetune_slow067,
+#     cql_finetune_slow033,
+#     cql_finetune_slow01,
+#     cql_finetune_slow001
+# ]
 
 # labels = [
 #     'CQL_2x',
@@ -440,6 +440,21 @@ base_names = [
 #     cql_2x,
 #     cql_mdp_t1
 # ]
+
+labels = [
+    'CQL',
+    'CQL_MDP_Base',
+    'CQL_Layer',
+    'CQL_Model',
+    'CQL_Whole'
+]
+base_names = [
+    cql_1x,
+    cql_mdp_t1,
+    cql_init_layerG,
+    cql_init_modelG,
+    cql_init_wholeG
+]
 
 plot_cql_performance_curves(labels, base_names)
 plot_cql_q_loss_curves(labels, base_names)

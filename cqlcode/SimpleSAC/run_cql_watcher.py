@@ -439,24 +439,26 @@ def run_single_exp(variant):
             if variant['pretrain_data_ratio'] == 1:
                 dataset_name_string = variant['dataset']
             else:
-                dataset_name_string = '%s_%s' % (variant['dataset'], str(variant['pretrain_data_ratio']))
-            pretrain_model_name = '%s_%s_%s_%s_%d_%d_%s_%s.pth' % (
+                dataset_name_string = '%s_preR%s' % (variant['dataset'], str(variant['pretrain_data_ratio']))
+            pretrain_model_name = '%s_%s_%s_preM%s_l%d_hs%d_preUps%s_preEp%s.pth' % (
                 'cql', variant['env'], dataset_name_string, variant['pretrain_mode'],
-                variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_epochs'],
-                variant['n_pretrain_step_per_epoch'])
+                variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_step_per_epoch'],
+                variant['n_pretrain_epochs'])
         else:  # mdp pretrain
             if variant['pretrain_data_ratio'] == 1:
                 dataset_name_string = variant['mdppre_n_traj']
             else:
-                dataset_name_string = '%d_%s' % (variant['mdppre_n_traj'], str(variant['pretrain_data_ratio']))
-            pretrain_model_name = '%s_%s_%s_%d_%d_%s_%s_%d_%d_%s_%d_%d_%s.pth' % (
-                'cql', variant['env'],
-                # downstream task env is needed here because pretrain projection will be different for each task
-                dataset_name_string, variant['mdppre_n_state'], variant['mdppre_n_action'],
-                str(variant['mdppre_policy_temperature']), str(variant['mdppre_transition_temperature']),
-                variant['mdppre_state_dim'], variant['mdppre_action_dim'],
-                variant['pretrain_mode'], variant['qf_hidden_layer'], variant['qf_hidden_unit'],
-                variant['n_pretrain_epochs']) #, variant['n_pretrain_step_per_epoch'], variant['seed'])
+                dataset_name_string = '%d_preR%s' % (variant['mdppre_n_traj'], str(variant['pretrain_data_ratio']))
+            pretrain_model_name = '%s_%s_preTraj%s_nS%d_nA%d_pt%s_tt%s_dimS%d_dimA%d_preM%s_l%d_hs%d_preUps%s_preEp%s' \
+                                  '.pth' % ('cql', variant['env'],
+                                            # downstream task env is needed here because pretrain projection will be different for each task
+                                            dataset_name_string, variant['mdppre_n_state'], variant['mdppre_n_action'],
+                                            str(variant['mdppre_policy_temperature']),
+                                            str(variant['mdppre_transition_temperature']),
+                                            variant['mdppre_state_dim'], variant['mdppre_action_dim'],
+                                            variant['pretrain_mode'], variant['qf_hidden_layer'],
+                                            variant['qf_hidden_unit'],
+                                            variant['n_pretrain_step_per_epoch'], variant['n_pretrain_epochs'])
 
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         if os.path.exists(pretrain_full_path):
@@ -469,7 +471,7 @@ def run_single_exp(variant):
             if variant['init_scheme'] is not None:
                 pre_qf1 = pretrained_agent.qf1
                 pre_qf2 = pretrained_agent.qf2
-                sendback_path = os.path.join(pretrain_model_folder_path+'sendbackmodel/', pretrain_model_name)
+                sendback_path = os.path.join(pretrain_model_folder_path + 'sendbackmodel/', pretrain_model_name)
                 if not os.path.exists(sendback_path):
                     torch.save({'qf1': pre_qf1, 'qf2': pre_qf2}, sendback_path)
                     print('Saved state_dict of Q functions to send back.')

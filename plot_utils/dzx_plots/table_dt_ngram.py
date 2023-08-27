@@ -104,6 +104,7 @@ for e in MUJOCO_4_ENVS:
     for dataset in MUJOCO_3_DATASETS:
         all_envs.append('%s_%s' % (e, dataset))
 
+
 def get_alg_dataset_dict(algs, envs):
     # load extra dict for all alg, all envs, all seeds
     alg_dataset_dict = {}
@@ -381,8 +382,10 @@ def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_
     #     print(agg_mean)
     #     print(agg_std)
 
-def generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, column_names, best_value_bold=True, bold_threshold=0.05,
-                                   measure='best_return_normalized'):
+
+def generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, column_names, best_value_bold=True,
+                                           bold_threshold=0.05,
+                                           measure='best_return_normalized'):
     print("\nNow generate latex table:\n")
 
     tables = np.zeros((2, len(algs), len(algs[0])))
@@ -393,9 +396,9 @@ def generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, co
                 std_mean, std_std = get_aggregated_value(alg_dataset_dict, algs[i][j], measure + '_std')
                 tables[1, i, j] = std_mean
             if measure == 'final_test_normalized_returns':
-                std_mean, std_std = get_aggregated_value(alg_dataset_dict, algs[i][j], 'final_test_normalized_returns_std')
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, algs[i][j],
+                                                         'final_test_normalized_returns_std')
                 tables[1, i, j] = std_mean
-
 
     max_values = np.max(tables[0], axis=1)
     min_values = np.min(tables[0], axis=1)
@@ -1368,28 +1371,26 @@ def dzx_generate_cql_fix_target():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
 
+
 def dzx_generate_cql_less_pretraining_partial():
     algs = [cql_pR1_pT1k,
-            cql_pR1_pT5k,
-            cql_pR1_pT10k,
-            cql_pR1_pT20k,
             cql_pR1_pT50k,
-            cql_pR1_pT125k,
-            cql_pR1_pT250k,
-            cql_pR1_pT500k,
-            cql_pR1_pT750k,
             cql_pR1_pT1m]
+
+    algs = [f'cqlr3n_premdp_same_noproj_preRatio1_preStep1_preEp{pE}_l2_ns100_pt1_sameTrue'
+                   for pE in [1, 5, 10, 25, 50, 100, 500]] + algs
+
     col_names = [
         'Best',
+        'preStep 1',
+        'preStep 5',
+        'preStep 10',
+        'preStep 25',
+        'preStep 50',
+        'preStep 100',
+        'preStep 500',
         'preStep 1K',
-        'preStep 5K',
-        'preStep 10K',
-        'preStep 20K',
         'preStep 50K',
-        'preStep 125K',
-        'preStep 250K',
-        'preStep 500K',
-        'preStep 750K',
         'preStep 1M'
     ]
     envs = all_envs
@@ -1405,60 +1406,69 @@ def dzx_generate_cql_less_pretraining_partial():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
 
+
 def dzx_generate_cql_less_pretraining_full():
-    algs = [
-        [cql_pR0001_pT1k, cql_pR0001_pT5k, cql_pR0001_pT10k, cql_pR0001_pT20k, cql_pR0001_pT50k, cql_pR0001_pT125k,
-         cql_pR0001_pT250k, cql_pR0001_pT500k, cql_pR0001_pT750k, cql_pR0001_pT1m],
-        [cql_pR0005_pT1k, cql_pR0005_pT5k, cql_pR0005_pT10k, cql_pR0005_pT20k, cql_pR0005_pT50k, cql_pR0005_pT125k,
-         cql_pR0005_pT250k, cql_pR0005_pT500k, cql_pR0005_pT750k, cql_pR0005_pT1m],
-        [cql_pR001_pT1k, cql_pR001_pT5k, cql_pR001_pT10k, cql_pR001_pT20k, cql_pR001_pT50k, cql_pR001_pT125k,
-         cql_pR001_pT250k, cql_pR001_pT500k, cql_pR001_pT750k, cql_pR001_pT1m],
-        [cql_pR005_pT1k, cql_pR005_pT5k, cql_pR005_pT10k, cql_pR005_pT20k, cql_pR005_pT50k, cql_pR005_pT125k,
-         cql_pR005_pT250k, cql_pR005_pT500k, cql_pR005_pT750k, cql_pR005_pT1m],
-        [cql_pR01_pT1k, cql_pR01_pT5k, cql_pR01_pT10k, cql_pR01_pT20k, cql_pR01_pT50k, cql_pR01_pT125k,
-         cql_pR01_pT250k, cql_pR01_pT500k, cql_pR01_pT750k, cql_pR01_pT1m],
-        [cql_pR025_pT1k, cql_pR025_pT5k, cql_pR025_pT10k, cql_pR025_pT20k, cql_pR025_pT50k, cql_pR025_pT125k,
-         cql_pR025_pT250k, cql_pR025_pT500k, cql_pR025_pT750k, cql_pR025_pT1m],
-        [cql_pR05_pT1k, cql_pR05_pT5k, cql_pR05_pT10k, cql_pR05_pT20k, cql_pR05_pT50k, cql_pR05_pT125k,
-         cql_pR05_pT250k, cql_pR05_pT500k, cql_pR05_pT750k, cql_pR05_pT1m],
-        [cql_pR075_pT1k, cql_pR075_pT5k, cql_pR075_pT10k, cql_pR075_pT20k, cql_pR075_pT50k, cql_pR075_pT125k,
-         cql_pR075_pT250k, cql_pR075_pT500k, cql_pR075_pT750k, cql_pR075_pT1m],
-        [cql_pR1_pT1k, cql_pR1_pT5k, cql_pR1_pT10k, cql_pR1_pT20k, cql_pR1_pT50k, cql_pR1_pT125k,
-         cql_pR1_pT250k, cql_pR1_pT500k, cql_pR1_pT750k, cql_pR1_pT1m],
-    ]
-
-    row_names = [
-        'preDataRatio0.001',
-        'preDataRatio0.005',
-        'preDataRatio0.01',
-        'preDataRatio0.05',
-        'preDataRatio0.1',
-        'preDataRatio0.25',
-        'preDataRatio0.5',
-        'preDataRatio0.75',
-        'preDataRatio1',
-    ]
-
-    column_names = [
-        'Best',
-        'preStep 1K',
-        'preStep 5K',
-        'preStep 10K',
-        'preStep 20K',
-        'preStep 50K',
-        'preStep 125K',
-        'preStep 250K',
-        'preStep 500K',
-        'preStep 750K',
-        'preStep 1M'
-    ]
+    algs = []
+    for pR in reversed([1, 0.5, 0.1, 0.01, 0.001]):
+        algs.append([f'cqlr3n_premdp_same_noproj_preRatio{pR}_preStep1_preEp{pT}_l2_ns100_pt1_sameTrue'
+                     for pT in [1, 5, 10, 25, 50, 100, 500]])
+    row_names = [f'preDataRatio{pR}' for pR in reversed([1, 0.5, 0.1, 0.01, 0.001])]
+    column_names = ['Best'] + [f'preStep {pT}' for pT in [1, 5, 10, 25, 50, 100, 500]]
+    # algs = [
+    #     [cql_pR0001_pT1k, cql_pR0001_pT5k, cql_pR0001_pT10k, cql_pR0001_pT20k, cql_pR0001_pT50k, cql_pR0001_pT125k,
+    #      cql_pR0001_pT250k, cql_pR0001_pT500k, cql_pR0001_pT750k, cql_pR0001_pT1m],
+    #     [cql_pR0005_pT1k, cql_pR0005_pT5k, cql_pR0005_pT10k, cql_pR0005_pT20k, cql_pR0005_pT50k, cql_pR0005_pT125k,
+    #      cql_pR0005_pT250k, cql_pR0005_pT500k, cql_pR0005_pT750k, cql_pR0005_pT1m],
+    #     [cql_pR001_pT1k, cql_pR001_pT5k, cql_pR001_pT10k, cql_pR001_pT20k, cql_pR001_pT50k, cql_pR001_pT125k,
+    #      cql_pR001_pT250k, cql_pR001_pT500k, cql_pR001_pT750k, cql_pR001_pT1m],
+    #     [cql_pR005_pT1k, cql_pR005_pT5k, cql_pR005_pT10k, cql_pR005_pT20k, cql_pR005_pT50k, cql_pR005_pT125k,
+    #      cql_pR005_pT250k, cql_pR005_pT500k, cql_pR005_pT750k, cql_pR005_pT1m],
+    #     [cql_pR01_pT1k, cql_pR01_pT5k, cql_pR01_pT10k, cql_pR01_pT20k, cql_pR01_pT50k, cql_pR01_pT125k,
+    #      cql_pR01_pT250k, cql_pR01_pT500k, cql_pR01_pT750k, cql_pR01_pT1m],
+    #     [cql_pR025_pT1k, cql_pR025_pT5k, cql_pR025_pT10k, cql_pR025_pT20k, cql_pR025_pT50k, cql_pR025_pT125k,
+    #      cql_pR025_pT250k, cql_pR025_pT500k, cql_pR025_pT750k, cql_pR025_pT1m],
+    #     [cql_pR05_pT1k, cql_pR05_pT5k, cql_pR05_pT10k, cql_pR05_pT20k, cql_pR05_pT50k, cql_pR05_pT125k,
+    #      cql_pR05_pT250k, cql_pR05_pT500k, cql_pR05_pT750k, cql_pR05_pT1m],
+    #     [cql_pR075_pT1k, cql_pR075_pT5k, cql_pR075_pT10k, cql_pR075_pT20k, cql_pR075_pT50k, cql_pR075_pT125k,
+    #      cql_pR075_pT250k, cql_pR075_pT500k, cql_pR075_pT750k, cql_pR075_pT1m],
+    #     [cql_pR1_pT1k, cql_pR1_pT5k, cql_pR1_pT10k, cql_pR1_pT20k, cql_pR1_pT50k, cql_pR1_pT125k,
+    #      cql_pR1_pT250k, cql_pR1_pT500k, cql_pR1_pT750k, cql_pR1_pT1m],
+    # ]
+    #
+    # row_names = [
+    #     'preDataRatio0.001',
+    #     'preDataRatio0.005',
+    #     'preDataRatio0.01',
+    #     'preDataRatio0.05',
+    #     'preDataRatio0.1',
+    #     'preDataRatio0.25',
+    #     'preDataRatio0.5',
+    #     'preDataRatio0.75',
+    #     'preDataRatio1',
+    # ]
+    #
+    # column_names = [
+    #     'Best',
+    #     'preStep 1K',
+    #     'preStep 5K',
+    #     'preStep 10K',
+    #     'preStep 20K',
+    #     'preStep 50K',
+    #     'preStep 125K',
+    #     'preStep 250K',
+    #     'preStep 500K',
+    #     'preStep 750K',
+    #     'preStep 1M'
+    # ]
 
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(sum(algs, []), envs)
     generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, column_names)
 
     column_names[0] = 'Average Final Four'
-    generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, column_names, measure='last_four_normalized')
+    generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, column_names,
+                                           measure='last_four_normalized')
+
 
 ##################### table generation
 # generate_table_nvocab_markov_chain()
@@ -1524,4 +1534,3 @@ def dzx_generate_cql_less_pretraining_full():
 # 08/12/2023 less training:
 dzx_generate_cql_less_pretraining_partial()
 # dzx_generate_cql_less_pretraining_full()
-

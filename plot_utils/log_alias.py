@@ -411,3 +411,8 @@ cql_finetune_slow067, cql_finetune_slow033, cql_finetune_slow01, cql_finetune_sl
     'cqlr3n_premdp_same_noproj_l2_lr0.33_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_l2_lr0.1_ns100_pt1_sameTrue', \
     'cqlr3n_premdp_same_noproj_l2_lr0.01_ns100_pt1_sameTrue',
+
+# 2023/08/27 Guess Init:
+cql_init_layerG = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1_sameTrue_initlayerGuass'
+cql_init_modelG = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1_sameTrue_initmodelGuass'
+cql_init_wholeG = 'cqlr3n_premdp_same_noproj_l2_ns100_pt1_sameTrue_initwholeGuass'
