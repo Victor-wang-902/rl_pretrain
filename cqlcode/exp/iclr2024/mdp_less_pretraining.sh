@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL # select which email types will be sent
 #SBATCH --mail-user=zd662@nyu.edu # NOTE: put your netid here if you want emails
 
-#SBATCH --array=0-239 # here the number depends on number of tasks in the array, e.g. 0-11 will create 12 tasks
+#SBATCH --array=0-7 # here the number depends on number of tasks in the array, e.g. 0-11 will create 12 tasks
 #SBATCH --output=../logs/%A_%a.out # %A is SLURM_ARRAY_JOB_ID, %a is SLURM_ARRAY_TASK_ID,
 #SBATCH --error=../logs/%A_%a.err # MAKE SURE WHEN YOU RUN THIS, ../logs IS A VALID PATH
 
@@ -25,5 +25,5 @@ echo "Job ID: ${SLURM_ARRAY_TASK_ID}"
 singularity exec --nv -B /scratch/$USER/rl_pretrain/code:/code -B /scratch/$USER/rl_pretrain/rlcode:/rlcode -B /scratch/$USER/rl_pretrain/cqlcode:/cqlcode -B /scratch/$USER/cql-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /scratch/$USER/rl_pretrain/code/checkpoints:/checkpoints /scratch/$USER/cql-sandbox bash -c "
 cd /cqlcode
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
-python exp/iclr2024/baseline.py --setting ${SLURM_ARRAY_TASK_ID}
+python exp/iclr2024/mdp_less_pretraining.py --setting ${SLURM_ARRAY_TASK_ID}
 "
