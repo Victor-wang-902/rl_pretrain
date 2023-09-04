@@ -65,15 +65,18 @@ def get_extra_dict_multiple_seeds(datafolder_path):
         aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1],]
     return aggregate_dict
 
-data_path = '../../code/checkpoints/'
+data_path = "/scratch/zw2374/public/rl_pretrain/code/checkpoints"
 
 MUJOCO_3_ENVS = [
                 'hopper',
-                 'halfcheetah',
+                'halfcheetah',
                 'walker2d',
 ]
 MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
 all_envs = []
+
+walker_2 = ["walker2d_medium-replay", "walker2d_medium-expert"]
+walker_1 = ["walker2d_medium-replay"]
 for e in MUJOCO_3_ENVS:
     for dataset in MUJOCO_3_DATASETS:
         all_envs.append('%s_%s' % (e, dataset))
@@ -289,18 +292,41 @@ def generate_table_markov_chain_compare_number_of_steps():
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
 
+def generate_dt_mc_table_compare_temperature_small():
+    #################### table 2
+    # DT table, pretrain with markov chain data change number of step
+    algs = [
+        dt_mc_temp0_001_vocab100,
+        dt_mc_temp0_01_vocab100,
+        dt_mc_temp0_1_vocab100,
+        dt_mc_temp0_2_vocab100,
+        dt_mc_temp0_4_vocab100,
+        dt_mc_temp0_8_vocab100,
+        dt_mc_temp1_0_vocab100,
+        dt_mc_temp10_0_vocab100,
+        dt_mc_temp100_0_vocab100,
+    ]
+    col_names = ['Measures', '1step v100 0.001', '1step v100 0.01', '1step v100 0.1', '1step v100 0.2', '1step v100 0.4','1step v100 0.8','1step v100 1','1step v100 10','1step v100 100.0'] # '0.1', '0.2',
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
 def generate_dt_mc_table_compare_temperature():
     #################### table 2
     # DT table, pretrain with markov chain data change number of step
     algs = [
-        # dt_mc_temp0_1_vocab50257,
-        # dt_mc_temp0_2_vocab50257,
+        dt_mc_temp0_001_vocab50257,
+        dt_mc_temp0_01_vocab50257,
+        dt_mc_temp0_1_vocab50257,
+        dt_mc_temp0_2_vocab50257,
         dt_mc_temp0_4_vocab50257,
         dt_mc_temp0_8_vocab50257,
         dt_mc_temp1_0_vocab50257,
         dt_mc_temp10_0_vocab50257,
+        dt_mc_temp100_0_vocab50257,
     ]
-    col_names = ['Measures', '1step v50257 0.4','1step v50257 0.8','1step v50257 1','1step v50257 10',] # '0.1', '0.2',
+    col_names = ['Measures', '1step v50257 0.001', '1step v50257 0.01', '1step v50257 0.1', '1step v50257 0.2', '1step v50257 0.4','1step v50257 0.8','1step v50257 1','1step v50257 10','1step v50257 100.0'] # '0.1', '0.2',
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
@@ -390,6 +416,67 @@ def generate_table_cql_mdp_compare_temperature():
                 '0.01', '0.1', '1', '10', '100'
                  ]
     envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+def generate_table_dt_random_small_vocab():
+    algs = [
+        'chibiT-rerun',
+        'chibiT-rerun-syn_ngram1_nvocab10_temperature1.0',
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
+        'chibiT-rerun-syn_ngram1_nvocab1000_temperature1.0',
+        'chibiT-random_nvocab10',
+        'chibiT-random_nvocab100',
+        'chibiT-random_nvocab1000',
+    ]
+    col_names = [
+        'Measures','ChibiT', '1-step MC10', '1-step MC100', '1-step MC1000', 'Random10', 'Random100', 'Random1000'
+    ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+def generate_table_dt_short_small_vocab():
+    algs = [
+        'chibiT-rerun',
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
+        'chibiT-rerun-syn_ngram3_nvocab100_temperature1.0',
+        'chibiT-rerun-syn_ngram5_nvocab100_temperature1.0',
+        'chibiT-syn-short_ngram1_nvocab100_temperature1.0',
+        'chibiT-syn-short_ngram3_nvocab100_temperature1.0',
+        'chibiT-syn-short_ngram5_nvocab100_temperature1.0',
+    ]
+    col_names = [
+        'Measures','ChibiT', '1-step MC100', '3-step MC100', '5-step MC100', '1-step ShortMC100', '3-step ShortMC100', '5-step ShortMC100',
+    ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+
+def generate_table_dt_same_walker_2():
+    algs = [
+        'chibiT-rerun',
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
+        'same-no-return_new_ft',
+    ]
+    col_names = [
+        'Measures','ChibiT', '1-step MC100 t1.0', 'Same dataset pretrain with no return',
+    ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_aggregate_table(algs, alg_dataset_dict, col_names)
+
+def generate_table_dt_same_walker_1():
+    algs = [
+        'chibiT-rerun',
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0',
+        'same_ft',
+    ]
+    col_names = [
+        'Measures','ChibiT', '1-step MC100 t1.0', 'Same dataset pretrain',
+    ]
+    envs = walker_1
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_aggregate_table(algs, alg_dataset_dict, col_names)
 
@@ -717,4 +804,9 @@ def generate_table_cql_with_target_networks4():
 # generate_table_cql_with_target_networks()
 # generate_table_cql_with_target_networks2()
 # generate_table_cql_with_target_networks3()
-generate_table_cql_with_target_networks4()
+# generate_table_cql_with_target_networks4()
+# generate_table_dt_random_small_vocab()
+# generate_table_dt_short_small_vocab()
+# generate_dt_mc_table_compare_temperature_small()
+# generate_dt_mc_table_compare_temperature()
+generate_table_dt_same_walker_2()

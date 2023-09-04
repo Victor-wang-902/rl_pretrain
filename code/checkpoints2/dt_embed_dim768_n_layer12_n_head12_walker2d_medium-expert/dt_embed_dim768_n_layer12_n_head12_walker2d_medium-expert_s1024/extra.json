@@ -1,0 +1,16 @@
+{
+    "final_weight_diff": 275.8426513671875,
+    "final_feature_diff": 31.316150472643084,
+    "best_weight_diff": 250.98907470703125,
+    "best_feature_diff": 31.783915352220358,
+    "num_feature_traj": 219,
+    "num_feature_timesteps": "197797",
+    "final_test_returns": 4907.136775247935,
+    "final_test_normalized_returns": 106.85818643498062,
+    "best_return": 4973.1714183011045,
+    "best_return_normalized": 108.29663940118635,
+    "convergence_step": "5000",
+    "convergence_iter": "1",
+    "best_step": "85000",
+    "best_iter": "17"
+}

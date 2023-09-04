@@ -17,13 +17,14 @@ def get_other_score_measures(path):
             'best_50percent_normalized': test_returns_norm_sorted[-int(n *0.5):].mean(),
             'best_100percent_normalized': test_returns_norm_sorted.mean(),
             'best_later_half_normalized': test_returns_norm[int(n * 0.5):].mean(),
+            'best_last_four_normalized': test_returns_norm[-4:].mean()
         }
     return d
 
 base_path = '../code/checkpoints'
 # base_path = '../code/testonly'
 for root, dirs, files in os.walk(base_path):
-    if 'dt' in root or 'chibiT' in root:
+    if 'dt' in root or 'chibiT' in root or 'same' in root or 'random' in root:
         for dir in dirs:
             # Go through every subfolder in this folder
             subfolder = os.path.join(root, dir)

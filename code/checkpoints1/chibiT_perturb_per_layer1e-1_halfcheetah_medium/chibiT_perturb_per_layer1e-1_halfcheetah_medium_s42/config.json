@@ -1,0 +1,67 @@
+{
+    "exp_name":	"chibiT_perturb_per_layer1e-1_halfcheetah_medium",
+    "exp_prefix":	"gym-experiment",
+    "logger":	{
+        "<logx.EpochLogger object at 0x152690024fd0>":	{
+            "epoch_dict":	{},
+            "exp_name":	"chibiT_perturb_per_layer1e-1_halfcheetah_medium",
+            "first_row":	true,
+            "log_current_row":	{},
+            "log_headers":	[],
+            "output_dir":	"/checkpoints/chibiT_perturb_per_layer1e-1_halfcheetah_medium/chibiT_perturb_per_layer1e-1_halfcheetah_medium_s42",
+            "output_file":	{
+                "<_io.TextIOWrapper name='/checkpoints/chibiT_perturb_per_layer1e-1_halfcheetah_medium/chibiT_perturb_per_layer1e-1_halfcheetah_medium_s42/progress.csv' mode='w' encoding='UTF-8'>":	{
+                    "mode":	"w"
+                }
+            }
+        }
+    },
+    "variant":	{
+        "K":	20,
+        "activation_function":	"relu",
+        "batch_size":	64,
+        "data_size":	1.0,
+        "dataset":	"medium",
+        "device":	"cuda",
+        "dropout":	0.2,
+        "embed_dim":	128,
+        "env":	"halfcheetah",
+        "exp_name":	"chibiT_perturb_per_layer1e-1_halfcheetah_medium",
+        "extend_positions":	true,
+        "fp16":	false,
+        "frozen":	false,
+        "gpt_kmeans":	1000,
+        "gpt_kmeans_const":	0.1,
+        "kmeans_cache":	"kmeans_cache/chibiv2_lm_1000.pt",
+        "kmeans_mean":	false,
+        "learning_rate":	0.0001,
+        "lm_learning_rate":	null,
+        "load_checkpoint":	null,
+        "log_to_wandb":	false,
+        "max_iters":	20,
+        "mode":	"normal",
+        "model_type":	"dt",
+        "n_head":	1,
+        "n_layer":	3,
+        "not_perturb_attn":	false,
+        "not_perturb_ln":	false,
+        "not_perturb_mlp":	false,
+        "num_eval_episodes":	10,
+        "num_steps_per_iter":	5000,
+        "outdir":	"/checkpoints/chibiT_perturb_per_layer1e-1_halfcheetah_medium/chibiT_perturb_per_layer1e-1_halfcheetah_medium_s42",
+        "output_fname":	"progress.csv",
+        "pct_traj":	1.0,
+        "perturb":	true,
+        "perturb_absolute":	null,
+        "perturb_attn_only":	false,
+        "perturb_ln_only":	false,
+        "perturb_mlp_only":	false,
+        "perturb_per_layer":	0.1,
+        "perturb_transformer_only":	true,
+        "pretrained_lm":	"chibiT",
+        "seed":	42,
+        "share_input_output_proj":	true,
+        "warmup_steps":	5000,
+        "weight_decay":	0.0001
+    }
+}

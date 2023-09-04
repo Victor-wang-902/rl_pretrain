@@ -1,0 +1,22 @@
+{
+    "final_4800_return_mean": 3207.601798794247,
+    "best_4800_return_mean": 3593.9426984645143,
+    "last_four_4800_return_mean": 3334.3758816572295,
+    "convergence_4800_step": "5000",
+    "best_4800_step": "75000",
+    "final_5000_return_mean": 2877.363723255114,
+    "best_5000_return_mean": 3598.1602410146456,
+    "last_four_5000_return_mean": 3140.9047830755553,
+    "convergence_5000_step": "5000",
+    "best_5000_step": "90000",
+    "final_5500_return_mean": 3658.239780071188,
+    "best_5500_return_mean": 3658.239780071188,
+    "last_four_5500_return_mean": 3440.197420752099,
+    "convergence_5500_step": "5000",
+    "best_5500_step": "100000",
+    "final_6000_return_mean": 3663.627754643134,
+    "best_6000_return_mean": 3670.251722416143,
+    "last_four_6000_return_mean": 3493.5854038754196,
+    "convergence_6000_step": "5000",
+    "best_6000_step": "85000"
+}
