@@ -1256,10 +1256,12 @@ def dzx_generate_cql_main():
     algs = [
         cql_1x,
         cql_mdp_t1,
+        cql_mdp_tinf2
     ]
     col_names = ['Best Score',
                  'CQL',
-                 'CQL+MDP'
+                 'CQL+MDP',
+                 'CQL+IID'
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -1378,7 +1380,7 @@ def dzx_generate_cql_less_pretraining_partial():
             cql_pR1_pT1m]
 
     algs = [f'cqlr3n_premdp_same_noproj_preRatio1_preStep1_preEp{pE}_l2_ns100_pt1_sameTrue'
-                   for pE in [1, 5, 10, 25, 50, 100, 500]] + algs
+            for pE in [1, 5, 10, 25, 50, 100, 500]] + algs
 
     col_names = [
         'Best',
@@ -1470,6 +1472,107 @@ def dzx_generate_cql_less_pretraining_full():
                                            measure='last_four_normalized')
 
 
+def dzx_20seeds():
+    algs = [
+        cql_20s,
+        cql_iid_preT1m_20s,
+        cql_iid_preT100k_20s,
+        cql_mdp_t1_preT1m_20s,
+        cql_mdp_t1_preT100k_20s,
+        cql_mdp_t1_preT50k_20s,
+        cql_mdp_t1_preT25k_20s,
+        cql_mdp_t1_preT1k_20s,
+        cql_mdp_t1_preT1_20s
+    ]
+
+    col_names = [
+        'Best',
+        'CQL',
+        'IID1m',
+        'IID100k',
+        'MDP1m',
+        'MDP100k',
+        'MDP50k',
+        'MDP25k',
+        'MDP1k',
+        'MDP1'
+    ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    # col_names[0] = 'Average Later Half'
+    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Final Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+
+
+    algs = [
+        cql_1x,
+        cql_20s,
+        cql_mdp_tinf2,
+        cql_iid_preT1m_20s,
+        cql_mdp_t1,
+        cql_mdp_t1_preT1m_20s,
+    ]
+
+    col_names = [
+        'Best',
+        'CQL',
+        'CQL20',
+        'IID',
+        'IID20',
+        '1mMDP',
+        '1mMDP20',
+    ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    # col_names[0] = 'Average Later Half'
+    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Final Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+
+    algs = [
+        cql_pR1_pT50k,
+        cql_mdp_t1_preT50k_20s,
+        cql_pR1_pT1k,
+        cql_mdp_t1_preT1k_20s,
+        'cqlr3n_premdp_same_noproj_preRatio1_preStep1_preEp1_l2_ns100_pt1_sameTrue',
+        cql_mdp_t1_preT1_20s
+    ]
+
+    col_names = [
+        'Best',
+        '50kMDP',
+        '50kMDP20',
+        '1kMDP',
+        '1kMDP20',
+        '1MDP',
+        '1MDP20',
+    ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    # col_names[0] = 'Average Later Half'
+    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Final Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+
 ##################### table generation
 # generate_table_nvocab_markov_chain()
 # generate_table_markov_chain_compare_number_of_steps()
@@ -1532,5 +1635,8 @@ def dzx_generate_cql_less_pretraining_full():
 # dzx_generate_cql_fix_target()
 
 # 08/12/2023 less training:
-dzx_generate_cql_less_pretraining_partial()
+# dzx_generate_cql_less_pretraining_partial()
 # dzx_generate_cql_less_pretraining_full()
+
+dzx_20seeds()
+# dzx_generate_cql_main()

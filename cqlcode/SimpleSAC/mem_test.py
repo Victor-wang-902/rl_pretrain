@@ -14,7 +14,7 @@ def get_memory_usage_in_GB():
     return mem_info.rss / (1024 ** 3)
 
 m1 = get_memory_usage_in_GB()
-x = np.random.rand(10000 * 10000)
+x = np.random.rand(20000, 512)
 m2 = get_memory_usage_in_GB()
 print(m1, m2)
 
