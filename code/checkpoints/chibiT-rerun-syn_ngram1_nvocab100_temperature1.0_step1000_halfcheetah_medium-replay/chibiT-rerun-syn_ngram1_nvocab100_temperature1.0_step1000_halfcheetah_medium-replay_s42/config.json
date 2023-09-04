@@ -1,0 +1,69 @@
+{
+    "exp_name":	"chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_halfcheetah_medium-replay",
+    "exp_prefix":	"gym-experiment",
+    "logger":	{
+        "<logx.EpochLogger object at 0x145505b65b50>":	{
+            "epoch_dict":	{},
+            "exp_name":	"chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_halfcheetah_medium-replay",
+            "first_row":	true,
+            "log_current_row":	{},
+            "log_headers":	[],
+            "output_dir":	"/checkpoints/chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_halfcheetah_medium-replay/chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_halfcheetah_medium-replay_s42",
+            "output_file":	{
+                "<_io.TextIOWrapper name='/checkpoints/chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_halfcheetah_medium-replay/chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_halfcheetah_medium-replay_s42/progress.csv' mode='w' encoding='UTF-8'>":	{
+                    "mode":	"w"
+                }
+            }
+        }
+    },
+    "variant":	{
+        "K":	20,
+        "activation_function":	"relu",
+        "batch_size":	64,
+        "calculate_extra":	false,
+        "data_size":	1.0,
+        "dataset":	"medium-replay",
+        "device":	"cuda",
+        "dropout":	0.2,
+        "embed_dim":	128,
+        "env":	"halfcheetah",
+        "exp_name":	"chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_halfcheetah_medium-replay",
+        "extend_positions":	true,
+        "fp16":	false,
+        "frozen":	false,
+        "gpt_kmeans":	20,
+        "gpt_kmeans_const":	0.1,
+        "kmeans_cache":	"kmeans_cache/chibiv4_ngram_1_nvocab_100_temperature_1.0_step_1000_lm_1000.pt",
+        "kmeans_mean":	false,
+        "learning_rate":	0.0001,
+        "lm_learning_rate":	null,
+        "load_checkpoint":	null,
+        "log_to_wandb":	false,
+        "max_iters":	20,
+        "mode":	"normal",
+        "model_type":	"dt",
+        "n_head":	1,
+        "n_layer":	3,
+        "not_perturb_attn":	false,
+        "not_perturb_ln":	false,
+        "not_perturb_mlp":	false,
+        "num_eval_episodes":	10,
+        "num_steps_per_iter":	5000,
+        "outdir":	"/checkpoints/chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_halfcheetah_medium-replay/chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_halfcheetah_medium-replay_s42",
+        "output_fname":	"progress.csv",
+        "pct_traj":	1.0,
+        "perturb":	false,
+        "perturb_absolute":	null,
+        "perturb_attn_only":	false,
+        "perturb_ln_only":	false,
+        "perturb_mlp_only":	false,
+        "perturb_per_layer":	null,
+        "perturb_transformer_only":	false,
+        "pretrained_lm":	"/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram/pretrain/checkpoints_ngram/chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_1_nvocab_100_temperature_1.0_rerun/model_1000",
+        "seed":	42,
+        "share_input_output_proj":	true,
+        "target_return_finding":	false,
+        "warmup_steps":	5000,
+        "weight_decay":	0.0001
+    }
+}
