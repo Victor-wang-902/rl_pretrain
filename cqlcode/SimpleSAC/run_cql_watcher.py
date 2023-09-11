@@ -25,7 +25,7 @@ import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
 from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, \
-    index_batch, get_mdp_dataset_with_ratio, get_d4rl_dataset_from_multiple_envscs
+    index_batch, get_mdp_dataset_with_ratio, get_d4rl_dataset_from_multiple_envs
 from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain, \
     FullyConnectedQFunctionPretrain2
 from SimpleSAC.sampler import StepSampler, TrajSampler
