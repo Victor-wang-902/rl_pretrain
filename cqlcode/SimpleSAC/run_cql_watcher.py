@@ -25,7 +25,7 @@ import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
 from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, \
-    index_batch, get_mdp_dataset_with_ratio, get_d4rl_dataset_from_multiple_envs
+    index_batch, get_mdp_dataset_with_ratio, get_d4rl_dataset_from_multiple_envscs
 from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain, \
     FullyConnectedQFunctionPretrain2
 from SimpleSAC.sampler import StepSampler, TrajSampler
@@ -606,7 +606,7 @@ def run_single_exp(variant):
                 pretrain_logger.dump_tabular()
                 sys.stdout.flush()
 
-                if (epoch + 1) in (2, 20, 100, 500, 1000):
+                if (epoch + 1) in (150, 250, 350):
                     pretrain_model_name_mid = pretrain_model_name[:-4] + '_%d' % (epoch + 1) + pretrain_model_name[-4:]
 
                     pretrain_full_path_mid = os.path.join(pretrain_model_folder_path, pretrain_model_name_mid)

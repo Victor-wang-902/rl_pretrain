@@ -84,7 +84,7 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
         next_states = np.zeros(n_data, dtype=int)
         i = 0
         for i_traj in tqdm(range(n_traj)):
-            np.random.seed(n_traj)
+            np.random.seed(i_traj)
             state = np.random.randint(n_state)
             for t in range(max_length):
                 states[i] = state
@@ -114,7 +114,7 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
     data_dict = {'observations': states,
             'actions': actions,
             'next_observations': next_states}
-    data_name = 'mdp_traj%d_ns%d_na%d_pt%s_tt%s.pkl' % (n_traj, n_state, n_action,
+    data_name = 'mdp2_traj%d_ns%d_na%d_pt%s_tt%s.pkl' % (n_traj, n_state, n_action,
                                                         str(policy_temperature), str(transition_temperature))
     save_name = '../mdpdata/%s' % data_name
     joblib.dump(data_dict, save_name)
@@ -146,7 +146,12 @@ n_traj, max_length = 1000, 1000
 
 
 for n_state in [100]:
-    for temperature in ['inf3']:
+    for temperature in [0.001,0.01,0.1,1,10,100]:
+        n_action = n_state
+        gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+
+for n_state in [10,1000,10000,100000]:
+    for temperature in [1]:
         n_action = n_state
         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
 

@@ -97,20 +97,20 @@ def plot_cql_performance_curves(labels, base_names):
         smooth=default_performance_smooth
     )
 
-    # separate
-    for env_dataset_name in d4rl_12_datasets_envs:
-        quick_plot_with_full_name(  # labels, folder name prefix, envs
-            labels,
-            get_full_names_with_envs(base_names, [env_dataset_name]),
-            save_name_prefix='ind-cql',
-            base_data_folder_path=data_path,
-            save_folder_path=save_path,
-            y_value=[y],
-            x_to_use=d4rl_x_axis_col_name,
-            ymax=ymax,
-            save_name_suffix=env_dataset_name,
-            smooth=default_performance_smooth
-        )
+    # # separate
+    # for env_dataset_name in d4rl_12_datasets_envs:
+    #     quick_plot_with_full_name(  # labels, folder name prefix, envs
+    #         labels,
+    #         get_full_names_with_envs(base_names, [env_dataset_name]),
+    #         save_name_prefix='ind-cql',
+    #         base_data_folder_path=data_path,
+    #         save_folder_path=save_path,
+    #         y_value=[y],
+    #         x_to_use=d4rl_x_axis_col_name,
+    #         ymax=ymax,
+    #         save_name_suffix=env_dataset_name,
+    #         smooth=default_performance_smooth
+    #     )
 
 
 def plot_cql_q_loss_curves(labels, base_names):
@@ -441,23 +441,35 @@ def plot_dt_loss_curves():
 #     cql_mdp_t1
 # ]
 
+# labels = [
+#     'CQL',
+#     'CQL_MDP_Base',
+#     'CQL_Layer',
+#     'CQL_Model',
+#     'CQL_Whole'
+# ]
+# base_names = [
+#     cql_1x,
+#     cql_mdp_t1,
+#     cql_init_layerG,
+#     cql_init_modelG,
+#     cql_init_wholeG
+# ]
+
 labels = [
     'CQL',
-    'CQL_MDP_Base',
-    'CQL_Layer',
-    'CQL_Model',
-    'CQL_Whole'
+    'CQL+MDP',
+    'CQL+IID'
 ]
+
 base_names = [
-    cql_1x,
-    cql_mdp_t1,
-    cql_init_layerG,
-    cql_init_modelG,
-    cql_init_wholeG
+    iclr_cql,
+    iclr_cql_mdp_t1,
+    iclr_cql_iid_preT100k
 ]
 
 plot_cql_performance_curves(labels, base_names)
-plot_cql_q_loss_curves(labels, base_names)
-plot_cql_combined_loss_curves(labels, base_names)
+# plot_cql_q_loss_curves(labels, base_names)
+# plot_cql_combined_loss_curves(labels, base_names)
 # plot_dt_performance_curves()
 # plot_dt_loss_curves()
