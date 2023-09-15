@@ -1577,7 +1577,7 @@ def dzx_20seeds():
 def dzx_iclr_abl_temp():
     algs = [
         iclr_cql,
-        iclr_cql_mdp_t0001,
+        # iclr_cql_mdp_t0001,
         iclr_cql_mdp_t001,
         iclr_cql_mdp_t01,
         iclr_cql_mdp_t1,
@@ -1589,12 +1589,12 @@ def dzx_iclr_abl_temp():
     col_names = [
         'Best',
         'CQL',
-        't0.001',
-        't0.01',
-        't0.1',
-        't1',
-        't10',
-        't100',
+        # 't0.001',
+        '$\\tau$=0.01',
+        '$\\tau$=0.1',
+        '$\\tau$=1',
+        '$\\tau$=10',
+        '$\\tau$=100',
         'CQL+IID'
     ]
     envs = all_envs
@@ -1624,11 +1624,11 @@ def dzx_iclr_abl_ns():
     col_names = [
         'Best',
         'CQL',
-        'S10',
-        'S100',
-        'S1000',
-        'S10000',
-        'S100000',
+        'S=10',
+        'S=100',
+        'S=1,000',
+        'S=10,000',
+        'S=100,000',
     ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -1649,25 +1649,25 @@ def dzx_iclr_abl_update():
         iclr_cql,
         iclr_cql_mdp_preT1k,
         iclr_cql_mdp_preT10k,
-        iclr_cql_mdp_preT20k,
+        # iclr_cql_mdp_preT20k,
         iclr_cql_mdp_preT40k,
         iclr_cql_mdp_preT100k,
         iclr_cql_mdp_preT500k,
         iclr_cql_mdp_preT1m,
-        iclr_cql_mdp_preT2m,
+        # iclr_cql_mdp_preT2m,
     ]
 
     col_names = [
         'Best',
         'CQL',
-        'U 1K',
-        'U 10K',
-        'U 20K',
-        'U 40K',
-        'U 100K',
-        'U 500K',
-        'U 1M',
-        'U 2M',
+        '1K updates',
+        '10K updates',
+        # 'Update 20K',
+        '40K updates',
+        '100K updates',
+        '500K updates',
+        '1M updates',
+        # 'Update 2M',
     ]
 
     envs = all_envs
@@ -1750,6 +1750,6 @@ def dzx_iclr_abl_update():
 
 # dzx_20seeds()
 # dzx_generate_cql_main()
-dzx_iclr_abl_temp()
-dzx_iclr_abl_ns()
+# dzx_iclr_abl_temp()
+# dzx_iclr_abl_ns()
 dzx_iclr_abl_update()

@@ -40,7 +40,7 @@ def main():
         'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['none'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
-        'seed', '', [42, 666, 1024, 2048, 4096] + list(range(15)),
+        'seed', '', [4069]#[42, 666, 1024, 2048, 4069] + list(range(15)),
     ]
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting)

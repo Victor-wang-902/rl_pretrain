@@ -97,20 +97,20 @@ def plot_cql_performance_curves(labels, base_names):
         smooth=default_performance_smooth
     )
 
-    # # separate
-    # for env_dataset_name in d4rl_12_datasets_envs:
-    #     quick_plot_with_full_name(  # labels, folder name prefix, envs
-    #         labels,
-    #         get_full_names_with_envs(base_names, [env_dataset_name]),
-    #         save_name_prefix='ind-cql',
-    #         base_data_folder_path=data_path,
-    #         save_folder_path=save_path,
-    #         y_value=[y],
-    #         x_to_use=d4rl_x_axis_col_name,
-    #         ymax=ymax,
-    #         save_name_suffix=env_dataset_name,
-    #         smooth=default_performance_smooth
-    #     )
+    # separate
+    for env_dataset_name in d4rl_12_datasets_envs:
+        quick_plot_with_full_name(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs(base_names, [env_dataset_name]),
+            save_name_prefix='ind-cql',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            smooth=default_performance_smooth
+        )
 
 
 def plot_cql_q_loss_curves(labels, base_names):

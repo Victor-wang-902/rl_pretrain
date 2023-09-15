@@ -163,8 +163,10 @@ def quick_plot_with_full_name(labels, data_folder_full_names, colors=DEFAULT_COL
                 y = y / 3600
             if label == 'CQL+MDP' or label == 'CQL+IID':
                 print('We are plotting w.r.t total updates criterion!! Rename labels if this is not required!!')
-                y = y.reshape((240,-1))
-                y = np.concatenate((np.zeros((240, 20)), y[:, 0:-20]), axis=1).reshape(-1)
+                # y = y.reshape((240,-1))
+                # y = np.concatenate((np.zeros((240, 20)), y[:, 0:-20]), axis=1).reshape(-1)
+                x = x.reshape((-1, 200))[:, 20:].reshape(-1)
+                y = y.reshape((-1, 200))[:, 0:-20].reshape(-1)
                 ax = sns.lineplot(x=x, y=y, n_boot=20, label=label, color=colors[i], linestyle=linestyles[i], linewidth = 2)
             else:
                 ax = sns.lineplot(x=x, y=y, n_boot=20, label=label, color=colors[i], linestyle=linestyles[i],
