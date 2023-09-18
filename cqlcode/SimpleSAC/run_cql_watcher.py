@@ -710,7 +710,7 @@ def run_single_exp(variant):
                 metrics['average_return'] = np.mean([np.sum(t['rewards']) for t in trajs])
                 metrics['average_traj_length'] = np.mean([len(t['rewards']) for t in trajs])
                 metrics['average_normalizd_return'] = np.mean(
-                    [eval_sampler.env.get_normalized_score(np.sum(t['rewards']) * 100) for t in trajs]
+                    [eval_sampler.env.get_normalized_score(np.sum(t['rewards'])) * 100 for t in trajs]
                 )
 
                 # record best return and other things

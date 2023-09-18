@@ -1750,6 +1750,6 @@ def dzx_iclr_abl_update():
 
 # dzx_20seeds()
 # dzx_generate_cql_main()
-# dzx_iclr_abl_temp()
-# dzx_iclr_abl_ns()
+dzx_iclr_abl_temp()
+dzx_iclr_abl_ns()
 dzx_iclr_abl_update()
