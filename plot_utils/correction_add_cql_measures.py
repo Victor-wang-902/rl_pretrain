@@ -23,12 +23,11 @@ def get_other_score_measures(path):
     return d
 
 
-base_path = '../code/checkpoints/sendbackcql'
+base_path = '../code/checkpoints/final'
 for root, dirs, files in os.walk(base_path):
-    if 'new_iclr_cqlr3n_premdp_same_noproj_l2_ns10_pt1_sameTrue_preUps5000_preEp20_hopper_medium' in root:
+    if 'iclr_cqlr3n' in root:
         for dir in dirs:
             # Go through every subfolder in this folder
-            if dir != 'new_iclr_cqlr3n_premdp_same_noproj_l2_ns10_pt1_sameTrue_preUps5000_preEp20_hopper_medium_s7':
                 subfolder = os.path.join(root, dir)
                 for file in os.listdir(subfolder):
                     if file == 'progress.csv':

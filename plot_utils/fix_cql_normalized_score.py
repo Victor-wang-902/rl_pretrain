@@ -40,9 +40,10 @@ def delete_seeds(base_path):
                 except:
                     print(path)
 
+
 def check_pretrain_model(base_path, exp_prefix):
     for root, dirs, files in os.walk(base_path):
-        if exp_prefix in root and 'new_iclr_cqlr3n_True' not in root:
+        if exp_prefix in root and 'iclr_cqlr3n_True' not in root:
             for dir in dirs:
                 subfolder = os.path.join(root, dir)
                 for file in os.listdir(subfolder):
@@ -58,7 +59,7 @@ def check_pretrain_model(base_path, exp_prefix):
 
 
 base_path = '../code/checkpoints/new_20seeds'
-exp_prefix = 'new_iclr'
+exp_prefix = 'new_iclr_cqlr3n'
 correct_TestEpNormRet(base_path, exp_prefix)
 # delete_seeds(base_path)
 # check_pretrain_model(base_path, exp_prefix)

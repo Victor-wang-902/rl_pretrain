@@ -79,19 +79,6 @@ def get_extra_dict_multiple_seeds(datafolder_path):
     return aggregate_dict
 
 
-data_path = '../../code/checkpoints/sendbackcql'
-
-MUJOCO_3_ENVS = [
-    'hopper',
-    'halfcheetah',
-    'walker2d',
-]
-MUJOCO_3_DATASETS = ['medium', 'medium-replay', 'medium-expert', ]
-all_envs = []
-for e in MUJOCO_3_ENVS:
-    for dataset in MUJOCO_3_DATASETS:
-        all_envs.append('%s_%s' % (e, dataset))
-
 MUJOCO_4_ENVS = [
     'hopper',
     'halfcheetah',
@@ -1589,7 +1576,7 @@ def dzx_iclr_abl_temp():
     col_names = [
         'Best',
         'CQL',
-        # 't0.001',
+        # '$\\tau$=0.001',
         '$\\tau$=0.01',
         '$\\tau$=0.1',
         '$\\tau$=1',
@@ -1750,6 +1737,7 @@ def dzx_iclr_abl_update():
 
 # dzx_20seeds()
 # dzx_generate_cql_main()
-dzx_iclr_abl_temp()
+data_path = '../../code/checkpoints/final'
+# dzx_iclr_abl_temp()
 dzx_iclr_abl_ns()
-dzx_iclr_abl_update()
+# dzx_iclr_abl_update()

@@ -36,17 +36,17 @@ def main():
     ###########################################################
     exp_prefix = 'new_iclr_cqlr3n'
     settings = [
-        'env', '', ['hopper'],#MUJOCO_4_ENVS,
-        'dataset', '', ['medium'],#MUJOCO_3_DATASETS,
+        'env', '', ['ant'],#MUJOCO_4_ENVS,
+        'dataset', '', ['medium-expert'],#MUJOCO_3_DATASETS,
         # 'do_pretrain_only', '', [True],
         'pretrain_mode', 'pre', ['mdp_same_noproj'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
-        'mdppre_n_state', 'ns', [10],
+        'mdppre_n_state', 'ns', [1000, 10000, 100000],
         'mdppre_policy_temperature', 'pt', [1],
         'mdppre_same_as_s_and_policy', 'same', [True],
         'n_pretrain_step_per_epoch', 'preUps', [5000],
         'n_pretrain_epochs', 'preEp', [20],
-        'seed', '', [7]#[42, 666, 1024, 2048, 4069] + list(range(15)),
+        'seed', '', [42, 666, 1024, 2048, 4069] + list(range(15)),
     ]
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting)
