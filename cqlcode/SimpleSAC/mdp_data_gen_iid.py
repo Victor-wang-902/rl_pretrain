@@ -9,7 +9,7 @@ import joblib
 def softmax_with_torch(x, temperature):
     return F.softmax(Tensor(x/temperature), dim=0).numpy()
 
-def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, transition_temperature):
+def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, transition_temperature, random_start=False):
     n_data = n_traj * max_length
 
     if policy_temperature == transition_temperature == 'inf2':
@@ -84,7 +84,11 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
         next_states = np.zeros(n_data, dtype=int)
         i = 0
         for i_traj in tqdm(range(n_traj)):
-            np.random.seed(i_traj)
+            if random_start:
+                np.random.seed(i_traj)
+            else:
+                np.random.seed(n_traj)
+
             state = np.random.randint(n_state)
             for t in range(max_length):
                 states[i] = state
@@ -114,7 +118,8 @@ def gen_mdp_data(n_traj, max_length, n_state, n_action, policy_temperature, tran
     data_dict = {'observations': states,
             'actions': actions,
             'next_observations': next_states}
-    data_name = 'mdp2_traj%d_ns%d_na%d_pt%s_tt%s.pkl' % (n_traj, n_state, n_action,
+    prefix = 'mdp2' if random_start else 'mdp'
+    data_name = prefix + '_traj%d_ns%d_na%d_pt%s_tt%s.pkl' % (n_traj, n_state, n_action,
                                                         str(policy_temperature), str(transition_temperature))
     save_name = '../mdpdata/%s' % data_name
     joblib.dump(data_dict, save_name)
@@ -148,12 +153,12 @@ n_traj, max_length = 1000, 1000
 for n_state in [100]:
     for temperature in [0.001,0.01,0.1,1,10,100]:
         n_action = n_state
-        gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+        gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature, random_start=False)
 
-for n_state in [10,1000,10000,100000]:
-    for temperature in [1]:
-        n_action = n_state
-        gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature)
+# for n_state in [10,1000,10000,100000]:
+#     for temperature in [1]:
+#         n_action = n_state
+#         gen_mdp_data(n_traj, max_length, n_state, n_action, temperature, temperature, random_start=False)
 
 # for n_state in [100]:
 #     for temperature in ['sigma0.01S', 'sigma0.1S', 'sigma1S', 'sigma2S', 'sigma0.01N', 'sigma0.1N', 'sigma1N', 'sigma2N']:

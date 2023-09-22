@@ -113,6 +113,7 @@ def get_d4rl_dataset(env):
         dones=dataset['terminals'].astype(np.float32),
     )
 
+
 def get_d4rl_dataset_with_ratio(env, ratio=1, seed=0):
     dataset = d4rl.qlearning_dataset(env)
     n_data = dataset['observations'].shape[0]
@@ -128,6 +129,7 @@ def get_d4rl_dataset_with_ratio(env, ratio=1, seed=0):
         dones=dataset['terminals'][idxs].astype(np.float32),
     )
 
+
 def get_d4rl_dataset_from_multiple_envs(envs):
     n_data = 0
     d = None
@@ -138,21 +140,23 @@ def get_d4rl_dataset_from_multiple_envs(envs):
         n_data += dataset['observations'].shape[0]
         if not d:
             d = dict(
-                observations = dataset['observations'],
-                actions = dataset['actions'],
-                next_observations = dataset['next_observations'],
-                rewards = dataset['rewards'],
-                dones = dataset['dones'].astype(np.float32),
+                observations=dataset['observations'],
+                actions=dataset['actions'],
+                next_observations=dataset['next_observations'],
+                rewards=dataset['rewards'],
+                dones=dataset['dones'].astype(np.float32),
             )
         else:
             for key in d:
                 d[key] = np.concatenate((d[key], dataset[key]), axis=0)
     return d
 
+
 def get_mdp_dataset_with_ratio(n_traj, n_state, n_action, policy_temperature, transition_temperature,
-                               ratio=1, seed=0, verbose=True):
-    data_name = 'mdp2_traj%d_ns%d_na%d_pt%s_tt%s.pkl' % (n_traj, n_state, n_action,
-                                                        str(policy_temperature), str(transition_temperature))
+                               ratio=1, seed=0, random_start=False, verbose=True):
+    prefix = 'mdp2' if random_start else 'mdp'
+    data_name = prefix + '_traj%d_ns%d_na%d_pt%s_tt%s.pkl' % (n_traj, n_state, n_action,
+                                                              str(policy_temperature), str(transition_temperature))
     save_name = '/cqlcode/mdpdata/%s' % data_name
 
     dataset = joblib.load(save_name)
@@ -169,7 +173,6 @@ def get_mdp_dataset_with_ratio(n_traj, n_state, n_action, policy_temperature, tr
         actions=dataset['actions'][idxs],
         next_observations=dataset['next_observations'][idxs],
     )
-
 
 
 def index_batch(batch, indices):

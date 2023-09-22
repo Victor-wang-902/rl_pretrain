@@ -104,6 +104,7 @@ def get_default_variant_dict():
         mdppre_state_dim=20,
         mdppre_action_dim=20,
         mdppre_same_as_s_and_policy=False,  # if True, then action hyper will be same as state, tt will be same as pt
+        mdppre_random_start=False,
 
         hard_update_target_after_pretrain=True,  # if True, hard update target networks after pretraining stage.
     )
@@ -449,16 +450,19 @@ def run_single_exp(variant):
                 dataset_name_string = variant['mdppre_n_traj']
             else:
                 dataset_name_string = '%d_preR%s' % (variant['mdppre_n_traj'], str(variant['pretrain_data_ratio']))
-            pretrain_model_name = '%s_%s_preTraj%s_nS%d_nA%d_pt%s_tt%s_dimS%d_dimA%d_preM%s_l%d_hs%d_preUps%s_preEp%s' \
-                                  '.pth' % ('cql', variant['env'],
-                                            # downstream task env is needed here because pretrain projection will be different for each task
-                                            dataset_name_string, variant['mdppre_n_state'], variant['mdppre_n_action'],
-                                            str(variant['mdppre_policy_temperature']),
-                                            str(variant['mdppre_transition_temperature']),
-                                            variant['mdppre_state_dim'], variant['mdppre_action_dim'],
-                                            variant['pretrain_mode'], variant['qf_hidden_layer'],
-                                            variant['qf_hidden_unit'],
-                                            variant['n_pretrain_step_per_epoch'], variant['n_pretrain_epochs'])
+            pretrain_model_name = '%s_%s_preTraj%s_nS%d_nA%d_pt%s_tt%s_dimS%d_dimA%d_initS%s_preM%s_l%d_hs%d_preUps' \
+                                  '%s_preEp%s.pth' % ('cql', variant['env'],
+                                                      # downstream task env is needed here because pretrain projection will be different for each task
+                                                      dataset_name_string, variant['mdppre_n_state'],
+                                                      variant['mdppre_n_action'],
+                                                      str(variant['mdppre_policy_temperature']),
+                                                      str(variant['mdppre_transition_temperature']),
+                                                      variant['mdppre_state_dim'], variant['mdppre_action_dim'],
+                                                      variant['mdppre_random_start'],
+                                                      variant['pretrain_mode'], variant['qf_hidden_layer'],
+                                                      variant['qf_hidden_unit'],
+                                                      variant['n_pretrain_step_per_epoch'],
+                                                      variant['n_pretrain_epochs'])
 
         pretrain_full_path = os.path.join(pretrain_model_folder_path, pretrain_model_name)
         if os.path.exists(pretrain_full_path):
@@ -547,7 +551,8 @@ def run_single_exp(variant):
                                                      variant['mdppre_n_action'],
                                                      variant['mdppre_policy_temperature'],
                                                      variant['mdppre_transition_temperature'],
-                                                     ratio=variant['pretrain_data_ratio'])
+                                                     ratio=variant['pretrain_data_ratio'],
+                                                     random_start=variant['mdppre_random_start'])
                 np.random.seed(0)
                 if str(variant['mdppre_policy_temperature']).startswith('sigma'):
                     num_per_cluster = variant['mdppre_n_state'] // 5
