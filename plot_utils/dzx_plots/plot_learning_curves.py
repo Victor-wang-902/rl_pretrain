@@ -40,9 +40,6 @@ d4rl_combined_loss_maxs[7] = 150
 
 online_mujoco_5 = ['Hopper-v2', 'HalfCheetah-v2', 'Walker2d-v2', 'Ant-v2', 'Humanoid-v2']
 
-data_path = '../../code/checkpoints/sendbackcql'
-save_path = '../../figures/'
-
 twocolordoulbe = ['tab:blue', 'tab:orange', 'tab:blue', 'tab:orange', ]
 twosoliddashed = ['dashed', 'dashed', 'solid', 'solid', ]
 threecolordoulbe = ['tab:blue', 'tab:orange', 'tab:red', 'tab:blue', 'tab:orange', 'tab:red']
@@ -468,8 +465,11 @@ base_names = [
     iclr_cql_iid_preT100k
 ]
 
+
+data_path = '../../code/checkpoints/final'
+save_path = '../../figures/'
 plot_cql_performance_curves(labels, base_names)
 # plot_cql_q_loss_curves(labels, base_names)
-# plot_cql_combined_loss_curves(labels, base_names)
+plot_cql_combined_loss_curves(labels, base_names)
 # plot_dt_performance_curves()
 # plot_dt_loss_curves()
