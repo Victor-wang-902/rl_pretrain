@@ -34,7 +34,7 @@ def main():
 
     variant = get_default_variant_dict() # this is a dictionary
     ###########################################################
-    exp_prefix = 'tuned_cqlr3n'
+    exp_prefix = 'tuned_iclr_cqlr3n'
     settings = [
         'env', '', MUJOCO_4_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,

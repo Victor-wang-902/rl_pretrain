@@ -1,6 +1,7 @@
 #!/bin/bash
 #SBATCH --verbose
 #SBATCH --time=48:00:00
+#SBATCH --partition=parallel
 #SBATCH --nodes=1
 #SBATCH --mem=8GB
 #SBATCH --mail-type=ALL # select which email types will be sent
@@ -14,7 +15,6 @@
 # #SBATCH --gres=gpu:1 # uncomment this line to request a gpu
 # #SBATCH --cpus-per-task=4
 
-module purge
 module load singularity
 
 sleep $(( (RANDOM%10) + 1 )) # to avoid issues when submitting large amounts of jobs
