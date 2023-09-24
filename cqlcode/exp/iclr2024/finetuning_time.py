@@ -36,7 +36,7 @@ def main():
     ###########################################################
     exp_prefix = 'computeTime_cqlr3n'
     settings = [
-        'env', '', ['ant'],#MUJOCO_4_ENVS,
+        'env', '', MUJOCO_4_ENVS,
         'dataset', '', ['medium-expert'],
         'pretrain_mode', 'pre', ['none'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
