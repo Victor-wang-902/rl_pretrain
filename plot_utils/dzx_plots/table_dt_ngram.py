@@ -1738,7 +1738,7 @@ def dzx_iclr_abl_update(bold_thres):
 # dzx_20seeds()
 # dzx_generate_cql_main()
 data_path = '../../code/checkpoints/final'
-bold_thres = 0.01
+bold_thres = 0.05
 dzx_iclr_abl_ns(bold_thres)
 dzx_iclr_abl_temp(bold_thres)
 dzx_iclr_abl_update(bold_thres)

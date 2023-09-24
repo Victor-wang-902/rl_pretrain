@@ -470,6 +470,6 @@ data_path = '../../code/checkpoints/final'
 save_path = '../../figures/'
 plot_cql_performance_curves(labels, base_names)
 # plot_cql_q_loss_curves(labels, base_names)
-plot_cql_combined_loss_curves(labels, base_names)
+# plot_cql_combined_loss_curves(labels, base_names)
 # plot_dt_performance_curves()
 # plot_dt_loss_curves()
