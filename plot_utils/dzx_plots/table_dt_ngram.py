@@ -85,7 +85,7 @@ MUJOCO_4_ENVS = [
     'walker2d',
     'ant'
 ]
-MUJOCO_3_DATASETS = ['medium', 'medium-replay', 'medium-expert', ]
+MUJOCO_3_DATASETS = ['medium-replay', 'medium-expert', 'medium']
 all_envs = []
 for e in MUJOCO_4_ENVS:
     for dataset in MUJOCO_3_DATASETS:
@@ -276,7 +276,7 @@ def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bo
         print(row_string)
 
 
-def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05,
+def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.02,
                                    measure='best_return_normalized', row_name='Average over datasets'):
     # each row is a measure, each column is an algorithm variant
     rows = [measure]
@@ -315,14 +315,14 @@ def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_va
 
 
 # TODO add an aggregate score at the end
-def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05,
+def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.02,
                                      measure='best_return_normalized'):
     print("\nNow generate latex table:\n")
     # measure = 'best_100percent_normalized'
     # each row is a env-dataset pair, each column is an algorithm variant
     rows = []
     row_names = []
-    for dataset in ['medium-expert', 'medium', 'medium-replay']:
+    for dataset in ['medium-expert', 'medium-replay', 'medium']:
         for e in ['halfcheetah', 'hopper', 'walker2d', 'ant']:
             rows.append('%s_%s' % (e, dataset))
             row_names.append('%s-%s' % (e, dataset))
@@ -371,7 +371,7 @@ def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_
 
 
 def generate_pretraining_sensitivity_table(algs, alg_dataset_dict, row_names, column_names, best_value_bold=True,
-                                           bold_threshold=0.05,
+                                           bold_threshold=0.02,
                                            measure='best_return_normalized'):
     print("\nNow generate latex table:\n")
 
@@ -1561,7 +1561,7 @@ def dzx_20seeds():
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
 
 
-def dzx_iclr_abl_temp():
+def dzx_iclr_abl_temp(bold_thres):
     algs = [
         iclr_cql,
         # iclr_cql_mdp_t0001,
@@ -1594,11 +1594,11 @@ def dzx_iclr_abl_temp():
     # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
     col_names[0] = 'Average Final Four'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
 
 
-def dzx_iclr_abl_ns():
+def dzx_iclr_abl_ns(bold_thres):
     algs = [
         iclr_cql,
         iclr_cql_mdp_ns10,
@@ -1627,11 +1627,11 @@ def dzx_iclr_abl_ns():
     # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
     col_names[0] = 'Average Final Four'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
 
 
-def dzx_iclr_abl_update():
+def dzx_iclr_abl_update(bold_thres):
     algs = [
         iclr_cql,
         iclr_cql_mdp_preT1k,
@@ -1667,8 +1667,8 @@ def dzx_iclr_abl_update():
     # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
     col_names[0] = 'Average Final Four'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized')
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
 
 ##################### table generation
 # generate_table_nvocab_markov_chain()
@@ -1738,6 +1738,7 @@ def dzx_iclr_abl_update():
 # dzx_20seeds()
 # dzx_generate_cql_main()
 data_path = '../../code/checkpoints/final'
-dzx_iclr_abl_temp()
-dzx_iclr_abl_ns()
-dzx_iclr_abl_update()
+bold_thres = 0.01
+dzx_iclr_abl_ns(bold_thres)
+dzx_iclr_abl_temp(bold_thres)
+dzx_iclr_abl_update(bold_thres)

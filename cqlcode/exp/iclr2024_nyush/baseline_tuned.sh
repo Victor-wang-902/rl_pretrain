@@ -25,7 +25,6 @@ echo "SLURM_ARRAY_TASK_ID: " $SLURM_ARRAY_TASK_ID
 
 echo "Job ID: ${SLURM_ARRAY_TASK_ID}"
 
-touch
 singularity exec --nv -B /gpfsnyu/scratch/$USER/rl_pretrain/code:/code -B /gpfsnyu/scratch/$USER/rl_pretrain/rlcode:/rlcode -B /gpfsnyu/scratch/$USER/rl_pretrain/cqlcode:/cqlcode -B /gpfsnyu/scratch/$USER/cql-sandbox/opt/conda/lib/python3.8/site-packages/mujoco_py/:/opt/conda/lib/python3.8/site-packages/mujoco_py/ -B /gpfsnyu/scratch/$USER/rl_pretrain/code/checkpoints:/checkpoints /gpfsnyu/scratch/$USER/cql-sandbox bash -c "
 cd /cqlcode
 export PYTHONPATH=$PYTHONPATH:/code:/rlcode:/cqlcode
