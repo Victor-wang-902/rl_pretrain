@@ -1,15 +1,18 @@
 #!/bin/bash
 #SBATCH --verbose
-#SBATCH --time=06:00:00
+#SBATCH --time=24:00:00
 #SBATCH --nodes=1
+#SBATCH --ntasks-per-node=8
+#SBATCH --cpus-per-task=1
+#SBATCH --mem-per-cpu=4GB
 #SBATCH --exclude=gm[001-025]
-#SBATCH --mem=16GB
+##SBATCH --mem=32GB
 #SBATCH --mail-type=ALL # select which email types will be sent
 #SBATCH --mail-user=zd662@nyu.edu # NOTE: put your netid here if you want emails
 
 ##SBATCH --array=0-3 # here the number depends on number of tasks in the array, e.g. 0-11 will create 12 tasks
-#SBATCH --output=../logs/%A_%a.out # %A is SLURM_ARRAY_JOB_ID, %a is SLURM_ARRAY_TASK_ID,
-#SBATCH --error=../logs/%A_%a.err # MAKE SURE WHEN YOU RUN THIS, ../logs IS A VALID PATH
+#SBATCH --output=../logs/%A.out # %A is SLURM_ARRAY_JOB_ID, %a is SLURM_ARRAY_TASK_ID,
+#SBATCH --error=../logs/%A.err # MAKE SURE WHEN YOU RUN THIS, ../logs IS A VALID PATH
 
 # #####################################################
 #SBATCH --gres=gpu:rtx8000:1 # uncomment this line to request a gpu
@@ -30,5 +33,9 @@ python exp/iclr2024/finetuning_time.py --setting 0 --env hopper &
 python exp/iclr2024/finetuning_time.py --setting 0 --env halfcheetah &
 python exp/iclr2024/finetuning_time.py --setting 0 --env ant &
 python exp/iclr2024/finetuning_time.py --setting 0 --env walker2d &
+python exp/iclr2024/pretraining_time.py --setting 0 --env hopper &
+python exp/iclr2024/pretraining_time.py --setting 0 --env halfcheetah &
+python exp/iclr2024/pretraining_time.py --setting 0 --env ant &
+python exp/iclr2024/pretraining_time.py --setting 0 --env walker2d &
 wait
 "

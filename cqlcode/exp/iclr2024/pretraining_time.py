@@ -39,7 +39,7 @@ def main():
     settings = [
         'env', '', [args.env],#MUJOCO_4_ENVS,
         'dataset', '', ['medium-expert'],#MUJOCO_3_DATASETS,
-        'do_pretrain_only', '', [True],
+        # 'do_pretrain_only', '', [True],
         'pretrain_mode', 'pre', ['mdp_same_noproj'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
         'mdppre_n_state', 'ns', [100],
