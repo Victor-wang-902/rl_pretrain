@@ -58,6 +58,7 @@ def main():
     variant["exp_name"] = logger_kwargs["exp_name"]
     # TODO for now we set this to 3 for faster experiments
     variant['cql'].cql_n_actions = 3
+    variant['n_epochs'] = 50
     run_single_exp(variant)
 
 
