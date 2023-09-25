@@ -64,6 +64,8 @@ default_performance_smooth = 5
 default_cql_q_smooth = 5
 default_cql_combined_loss_smooth = 5
 
+font_size = 21
+
 
 def plot_cql_performance_curves(labels, base_names):
     # labels = [
@@ -91,7 +93,8 @@ def plot_cql_performance_curves(labels, base_names):
         y_value=[y],
         x_to_use=d4rl_x_axis_col_name,
         ymax=ymax,
-        smooth=default_performance_smooth
+        smooth=default_performance_smooth,
+        axis_font_size=font_size
     )
 
     # separate
@@ -106,7 +109,8 @@ def plot_cql_performance_curves(labels, base_names):
             x_to_use=d4rl_x_axis_col_name,
             ymax=ymax,
             save_name_suffix=env_dataset_name,
-            smooth=default_performance_smooth
+            smooth=default_performance_smooth,
+            axis_font_size=font_size
         )
 
 
@@ -138,6 +142,7 @@ def plot_cql_q_loss_curves(labels, base_names):
         ymax=ymax,
         ymin=ymin,
         smooth=default_cql_q_smooth,
+        axis_font_size=font_size
     )
 
     # separate
@@ -154,6 +159,7 @@ def plot_cql_q_loss_curves(labels, base_names):
             ymin=ymin,
             save_name_suffix=env_dataset_name,
             smooth=default_cql_q_smooth,
+            axis_font_size=font_size
         )
 
 
@@ -185,6 +191,7 @@ def plot_cql_combined_loss_curves(labels, base_names):
         ymax=ymax,
         ymin=ymin,
         smooth=default_cql_combined_loss_smooth,
+        axis_font_size=font_size
     )
 
     # separate
@@ -201,6 +208,7 @@ def plot_cql_combined_loss_curves(labels, base_names):
             ymin=ymin,
             save_name_suffix=env_dataset_name,
             smooth=default_cql_combined_loss_smooth,
+            axis_font_size=font_size
 
         )
 
@@ -470,6 +478,6 @@ data_path = '../../code/checkpoints/final'
 save_path = '../../figures/'
 plot_cql_performance_curves(labels, base_names)
 # plot_cql_q_loss_curves(labels, base_names)
-# plot_cql_combined_loss_curves(labels, base_names)
+plot_cql_combined_loss_curves(labels, base_names)
 # plot_dt_performance_curves()
 # plot_dt_loss_curves()

@@ -29,6 +29,7 @@ else:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--setting', type=int, default=0)
+    parser.add_argument('--env', type=str, default='hopper')
     args = parser.parse_args()
     setting = args.setting
 
@@ -36,7 +37,7 @@ def main():
     ###########################################################
     exp_prefix = 'computeTime_cqlr3n'
     settings = [
-        'env', '', MUJOCO_4_ENVS,
+        'env', '', args.env,#MUJOCO_4_ENVS,
         'dataset', '', ['medium-expert'],
         'pretrain_mode', 'pre', ['none'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
