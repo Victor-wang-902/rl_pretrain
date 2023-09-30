@@ -450,6 +450,7 @@ iclr_cql_iid_preT100k = 'iclr_cqlr3n_premdp_same_noproj_l2_ns100_ptinf3_sameTrue
 
 #2023/09/24 lower policy lr:
 tuned_cql = 'tuned_iclr_cqlr3n_prenone_l2'
+tuned_mdp = 'tuned_iclr_cqlr3n_premdp_same_noproj_l2_ns100_pt1_sameTrue_preUps5000_preEp20'
 
 
 

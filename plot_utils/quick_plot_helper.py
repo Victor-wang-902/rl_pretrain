@@ -19,8 +19,9 @@ y_to_y_label = {
     'TestEpNormRet':'Normalized Score',
     'TestEpRet': 'Score',
     'total_time': 'Hours',
-'sac_qf1_loss': 'Standard Q Loss',
-'current_itr_train_loss_mean': 'DT Training Loss',
+    'sac_qf1_loss': 'Standard Q Loss',
+    'current_itr_train_loss_mean': 'DT Training Loss',
+    'sac_combined_loss': 'CQL Training Loss'
 }
 
 # TODO we provide a number of things to a function to do plotting

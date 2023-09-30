@@ -19,6 +19,7 @@ base_measures = ['best_return_normalized', 'best_return',
                  "best_1_weight_sim",
 
                  'convergence_iter',
+                 'convergence_update',
 
                  'final_feature_diff',
                  'final_weight_diff',
@@ -73,7 +74,7 @@ def get_extra_dict_multiple_seeds(datafolder_path):
     for measure in ['final_test_returns', 'final_test_normalized_returns', 'best_return', 'best_return_normalized',
                     'best_5percent_normalized', 'best_10percent_normalized', 'best_25percent_normalized',
                     'best_50percent_normalized', 'best_100percent_normalized', 'best_later_half_normalized',
-                    'last_four_normalized'
+                    'last_four_normalized', 'convergence_update'
                     ]:
         aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1], ]
     return aggregate_dict
@@ -182,7 +183,8 @@ change_std_rows = [
     'best_50percent_normalized',
     'best_100percent_normalized',
     'best_later_half_normalized',
-    'last_four_normalized'
+    'last_four_normalized',
+    'convergence_update'
 ]
 
 row_names_higher_is_better = [
@@ -202,7 +204,21 @@ row_names_higher_is_better = [
     'Best Score 25\\%',
     'Best Score 50\\%',
     'Best Score 100\\%',
-    'Last Four Avg'
+    'Last Four Avg',
+]
+
+MEASURE_HIGHER_IS_BETTER = [
+    'final_test_returns',
+    'final_test_normalized_returns',
+    'best_return',
+    'best_return_normalized',
+    'best_5percent_normalized',
+    'best_10percent_normalized',
+    'best_25percent_normalized',
+    'best_50percent_normalized',
+    'best_100percent_normalized',
+    'best_later_half_normalized',
+    'last_four_normalized',
 ]
 
 row_names_use_1_precision = [
@@ -304,8 +320,12 @@ def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_va
             mean, std = table[0, i, j], table[1, i, j]
             bold = False
             if best_value_bold:
-                if mean >= (1 - bold_threshold) * max_values[i]:
-                    bold = True
+                if measure not in MEASURE_HIGHER_IS_BETTER:
+                    if mean <= (1 + bold_threshold) * min_values[i]:
+                        bold = True
+                else:
+                    if mean >= (1 - bold_threshold) * max_values[i]:
+                        bold = True
                 if bold:
                     row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
                 else:
@@ -354,8 +374,12 @@ def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_
             mean, std = table[0, i, j], table[1, i, j]
             bold = False
             if best_value_bold:
-                if mean >= (1 - bold_threshold) * max_values[i]:
-                    bold = True
+                if measure not in MEASURE_HIGHER_IS_BETTER:
+                    if mean <= (1 + bold_threshold) * min_values[i]:
+                        bold = True
+                else:
+                    if mean >= (1 - bold_threshold) * max_values[i]:
+                        bold = True
                 if bold:
                     row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
                 else:
@@ -1574,7 +1598,7 @@ def dzx_iclr_abl_temp(bold_thres):
     ]
 
     col_names = [
-        'Best',
+        'Best Score',
         'CQL',
         # '$\\tau$=0.001',
         '$\\tau$=0.01',
@@ -1586,14 +1610,10 @@ def dzx_iclr_abl_temp(bold_thres):
     ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, bold_threshold=bold_thres)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, bold_threshold=bold_thres)
 
-    # col_names[0] = 'Average Later Half'
-    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-
-    col_names[0] = 'Average Final Four'
+    col_names[0] = 'Average Last Four'
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
 
@@ -1609,7 +1629,7 @@ def dzx_iclr_abl_ns(bold_thres):
     ]
 
     col_names = [
-        'Best',
+        'Best Score',
         'CQL',
         'S=10',
         'S=100',
@@ -1622,11 +1642,7 @@ def dzx_iclr_abl_ns(bold_thres):
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
     generate_aggregate_performance(algs, alg_dataset_dict, col_names)
 
-    # col_names[0] = 'Average Later Half'
-    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-
-    col_names[0] = 'Average Final Four'
+    col_names[0] = 'Average Last Four'
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
 
@@ -1645,7 +1661,7 @@ def dzx_iclr_abl_update(bold_thres):
     ]
 
     col_names = [
-        'Best',
+        'Best Score',
         'CQL',
         '1K updates',
         '10K updates',
@@ -1659,16 +1675,32 @@ def dzx_iclr_abl_update(bold_thres):
 
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, bold_threshold=bold_thres)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, bold_threshold=bold_thres)
 
-    # col_names[0] = 'Average Later Half'
-    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-
-    col_names[0] = 'Average Final Four'
+    col_names[0] = 'Average Last Four'
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='last_four_normalized', bold_threshold=bold_thres)
+
+def dzx_iclr_abl_convergence(bold_thres):
+    algs = [
+        iclr_cql,
+        iclr_cql_mdp_t1,
+        iclr_cql_iid_preT100k
+    ]
+
+    col_names = [
+        'Number of Updates',
+        'CQL',
+        'CQL+Synthetic',
+        'CQL+IID'
+    ]
+
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='convergence_update', bold_threshold=bold_thres)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='convergence_update', bold_threshold=bold_thres)
+
 
 ##################### table generation
 # generate_table_nvocab_markov_chain()
@@ -1737,8 +1769,9 @@ def dzx_iclr_abl_update(bold_thres):
 
 # dzx_20seeds()
 # dzx_generate_cql_main()
-data_path = '../../code/checkpoints/final'
+data_path = '../../code/checkpoints/tuned_cql'
 bold_thres = 0.01
-dzx_iclr_abl_ns(bold_thres)
-dzx_iclr_abl_temp(bold_thres)
-dzx_iclr_abl_update(bold_thres)
+# dzx_iclr_abl_ns(bold_thres)
+# dzx_iclr_abl_temp(bold_thres)
+# dzx_iclr_abl_update(bold_thres)
+# dzx_iclr_abl_convergence(bold_thres)

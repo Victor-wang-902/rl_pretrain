@@ -23,9 +23,9 @@ def get_other_score_measures(path):
     return d
 
 
-base_path = '../code/checkpoints/final'
+base_path = '../code/checkpoints/tuned_cql'
 for root, dirs, files in os.walk(base_path):
-    if '/iclr' in root:
+    if '/tuned_iclr' in root:
         for dir in dirs:
             # Go through every subfolder in this folder
                 subfolder = os.path.join(root, dir)

@@ -34,12 +34,13 @@ def main():
 
     variant = get_default_variant_dict() # this is a dictionary
     ###########################################################
-    exp_prefix = 'tuned_iclr_cqlr3n'
+    exp_prefix = 'postICLR_tuned_cqlr3n'
     settings = [
-        'env', '', ['hopper', 'halfcheetah'],#MUJOCO_4_ENVS,
-        'dataset', '', ['medium-expert'],#MUJOCO_3_DATASETS,
+        'env', '', MUJOCO_4_ENVS,
+        'dataset', '', MUJOCO_3_DATASETS,
         'pretrain_mode', 'pre', ['none'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
+        'n_epochs', 'ep', [400],
         'seed', '', [42, 666, 1024, 2048, 4069]#[42, 666, 1024, 2048, 4069] + list(range(15)),
     ]
 
