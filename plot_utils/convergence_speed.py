@@ -44,7 +44,7 @@ for setting in all_env.keys():
 
 for setting in all_env.keys():
     for root, dirs, files in os.walk(base_path):
-        if 'iclr_cqlr3n_pre' in root and setting in root:
+        if '/cqlr3n' in root and setting in root:
             target = all_env[setting]
             for dir in dirs:
                 subfolder = os.path.join(root, dir)

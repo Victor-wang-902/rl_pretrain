@@ -58,8 +58,8 @@ def check_pretrain_model(base_path, exp_prefix):
                             print(e)
 
 
-base_path = '../code/checkpoints/20seeds'
-exp_prefix = 'iclr_cqlr3n'
+base_path = '../code/checkpoints/final'
+exp_prefix = '/cqlr3n'
 correct_TestEpNormRet(base_path, exp_prefix)
 # delete_seeds(base_path)
 # check_pretrain_model(base_path, exp_prefix)

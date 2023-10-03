@@ -19,7 +19,7 @@ base_measures = ['best_return_normalized', 'best_return',
                  "best_1_weight_sim",
 
                  'convergence_iter',
-                 'convergence_update',
+                 # 'convergence_update',
 
                  'final_feature_diff',
                  'final_weight_diff',
@@ -74,7 +74,7 @@ def get_extra_dict_multiple_seeds(datafolder_path):
     for measure in ['final_test_returns', 'final_test_normalized_returns', 'best_return', 'best_return_normalized',
                     'best_5percent_normalized', 'best_10percent_normalized', 'best_25percent_normalized',
                     'best_50percent_normalized', 'best_100percent_normalized', 'best_later_half_normalized',
-                    'last_four_normalized', 'convergence_update'
+                    'last_four_normalized', # 'convergence_update'
                     ]:
         aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1], ]
     return aggregate_dict
@@ -184,7 +184,7 @@ change_std_rows = [
     'best_100percent_normalized',
     'best_later_half_normalized',
     'last_four_normalized',
-    'convergence_update'
+    # 'convergence_update'
 ]
 
 row_names_higher_is_better = [

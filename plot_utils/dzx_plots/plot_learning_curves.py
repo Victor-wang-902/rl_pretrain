@@ -460,24 +460,36 @@ def plot_dt_loss_curves():
 #     cql_init_modelG,
 #     cql_init_wholeG
 # ]
+#
+# labels = [
+#     'CQL',
+#     'CQL+MDP',
+#     'CQL+IID'
+# ]
+#
+# base_names = [
+#     iclr_cql,
+#     iclr_cql_mdp_t1,
+#     iclr_cql_iid_preT100k
+# ]
 
 labels = [
     'CQL',
-    'CQL+MDP',
-    'CQL+IID'
+    'Tuned_CQL',
+    'MDP',
+    'Tuned_MDP'
 ]
-
 base_names = [
-    iclr_cql,
-    iclr_cql_mdp_t1,
-    iclr_cql_iid_preT100k
+    cql_2x,
+    tuned_cql_2x,
+    cql_mdp_2x,
+    tuned_mdp_2x
 ]
-
 
 data_path = '../../code/checkpoints/final'
 save_path = '../../figures/'
 plot_cql_performance_curves(labels, base_names)
 # plot_cql_q_loss_curves(labels, base_names)
-plot_cql_combined_loss_curves(labels, base_names)
+# plot_cql_combined_loss_curves(labels, base_names)
 # plot_dt_performance_curves()
 # plot_dt_loss_curves()
