@@ -12,6 +12,7 @@ MUJOCO_ALL = ['halfcheetah-random-v2', 'halfcheetah-medium-v2', 'halfcheetah-exp
               'ant-random-v2', 'ant-medium-v2', 'ant-expert-v2',
               'ant-medium-replay-v2', 'ant-medium-expert-v2']
 MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah',  ]
+MUJOCO_4_ENVS = ["hopper", "walker2d", "halfcheetah", "ant"]
 MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
 MUJOCO_9 = ['halfcheetah-medium-v2', 'halfcheetah-medium-replay-v2', 'halfcheetah-medium-expert-v2',
             'walker2d-medium-v2', 'walker2d-medium-replay-v2', 'walker2d-medium-expert-v2',
@@ -71,6 +72,9 @@ def get_setting_dt(settings, setting_number, random_setting_seed=0, random_order
         total = division
     actual_setting = {}
     for j in range(len(indexes)):
+        #if isinstance(values_list[j][indexes[j]], tuple):
+        #    actual_setting[hypers[j]] = values_list[j][indexes[j]][0]
+        #else:
         actual_setting[hypers[j]] = values_list[j][indexes[j]]
 
     return indexes, actual_setting, max_job, hyper2logname
@@ -80,11 +84,18 @@ def get_auto_exp_name(actual_setting, hyper2logname, exp_prefix=None, suffix_bef
     # if use this, make sure there is the underscore before
     exp_name_full = exp_prefix
     for hyper, value in actual_setting.items():
-        if hyper not in ['env', 'dataset', 'seed']:
-            if exp_name_full is not None:
-                exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value))
-            else:
-                exp_name_full = '%s' % (hyper2logname[hyper] + str(value))
+        if isinstance(value, tuple):
+            if hyper not in ['env', 'dataset', 'seed']:
+                if exp_name_full is not None:
+                    exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value[1]))
+                else:
+                    exp_name_full = '%s' % (hyper2logname[hyper] + str(value[1]))
+        else:
+            if hyper not in ['env', 'dataset', 'seed']:
+                if exp_name_full is not None:
+                    exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value))
+                else:
+                    exp_name_full = '%s' % (hyper2logname[hyper] + str(value))
     exp_name_full = exp_name_full + suffix_before_env_dataset + '_%s_%s' % (actual_setting['env'], actual_setting['dataset'])
     return exp_name_full
 

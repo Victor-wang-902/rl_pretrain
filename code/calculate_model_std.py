@@ -5,6 +5,7 @@ import gym
 
 
 def main(variant):
+    torch.manual_seed(666)
     K = variant["K"]
     env_name = variant["env"]
     if env_name == "hopper":
@@ -41,9 +42,9 @@ def main(variant):
                 resid_pdrop=variant["dropout"],
                 attn_pdrop=0.1,
             )
-    
-    param = sum(p.numel() for p in model.parameters())
-    print(param)
+    print("random")
+    for p in model.parameters():
+        print(p)
     
 '''
     if variant["load_checkpoint"]:

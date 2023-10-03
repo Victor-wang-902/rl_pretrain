@@ -2,15 +2,15 @@
 ##SBATCH --nodes=1
 #SBATCH --gres=gpu:2
 ##SBATCH --exclude=gm[001-024],gv[001-018]
-#SBATCH --exclude=gm[001-025],gv[001-016]
+#SBATCH --exclude=gm[001-025],gv[001-015]
 ##SBATCH --partition=aquila
 #SBATCH --cpus-per-task=4
-#SBATCH --mem=100GB
-#SBATCH --job-name=v100_t10.0_train
+#SBATCH --mem=200GB
+#SBATCH --job-name=random2_train
 #SBATCH --mail-type=END
 ##SBATCH --mail-user=zw2374@nyu.edu
 #SBATCH --time=48:00:00
-#SBATCH --dependency=singleton
+##SBATCH --dependency=singleton
 #SBATCH --output=pt_%j_wiki103_size_0.out
 #SBATCH --error=pt_%j_wiki103_size_0.err
 ##python pretrain/pretrain.py --embed_dim 512 --n_layer 6 --n_head 8 --outdir "chibiT_embed_dim512_n_layer6_n_head8"
@@ -20,7 +20,10 @@
 ## accelerate launch pretrain/pretrain_dist.py --batch_size 16384 --embed_dim 768 --n_layer 12 --n_head 12 --outdir "chibiT_embed_dim768_n_layer12_n_head12"
 ## accelerate launch pretrain/pretrain_dist.py --batch_size 16384 --embed_dim 512 --n_layer 6 --n_head 8 --outdir "chibiT_embed_dim512_n_layer6_n_head8"
 ## accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml pretrain/pretrain_dist.py --dataset data_online_new_new/data_ngram_1_nvocab_10_temperature_1.0.csv --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_syn_embed_dim128_n_layer3_n_head1"
-
+## accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml --main_process_port 29501 pretrain/pretrain_dist.py --dataset data_online_new_new/data_ngram_1_nvocab_50257_temperature_100.0.csv --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_1_nvocab_50257_temperature_100.0"
+## accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml --main_process_port 29501 pretrain/pretrain_dist.py --dataset data_online_new_short/data_ngram_5_nvocab_100_temperature_1.0.csv --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --max_length 20 --outdir "chibiT_short_embed_dim128_n_layer3_n_head1_ngram_5_nvocab_100_temperature_1.0"
+## accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml --main_process_port 29500 pretrain/pretrain_dist.py --dataset data_online_new_new/data_ngram_1_nvocab_100_temperature_1.0.csv --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_100_nvocab_1_temperature_1.0_shuffled" --inner_shuffle
+## accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml --main_process_port 29500 pretrain/pretrain_dist.py --dataset data_online_new_new/data_ngram_1_nvocab_100_temperature_1.0.csv --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_1_nvocab_100_temperature_1.0" --data_size 0.125
 
 singularity exec --nv --overlay $SCRATCH/overlay-50G-10M.ext3:ro /scratch/work/public/singularity/cuda11.3.0-cudnn8-devel-ubuntu20.04.sif /bin/bash -c "
 cd /scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram
@@ -31,6 +34,5 @@ nvidia-smi
 echo $PATH
 echo $LD_LIBRARY_PATH
 lsof -i :29500
-accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml pretrain/pretrain_dist.py --dataset data_online_new_new/data_ngram_1_nvocab_100_temperature_10.0.csv --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_1_nvocab_100_temperature_10.0"
+accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml --main_process_port 29507 pretrain/pretrain_dist.py --dataset data_online_new_new/data_random_nvocab_100.csv --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_IID_rerun" --num_steps 80000 --num_steps_per_save 1000 --log_save --log_save_until 1000
 "
-

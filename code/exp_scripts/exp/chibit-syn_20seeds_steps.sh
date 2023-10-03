@@ -6,7 +6,7 @@
 #SBATCH --mail-type=ALL # select which email types will be sent
 #SBATCH --mail-user=zw2374@nyu.edu # NOTE: put your netid here if you want emails
 
-#SBATCH --array=0-959 # here the number depends on number of tasks in the array, e.g. 0-11 will create 12 tasks
+#SBATCH --array=0-479 # here the number depends on number of tasks in the array, e.g. 0-11 will create 12 tasks
 #SBATCH --output=logs/datasize%A_%a.out # %A is SLURM_ARRAY_JOB_ID, %a is SLURM_ARRAY_TASK_ID
 #SBATCH --error=logs/datasize%A_%a.err
 
@@ -30,5 +30,5 @@ export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/local/nvidia/lib
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/workspace/.mujoco/mujoco210/bin
 export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/usr/lib/nvidia
 export MUJOCO_GL=egl
-python exp_scripts/exp/chibit-syn_20seeds_states.py --setting ${SLURM_ARRAY_TASK_ID} --device cpu --extend_positions --dropout 0.2 --share_input_output_proj
+python exp_scripts/exp/chibit-syn_20seeds_steps.py --setting ${SLURM_ARRAY_TASK_ID} --device cpu --extend_positions --dropout 0.2 --share_input_output_proj
 "

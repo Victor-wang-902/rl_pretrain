@@ -8,8 +8,8 @@ import numpy as np
 from numpy.random import Generator, SeedSequence, default_rng
 from sklearn.utils.extmath import softmax
 
-
-"""class RandomTokenGenerator:
+"""
+class RandomTokenGenerator:
     def __init__(
         self,
         nvocab,
@@ -31,30 +31,15 @@ from sklearn.utils.extmath import softmax
     def generate_worker(self, worker_id, total_itr, max_length, batch_size, results_queue, event):
         print("workerid", worker_id)
         generated = None
+        self.set_sample_seed(worker_id, total_itr)
+
         if self.mode == 0:
-            self.set_sample_seed(worker_id, total_itr)
         
-            generated = self.sample_seeder[worker_id].multinomial(batch_size * max_length, [1.0/self.vocab] * self.vocab, (batch_size, max_length))
+            generated = self.sample_seeder[worker_id].multinomial(1, [1.0/self.vocab] * self.vocab, (batch_size, max_length)).argmax(-1)
         else:
-            distribution = ##TODO
-        for itr in range(max_length):
-            self.set_sample_seed(worker_id, total_itr, itr, max_length)
-            if generated is not None:
+            distribution = softmax(self.sample_seeder[worker_id].random(self.vocab).reshape(1,-1)).reshape(-1)
+            generated = self.sample_seeder[worker_id].multinomial(1, distribution, (batch_size, max_length)).argmax(-1)
 
-                toks = self.sample_seeder[worker_id].multinomial(1, probs).argmax(1).reshape(1,-1)
-                #print(toks)
-                generated = np.concatenate([generated, toks], axis=0)
-            else:
-                param_np = self.get_param(worker_id)
-                probs = softmax(param_np / self.temperature)
-                tok = self.sample_seeder[worker_id].choice(self.nvocab, size=(batch_size,), p=probs.squeeze())
-                #print(self.sample_seeder[worker_id].multinomial(batch_size, probs).shape)
-
-                #tok = self.sample_seeder[worker_id].multinomial(batch_size, probs).argmax(1).reshape(1,-1)
-                #print(tok)
-                #raise Exception
-                tok = tok.reshape(1, -1)
-                generated = tok
         results_queue.put(generated.T)
         event.set()
         return

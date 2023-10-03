@@ -9,12 +9,12 @@ import d4rl
 
 datasets = []
 
-for env_name in ["halfcheetah", "hopper", "walker2d"]:
+for env_name in ["ant"]: #["halfcheetah", "hopper", "walker2d", "ant"]:
     for dataset_type in ["medium", "medium-replay", "expert", "medium-expert"]:
         name = f"{env_name}-{dataset_type}-v2"
         env = gym.make(name)
+        print(env.dataset_url)
         dataset = env.get_dataset()
-
         N = dataset["rewards"].shape[0]
         data_ = collections.defaultdict(list)
 

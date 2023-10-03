@@ -83,6 +83,11 @@ def get_normalized_score(env_name, score):
     name = env_name + "-medium-v0"
     return 100 * (score - REF_MIN_SCORE[name]) / (REF_MAX_SCORE[name] - REF_MIN_SCORE[name])
 
+def get_unnormalized_score(env_name, score):
+    name = env_name + "-medium-v0"
+    return (score * (REF_MAX_SCORE[name] - REF_MIN_SCORE[name]) / 100) + REF_MIN_SCORE[name]
+
+
 def calculate_statistics(dir, fname="progress.csv"):
     with open(os.path.join(dir, fname), "r") as f:
         df = pd.read_csv(f, delimiter="\t", header=0)

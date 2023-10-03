@@ -26,7 +26,13 @@ def eval(args, dataloader, model, device, accelerator):
         
         #accelerator.print(total_rows)
         #outputs = model(batch['input_ids'].to(device), attention_mask=batch["attention_mask"].to(device), labels=batch["input_ids"].detach().clone().long().to(device))  # fix here
-        outputs = model(batch['input_ids'], attention_mask=batch["attention_mask"], labels=batch["input_ids"].detach().clone().long())  # fix here
+        if args.predict_itself:
+            labels = torch.concatenate([torch.zeros((batch["input_ids"].shape[0], 1)).to(accelerator.device).long(), batch["input_ids"].detach().clone().long()[:,:-1]], dim=1)
+        elif args.predict_same:
+            labels = torch.full(batch["input_ids"].shape, args.same_state).to(accelerator.device).long()
+        else:
+            labels = batch["input_ids"].detach().clone().long()
+        outputs = model(batch['input_ids'], attention_mask=batch["attention_mask"], labels=labels)  # fix here
         loss = outputs.loss
         
         #accelerator.print("loss", loss)
@@ -41,7 +47,15 @@ def eval(args, dataloader, model, device, accelerator):
 def main(args):  # add argparser
     accelerator = Accelerator()
     device = accelerator.device
-    nvocab = int(os.path.basename(args.dataset).split("_")[4]) #hack
+    if "random" in os.path.basename(args.dataset):
+        nvocab = int(os.path.basename(args.dataset).split("_")[3].split(".")[0])
+    else:
+        nvocab = int(os.path.basename(args.dataset).split("_")[4]) #hack
+    args.nvocab = nvocab
+    if args.predict_same:
+        args.rng = torch.Generator()
+        args.rng.manual_seed(args.seed)
+        args.same_state = torch.randint(args.nvocab, (1,), generator=args.rng).item()
     #nvocab = args.dataset.split("_")[4] #hack
     #tokenizer = GPT2Tokenizer.from_pretrained('gpt2')
     tokenizer = SyntheticTokenizer(nvocab)
@@ -74,10 +88,10 @@ def main(args):  # add argparser
 
     collator = GPT2Collator()
 
-    batch_size = args.batch_size // 1024
+    batch_size = args.batch_size // args.max_length
     num_steps = args.num_steps
     num_warmup_steps = args.warmup_steps
-    num_tokens = args.batch_size - args.batch_size // 1024
+    num_tokens = args.batch_size - args.batch_size // args.max_length
 
     test_data_loader = get_dataloader(
         test_dataset,
@@ -104,7 +118,7 @@ def main(args):  # add argparser
     accelerator.wait_for_everyone()
     if not args.eval_only:
         with accelerator.main_process_first():
-            train_dataset = SyntheticDataset(train_data, seed=args.seed, data_size=args.data_size)
+            train_dataset = SyntheticDataset(train_data, seed=args.seed, data_size=args.data_size, inner_shuffle=args.inner_shuffle)
 
         train_data_loader = get_dataloader(
             train_dataset,
@@ -138,7 +152,9 @@ def main(args):  # add argparser
         )
 
         scheduler = accelerator.prepare_scheduler(scheduler)
-
+        if args.log_save:
+            exponent = int(math.log(args.log_save_until, 10))
+            args.log_save_iters = [10**i for i in range(exponent + 1)]
         total_start_time = time.time()
         cur_start_time = time.time()
         cumulative_loss = 0.
@@ -146,10 +162,19 @@ def main(args):  # add argparser
         epoch = 0
         while True:
             for step, batch in tqdm(enumerate(train_data_loader), total=num_steps):
+                if cur_step >= num_steps:
+                    break
                 #print("step", step)
                 #print(batch["input_ids"][0][1])
                 model.train()
-                labels = batch["input_ids"].detach().clone().long()
+                if args.predict_itself:
+                    labels = torch.concatenate([torch.zeros((batch["input_ids"].shape[0], 1)).to(accelerator.device).long(), batch["input_ids"].detach().clone().long()[:,:-1]], dim=1)
+
+                elif args.predict_same:
+                    labels = torch.full(batch["input_ids"].shape, args.same_state).to(accelerator.device).long()
+
+                else:
+                    labels = batch["input_ids"].detach().clone().long()
                 #print(labels)
                 #accelerator.wait_for_everyone()
                 #raise Exception
@@ -181,33 +206,106 @@ def main(args):  # add argparser
                 optimizer.step()
                 scheduler.step()
                 accelerator.wait_for_everyone()
-                if (cur_step + 1) % args.num_steps_per_save == 0:
-                    torch.cuda.empty_cache()
-                    train_ppl = torch.exp(torch.tensor(cumulative_loss) / args.num_steps_per_save).item()
-                    cur_train_end_time = time.time()
-                    valid_loss = eval(args, valid_data_loader, model, device, accelerator)
-                    #accelerator.print("valid loss", valid_loss)
-                    valid_ppl = math.exp(valid_loss)
-                    cur_eval_end_time = time.time()
-                    if accelerator.is_main_process:
-                        accelerator.print(f'Step {cur_step + 1}/{num_steps}, epoch {epoch}, train loss = {cumulative_loss}, train ppl = {train_ppl}, valid ppl = {valid_ppl}')
+                if args.log_save and (cur_step + 1) <= args.log_save_until:
+                    if (cur_step + 1) in args.log_save_iters:
+                        torch.cuda.empty_cache()
+                        train_ppl = torch.exp(torch.tensor(cumulative_loss) / args.num_steps_per_save).item()
+                        cur_train_end_time = time.time()
+                        if not args.no_eval:
+                            valid_loss = eval(args, valid_data_loader, model, device, accelerator)
+                            #accelerator.print("valid loss", valid_loss)
+                            valid_ppl = math.exp(valid_loss)
+                            cur_eval_end_time = time.time()
+                            if accelerator.is_main_process:
+                                accelerator.print(f'Step {cur_step + 1}/{num_steps}, epoch {epoch}, train loss = {cumulative_loss}, train ppl = {train_ppl}, valid ppl = {valid_ppl}')
 
-                    cur_total_time = time.time()
-                    accelerator.wait_for_everyone()
-                    if accelerator.is_main_process:
-                        if args.outdir is not None:
-                            accelerator.unwrap_model(model).save_pretrained(f"{args.outdir}/model_{cur_step + 1}")
-                            #torch.save(
-                            #    accelerator.unwrap_model(model).state_dict(),
-                            #    f"{args.outdir}/model_{step + 1}.pt",
-                            #)
-                        with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
-                            writer = csv.writer(f, delimiter="\t")
-                            writer.writerow([cur_train_end_time - cur_start_time, cur_eval_end_time - cur_train_end_time, cur_total_time - total_start_time, cur_step + 1, cumulative_loss, train_ppl, valid_ppl])
-                    accelerator.wait_for_everyone()
-                    cur_start_time = time.time()
-                    cumulative_loss = 0.
-                    torch.cuda.empty_cache()
+                            cur_total_time = time.time()
+                            accelerator.wait_for_everyone()
+                            if accelerator.is_main_process:
+                                if args.outdir is not None:
+                                    accelerator.unwrap_model(model).save_pretrained(f"{args.outdir}/model_{cur_step + 1}")
+                                    #torch.save(
+                                    #    accelerator.unwrap_model(model).state_dict(),
+                                    #    f"{args.outdir}/model_{step + 1}.pt",
+                                    #)
+                                with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
+                                    writer = csv.writer(f, delimiter="\t")
+                                    writer.writerow([cur_train_end_time - cur_start_time, cur_eval_end_time - cur_train_end_time, cur_total_time - total_start_time, cur_step + 1, cumulative_loss, train_ppl, valid_ppl])
+                            accelerator.wait_for_everyone()
+                            cur_start_time = time.time()
+                            cumulative_loss = 0.
+                            torch.cuda.empty_cache()
+                        else:
+                            #accelerator.print("valid loss", valid_loss)
+                            if accelerator.is_main_process:
+                                accelerator.print(f'Step {cur_step + 1}/{num_steps}, epoch {epoch}, train loss = {cumulative_loss}, train ppl = {train_ppl}')
+
+                            cur_total_time = time.time()
+                            accelerator.wait_for_everyone()
+                            if accelerator.is_main_process:
+                                if args.outdir is not None:
+                                    accelerator.unwrap_model(model).save_pretrained(f"{args.outdir}/model_{cur_step + 1}")
+                                    #torch.save(
+                                    #    accelerator.unwrap_model(model).state_dict(),
+                                    #    f"{args.outdir}/model_{step + 1}.pt",
+                                    #)
+                                with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
+                                    writer = csv.writer(f, delimiter="\t")
+                                    writer.writerow([cur_train_end_time - cur_start_time, -1, cur_total_time - total_start_time, cur_step + 1, cumulative_loss, train_ppl, -1])
+                            accelerator.wait_for_everyone()
+                            cur_start_time = time.time()
+                            cumulative_loss = 0.
+                            torch.cuda.empty_cache()
+                else:
+                    if (cur_step + 1) % args.num_steps_per_save == 0:
+                        torch.cuda.empty_cache()
+                        train_ppl = torch.exp(torch.tensor(cumulative_loss) / args.num_steps_per_save).item()
+                        cur_train_end_time = time.time()
+                        if not args.no_eval:
+                            valid_loss = eval(args, valid_data_loader, model, device, accelerator)
+                            #accelerator.print("valid loss", valid_loss)
+                            valid_ppl = math.exp(valid_loss)
+                            cur_eval_end_time = time.time()
+                            if accelerator.is_main_process:
+                                accelerator.print(f'Step {cur_step + 1}/{num_steps}, epoch {epoch}, train loss = {cumulative_loss}, train ppl = {train_ppl}, valid ppl = {valid_ppl}')
+
+                            cur_total_time = time.time()
+                            accelerator.wait_for_everyone()
+                            if accelerator.is_main_process:
+                                if args.outdir is not None:
+                                    accelerator.unwrap_model(model).save_pretrained(f"{args.outdir}/model_{cur_step + 1}")
+                                    #torch.save(
+                                    #    accelerator.unwrap_model(model).state_dict(),
+                                    #    f"{args.outdir}/model_{step + 1}.pt",
+                                    #)
+                                with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
+                                    writer = csv.writer(f, delimiter="\t")
+                                    writer.writerow([cur_train_end_time - cur_start_time, cur_eval_end_time - cur_train_end_time, cur_total_time - total_start_time, cur_step + 1, cumulative_loss, train_ppl, valid_ppl])
+                            accelerator.wait_for_everyone()
+                            cur_start_time = time.time()
+                            cumulative_loss = 0.
+                            torch.cuda.empty_cache()
+                        else:
+                            #accelerator.print("valid loss", valid_loss)
+                            if accelerator.is_main_process:
+                                accelerator.print(f'Step {cur_step + 1}/{num_steps}, epoch {epoch}, train loss = {cumulative_loss}, train ppl = {train_ppl}')
+
+                            cur_total_time = time.time()
+                            accelerator.wait_for_everyone()
+                            if accelerator.is_main_process:
+                                if args.outdir is not None:
+                                    accelerator.unwrap_model(model).save_pretrained(f"{args.outdir}/model_{cur_step + 1}")
+                                    #torch.save(
+                                    #    accelerator.unwrap_model(model).state_dict(),
+                                    #    f"{args.outdir}/model_{step + 1}.pt",
+                                    #)
+                                with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
+                                    writer = csv.writer(f, delimiter="\t")
+                                    writer.writerow([cur_train_end_time - cur_start_time, -1, cur_total_time - total_start_time, cur_step + 1, cumulative_loss, train_ppl, -1])
+                            accelerator.wait_for_everyone()
+                            cur_start_time = time.time()
+                            cumulative_loss = 0.
+                            torch.cuda.empty_cache()
                 torch.cuda.empty_cache()
                 cur_step +=1
             epoch += 1
@@ -216,23 +314,42 @@ def main(args):  # add argparser
     else:
         (valid_data_loader, test_data_loader, model) = accelerator.prepare(valid_data_loader, test_data_loader, model)
 
-    test_start_time = time.time()
-    test_loss = eval(args, test_data_loader, model, device, accelerator)
-    test_ppl = math.exp(test_loss)
-    test_end_time = time.time()
-    accelerator.wait_for_everyone()
-    if accelerator.is_main_process:
-        accelerator.print(f'Training complete, final test ppl = {test_ppl}')
-        with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
-            writer = csv.writer(f, delimiter="\t")
-            writer.writerow([0., test_end_time - test_start_time, test_end_time - total_start_time, "test", 0., 0., test_ppl])
-        if args.outdir is not None:
-            accelerator.unwrap_model(model).save_pretrained(f"{args.outdir}/model_final")
-            #torch.save(
-            #    accelerator.unwrap_model(model).state_dict(),
-            #    f"{args.outdir}/model_final.pt",
-            #)
-    return accelerator
+    if not args.no_eval:
+        test_start_time = time.time()
+        test_loss = eval(args, test_data_loader, model, device, accelerator)
+        test_ppl = math.exp(test_loss)
+        test_end_time = time.time()
+        accelerator.wait_for_everyone()
+        if accelerator.is_main_process:
+            accelerator.print(f'Training complete, final test ppl = {test_ppl}')
+            with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
+                writer = csv.writer(f, delimiter="\t")
+                writer.writerow([0., test_end_time - test_start_time, test_end_time - total_start_time, "test", 0., 0., test_ppl])
+            if args.outdir is not None:
+                accelerator.unwrap_model(model).save_pretrained(f"{args.outdir}/model_final")
+                #torch.save(
+                #    accelerator.unwrap_model(model).state_dict(),
+                #    f"{args.outdir}/model_final.pt",
+                #)
+        return accelerator
+    else:
+        #test_start_time = time.time()
+        #test_loss = eval(args, test_data_loader, model, device, accelerator)
+        #test_ppl = math.exp(test_loss)
+        #test_end_time = time.time()
+        accelerator.wait_for_everyone()
+        if accelerator.is_main_process:
+            accelerator.print(f'Training complete')
+            with open(os.path.join(args.outdir, "progress.csv"), "a") as f:
+                writer = csv.writer(f, delimiter="\t")
+                writer.writerow([0., -1, -1, "test", 0., 0., -1])
+            if args.outdir is not None:
+                accelerator.unwrap_model(model).save_pretrained(f"{args.outdir}/model_final")
+                #torch.save(
+                #    accelerator.unwrap_model(model).state_dict(),
+                #    f"{args.outdir}/model_final.pt",
+                #)
+        return accelerator
 
 
 
@@ -254,6 +371,7 @@ def set_dt_args(args_to_parse=None):
     parser.add_argument("--activation_function", type=str, default="relu")
     parser.add_argument("--dropout", type=float, default=0.1)
     parser.add_argument("--load_checkpoint", type=str, default=None)
+    parser.add_argument("--max_length", type=int, default=1024)
 
     parser.add_argument("--learning_rate", "-lr", type=float, default=3e-4)
     parser.add_argument("--weight_decay", "-wd", type=float, default=1e-2)
@@ -270,6 +388,13 @@ def set_dt_args(args_to_parse=None):
     parser.add_argument("--output_fname", type=str, default="progress.csv")
     parser.add_argument("--grad_checkpoint", action="store_true", default=False)
     parser.add_argument("--data_size", type=float, default=1.0)
+    parser.add_argument("--inner_shuffle", action="store_true", default=False)
+
+    parser.add_argument("--predict_same", action="store_true", default=False)
+    parser.add_argument("--predict_itself", action="store_true", default=False)
+    parser.add_argument("--no_eval", action="store_true", default=False)
+    parser.add_argument("--log_save", action="store_true", default=False)
+    parser.add_argument("--log_save_until", type=int, default=10000)
 
     if args_to_parse is not None:
         args = parser.parse_args(args_to_parse)

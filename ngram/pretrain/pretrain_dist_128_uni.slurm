@@ -1,6 +1,6 @@
 #!/bin/bash
 ##SBATCH --nodes=1
-#SBATCH --gres=gpu:1
+#SBATCH --gres=gpu:rtx8000:1
 #SBATCH --exclude=gm[001-024],gv[013-018]
 ##SBATCH --partition=aquila
 #SBATCH --cpus-per-task=4
@@ -11,6 +11,7 @@
 #SBATCH --time=48:00:00
 ##SBATCH --dependency=singleton
 #SBATCH --output=pt_%j_wiki103_size_0.out
+
 #SBATCH --error=pt_%j_wiki103_size_0.err
 ##python pretrain/pretrain.py --embed_dim 512 --n_layer 6 --n_head 8 --outdir "chibiT_embed_dim512_n_layer6_n_head8"
 ##python pretrain/pretrain.py --embed_dim 256 --n_layer 4 --n_head 4 --outdir "chibiT_embed_dim256_n_layer4_n_head4"

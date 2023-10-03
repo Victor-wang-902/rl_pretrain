@@ -65,6 +65,7 @@ class GPT2Collator:
             attention_mask =item["attention_mask"]
             input_ids_list.append(torch.tensor(input_ids, dtype=torch.int))
             attention_mask_list.append(torch.tensor(attention_mask, dtype=torch.int))
+        #print(torch.stack(input_ids_list).shape)
         return {"input_ids": torch.stack(input_ids_list), "attention_mask": torch.stack(attention_mask_list)}
 
 def worker_init_fn(worker_id):
@@ -96,13 +97,13 @@ class SyntheticTokenizer:
         self.eos_token_id = self.nvocab
 
 class SyntheticDataset(IterableDataset):
-    def __init__(self, data, split="train", n_tokens=1024, seed=0, data_size=1.0):
+    def __init__(self, data, split="train", n_tokens=1024, seed=0, data_size=1.0, inner_shuffle=False):
         super().__init__()
         self.data = data
         #self.tokenizer = tokenizer
         #self.eos_token_id = tokenizer.eos_token_id
         self.tokenized = []
-
+        self.inner_shuffle = inner_shuffle
         ind = list(range(len(data)))
         if split == "train":
             random.seed(seed)
@@ -112,7 +113,14 @@ class SyntheticDataset(IterableDataset):
         print("read %s entries from the raw dataset" % str(len(ind)))
         for i in tqdm.tqdm(ind):
             line = data[i]
-            input_ids =  line #+ [self.eos_token_id]
+            #print("before", line, sum(line))
+            if self.inner_shuffle:
+                random.seed(i + seed)
+                random.shuffle(line)
+                input_ids = line
+                #print("after", input_ids, sum(input_ids))
+            else:
+                input_ids =  line #+ [self.eos_token_id]
             attention_mask = [1 for _ in range(len(line))] #+ [1]
             self.tokenized.append({"input_ids": input_ids, "attention_mask": attention_mask})
         print("processed %s entries in the tokenized dataset" % str(len(self.tokenized)))

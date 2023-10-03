@@ -24,6 +24,6 @@ export PYTHONPATH=$PYTHONPATH:/scratch/zw2374/public/can-wikipedia-help-offline-
 nvidia-smi
 echo $PATH
 echo $LD_LIBRARY_PATH
-python pretrain/pretrain.py --dataset data_online_new_new/data_ngram_5_nvocab_50257_temperature_1.0.csv --batch_size 65536 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_5_nvocab_50257_temperature_1.0"
+python pretrain/pretrain.py --dataset data_online_random_mode_0/data_random_nvocab_10000.csv --batch_size 65536 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_random_embed_dim128_n_layer3_n_head1_nvocab_10000"
 "
 

@@ -26,18 +26,18 @@ if __name__ == '__main__':
 
     # each 3-tuple is:
     # parameter name - abbreviation - values (this has to be a list)
-    exp_prefix = 'chibiT-syn-20seeds-states-wo'
+    exp_prefix = 'chibiT-syn-20seeds-steps-wo'
     # env, dataset and seed values will be added to the end of the folder name string
     # for each 3-tuple,
     settings = [
         'env', '', MUJOCO_4_ENVS,
         'dataset', '', MUJOCO_3_DATASETS,
         'seed', '', [42, 1024, 666, 6331, 6049, 3785, 9329, 2901, 7929, 4598, 9051, 5599, 6183, 7282, 7127, 5575, 4493, 3406, 8958, 684],
-        'pretrained_lm', 'S', [("/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram/pretrain/checkpoints_ngram/chibiT_syn_test_embed_dim128_n_layer3_n_head1/model_20000", "10"), 
-        ("/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram/pretrain/checkpoints/chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_1_nvocab_1000_temperature_1.0/model_20000", "1000"), 
-        ("/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram/pretrain/checkpoints/chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_1_nvocab_10000_temperature_1.0/model_20000", "10000"),
-        ("/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram/pretrain/checkpoints_ngram/chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_1_nvocab_100000_temperature_1.0/model_20000", "100000")
-
+        'pretrained_lm', 'MC-', [
+        ("/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram/pretrain/checkpoints_ngram/chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_2_nvocab_100_temperature_1.0/model_20000"
+, "2"), 
+        ("/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram/pretrain/checkpoints_ngram/chibiT_syn_embed_dim128_n_layer3_n_head1_ngram_5_nvocab_100_temperature_1.0/model_20000"
+, "5"),
         ]        ]
 
     indexes, actual_setting, total, hyper2logname = get_setting_dt(settings, setting_id)

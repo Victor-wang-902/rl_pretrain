@@ -16,6 +16,8 @@ python pretrain/pretrain.py --embed_dim 64 --n_layer 1 --n_head 2 --outdir "chib
 
 
 
+
+
 singularity exec --nv --overlay $SCRATCH/overlay-50G-10M.ext3:ro /scratch/work/public/singularity/cuda11.3.0-cudnn8-devel-ubuntu20.04.sif /bin/bash -c "
 cd /scratch/zw2374/public/can-wikipedia-help-offline-rl-old/code
 source /ext3/env.sh
@@ -36,4 +38,31 @@ nvidia-smi
 echo $PATH
 echo $LD_LIBRARY_PATH
 accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml pretrain/pretrain_dist.py --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_embed_dim128_n_layer3_n_head1" --data_size 0.01 --num_steps 100 --num_steps_per_save 1000
+"
+
+
+
+singularity exec --nv --overlay $SCRATCH/overlay-50G-10M.ext3:ro /scratch/work/public/singularity/cuda11.3.0-cudnn8-devel-ubuntu20.04.sif /bin/bash -c "
+cd /scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram
+source /ext3/env.sh
+conda activate rblm
+export PYTHONPATH=$PYTHONPATH:/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram
+nvidia-smi
+echo $PATH
+echo $LD_LIBRARY_PATH
+lsof -i :29500
+accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml --main_process_port 29500 pretrain/pretrain_dist.py --dataset data_online_random_2/data_random_nvocab_100.csv --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_random_short_embed_dim128_n_layer3_n_head1_nvocab_100" --max_length 2
+"
+
+
+singularity exec --nv --overlay $SCRATCH/overlay-50G-10M.ext3:ro /scratch/work/public/singularity/cuda11.3.0-cudnn8-devel-ubuntu20.04.sif /bin/bash -c "
+cd /scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram
+source /ext3/env.sh
+conda activate rblm
+export PYTHONPATH=$PYTHONPATH:/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram
+nvidia-smi
+echo $PATH
+echo $LD_LIBRARY_PATH
+lsof -i :29500
+accelerate launch --config_file /home/zw2374/.cache/huggingface/accelerate/duo_config.yaml --main_process_port 29504 pretrain/pretrain_dist.py --dataset data_online_new_new/data_random_nvocab_100.csv --batch_size 32768 --embed_dim 128 --n_layer 3 --n_head 1 --outdir "chibiT_random_itself_embed_dim128_n_layer3_n_head1_nvocab_100" --predict_itself
 "
