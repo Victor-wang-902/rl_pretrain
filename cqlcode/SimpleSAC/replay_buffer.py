@@ -7,7 +7,9 @@ import d4rl
 import numpy as np
 import torch
 import joblib
-
+####################################
+from info import TEXT_DESCRIPTIONS
+####################################
 
 class ReplayBuffer(object):
     def __init__(self, max_size, data=None):
@@ -150,8 +152,119 @@ def get_d4rl_dataset_from_multiple_envs(envs):
             for key in d:
                 d[key] = np.concatenate((d[key], dataset[key]), axis=0)
     return d
+########################################################################
+def get_d4rl_dataset_with_text(env, variant):
+    dataset = d4rl.qlearning_dataset(env)
+    n_data = dataset['observations'].shape[0]
+    use_size = int(n_data * variant["target_env_ratio"])
+    np.random.seed(variant["seed"])
+    idxs = np.random.choice(n_data, use_size, replace=False)
+    env_name = env.unwrapped.spec.id
+    encoder = variant["encoder_model"]
+    tokenizer = variant["text_tokenizer"]
+    dataset = preprocess_with_text(dataset, encoder, tokenizer, TEXT_DESCRIPTION[env_name])
+    
+    return dict(
+        observations=dataset['observations'][idxs],
+        actions=dataset['actions'][idxs],
+        next_observations=dataset['next_observations'][idxs],
+        rewards=dataset['rewards'][idxs],
+        dones=dataset['terminals'][idxs].astype(np.float32),
+    )
 
 
+def get_d4rl_dataset_from_multiple_envs_with_text(envs, variant):
+    n_data = 0
+    d = None
+    encoder = variant["encoder_model"]
+    tokenizer = variant["text_tokenizer"]
+    for env in envs:
+        dataset = d4rl.qlearning_dataset(env)
+        dataset['dones'] = dataset['terminals']
+        del dataset['terminals']
+        n_data = dataset['observations'].shape[0]
+        env_name = env.unwrapped.spec.id
+        
+        if env_name == "%s-%s-v2" % (variant["env"], variant["dataset"]):
+            use_size = int(n_data * variant["target_env_ratio"])
+            np.random.seed(variant["seed"])
+            idxs = np.random.choice(n_data, use_size, replace=False)
+        else:
+            use_size = int(n_data * variant["other_env_ratio"])
+            np.random.seed(variant["seed"])
+            idxs = np.random.choice(n_data, use_size, replace=False)
+            
+        dataset = preprocess_with_text(dataset, encoder, tokenizer, TEXT_DESCRIPTION[env_name])
+        
+        if not d:
+            d = dict(
+                observations=dataset['observations'][idxs],
+                actions=dataset['actions'][idxs],
+                next_observations=dataset['next_observations'][idxs],
+                rewards=dataset['rewards'][idxs],
+                dones=dataset['dones'][idxs].astype(np.float32),
+            )
+        else:
+            for key in d:
+                d[key] = np.concatenate((d[key], dataset[key][idxs]), axis=0)
+    return d
+    
+def get_d4rl_dataset_from_multiple_different_envs(envs, variant):
+    n_data = 0
+    d = dict()
+    encoder = variant["encoder_model"]
+    tokenizer = variant["text_tokenizer"]
+    for env in envs:
+        dataset = d4rl.qlearning_dataset(env)
+        dataset['dones'] = dataset['terminals']
+        del dataset['terminals']
+        n_data = dataset['observations'].shape[0]
+        env_name = env.unwrapped.spec.id
+        task_name = env_name.split("-")[0]
+        if env_name == "%s-%s-v2" % (variant["env"], variant["dataset"]):
+            use_size = int(n_data * variant["target_env_ratio"])
+            np.random.seed(variant["seed"])
+            idxs = np.random.choice(n_data, use_size, replace=False)
+        else:
+            use_size = int(n_data * variant["other_env_ratio"])
+            np.random.seed(variant["seed"])
+            idxs = np.random.choice(n_data, use_size, replace=False)
+        
+        dataset = preprocess_with_text(dataset, encoder, tokenizer, TEXT_DESCRIPTION[env_name])
+        if task_name not in d.keys():
+            d[task_name] = dict(
+                observations=dataset['observations'][idxs],
+                actions=dataset['actions'][idxs],
+                next_observations=dataset['next_observations'][idxs],
+                rewards=dataset['rewards'][idxs],
+                dones=dataset['dones'][idxs].astype(np.float32),
+            )
+        else:
+            for key in d[task_name]:
+                d[task_name][key] = np.concatenate((d[task_name][key], dataset[key][idxs]), axis=0)
+    return d
+
+def subsample_batch_from_different_datasets(batch, size, weights):
+    names = []
+    values = []
+    for name, value in weights.items():
+        names.append(name)
+        values.append(value)
+    chosen = np.random.choice(names, p=values)
+    indices = np.random.randint(batch[chosen]['observations'].shape[0], size=size)
+    return index_batch(batch[chosen], indices), chosen
+
+def get_task_weights(dataset):
+    weights = dict()
+    count = 0
+    for task, data in dataset.items():
+        weights[task] = data["observations"].shape[0]
+        count += weights[task]
+    for task, value in weights.items():
+        weights[task] = value / count
+    return weights
+
+#########################################################################
 def get_mdp_dataset_with_ratio(n_traj, n_state, n_action, policy_temperature, transition_temperature,
                                ratio=1, seed=0, random_start=False, verbose=True):
     prefix = 'mdp2' if random_start else 'mdp'

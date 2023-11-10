@@ -25,9 +25,9 @@ import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
 from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, \
-    index_batch, get_mdp_dataset_with_ratio, get_d4rl_dataset_from_multiple_envs
+    index_batch, get_mdp_dataset_with_ratio, get_d4rl_dataset_from_multiple_envs, get_d4rl_dataset_from_multiple_different_envs, get_d4rl_dataset_from_multiple_envs_with_text, get_d4rl_dataset_with_text, subsample_batch_from_multiple_datasets, get_task_weights
 from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain, \
-    FullyConnectedQFunctionPretrain2
+    FullyConnectedQFunctionPretrain2, FullyConnectedQFunctionPretrain3
 from SimpleSAC.sampler import StepSampler, TrajSampler
 from SimpleSAC.utils import Timer, define_flags_with_default, set_random_seed, print_flags, get_user_flags, \
     prefix_metrics
@@ -35,6 +35,9 @@ from SimpleSAC.utils import WandBLogger
 # from viskit.logging import logger_other, setup_logger
 from exp_scripts.grid_utils import *
 from redq.utils.logx import EpochLogger
+#########################################
+from transformers import AutoTokenizer, AutoModel
+#########################################
 
 CUDA_AVAILABLE = torch.cuda.is_available()
 if CUDA_AVAILABLE:
@@ -65,9 +68,9 @@ def get_default_variant_dict():
         reward_bias=0.0,
         clip_action=0.999,
 
-        policy_hidden_layer=2,
+        policy_hidden_layer=3,
         policy_hidden_unit=256,
-        qf_hidden_layer=2,
+        qf_hidden_layer=3,
         qf_hidden_unit=256,
         orthogonal_init=False,
         policy_log_std_multiplier=1.0,
@@ -107,6 +110,14 @@ def get_default_variant_dict():
         mdppre_random_start=False,
 
         hard_update_target_after_pretrain=True,  # if True, hard update target networks after pretraining stage.
+        ############################
+        text_encoder=None,
+        target_env_data_ratio=1.0,
+        other_env_data_ratio=1.0,
+        pretrain_lr=3e-4,
+        finetune_qf_lr=3e-4,
+        finetune_policy_lr=3e-4
+        ############################
     )
 
 
@@ -319,6 +330,10 @@ def get_additional_dict(additional_dict_with_list):
 
 
 def run_single_exp(variant):
+    if variant["text_encoder"] is not None:
+        variant["encoder_model"] = AutoModel.from_pretrained(variant["text_encoder"], is_decoder=False)
+        variant["text_tokenizer"] = AutoTokenizer.from_pretrained(variant["text_encoder"])
+    
     if variant['mdppre_same_as_s_and_policy']:
         variant['mdppre_n_action'] = variant['mdppre_n_state']
         variant['mdppre_transition_temperature'] = variant['mdppre_policy_temperature']
@@ -334,17 +349,24 @@ def run_single_exp(variant):
 
     # ready_agent = get_cqlr3_baseline_ready_agent_dict(variant['env'], variant['dataset'], variant['seed'])['agent']
     ready_agent = None
-
-    env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
-
-    def next_mujoco_env_name(env_name, reverse=False):
-        envs = ['hopper', 'walker2d', 'halfcheetah']
-        if not reverse:
-            new_index = (envs.index(env_name) + 1) % 3
+    if variant["env"] == "maze2d":
+        if variant["dataset"] == "open":
+            env_full = '%s-%s-v0' % (variant['env'], variant['dataset'])
         else:
-            new_index = (envs.index(env_name) - 1) % 3
-        return envs[new_index]
+            env_full = '%s-%s-v1' % (variant['env'], variant['dataset'])
+    else:
+        env_full = '%s-%s-v2' % (variant['env'], variant['dataset'])
 
+    def next_mujoco_env_name(env_name, reverse=False, index=1):
+        assert index in [1,2,3]
+        #################################################
+        envs = ['hopper', 'walker2d', 'halfcheetah', 'ant']
+        if not reverse:
+            new_index = (envs.index(env_name) + index) % 4
+        else:
+            new_index = (envs.index(env_name) - index) % 4
+        return envs[new_index]
+        #################################################
     if variant['pretrain_mode'] in ['proj1_q_sprime', 'proj1_q_sprime_3x']:
         pretrain_task_name = next_mujoco_env_name(variant['env'])
         pretrain_env_name = '%s-%s-v2' % (pretrain_task_name, variant['dataset'])
@@ -353,23 +375,107 @@ def run_single_exp(variant):
         pretrain_env_name = '%s-%s-v2' % (pretrain_task_name, variant['dataset'])
     elif variant['pretrain_mode'] in ['mdp_q_sprime', 'mdp_same_proj', 'mdp_same_noproj']:
         pretrain_env_name = None
+    #########################################################
+    elif variant["pretrain_mode"] in ['q_sprime_text', 'q_noact_sprime_text', 'proj0_q_sprime_text', 'TD']:
+        pretrain_env_name = env_full
+    
+    #elif variant["pretrain_mode"] in ['q_sprime_text_3x', 'q_noact_sprime_text_3x', 'proj0_q_sprime_text_3x', 'TD_3x']:
+    #    pretrain_env_name = []
+    #    for dataset_name in MUJOCO_3_DATASETS:
+    #        pretrain_env_name.append('%s-%s-v2' % (variant["env"], dataset_name))
+    
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text", "proj3_q_noact_sprime_text", "proj3_TD_text"]:
+        pretrain_task_name = next_mujoco_env_name(variant['env'])
+        pretrain_env_name = '%s-%s-v2' % (pretrain_task_name, variant['dataset'])
+        
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_3x", "proj3_q_noact_sprime_text_3x", "proj3_TD_text_3x"]:\
+        pretrain_env_name = []
+        pretrain_task_name = next_mujoco_env_name(variant['env'])
+        for dataset_name in MUJOCO_3_DATASETS:
+            pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, dataset_name))
+            
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_1", "proj3_q_noact_sprime_text_1", "proj3_TD_text_1"]:
+        pretrain_task_name = next_mujoco_env_name(variant['env'], index=2)
+        pretrain_env_name = '%s-%s-v2' % (pretrain_task_name, variant['dataset'])
+        
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_1_3x", "proj3_q_noact_sprime_text_1_3x", "proj3_TD_text_1_3x"]:
+        pretrain_env_name = []
+        pretrain_task_name = next_mujoco_env_name(variant['env'], index=2)
+        for dataset_name in MUJOCO_3_DATASETS:
+            pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, dataset_name)
+            
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_2", "proj3_q_noact_sprime_text_2", "proj3_TD_text_2"]:
+        pretrain_task_name = next_mujoco_env_name(variant['env'], index=3)
+        pretrain_env_name = '%s-%s-v2' % (pretrain_task_name, variant['dataset'])
+        
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_2_3x", "proj3_q_noact_sprime_text_2_3x", "proj3_TD_text_2_3x"]:
+        pretrain_env_name = []
+        pretrain_task_name = next_mujoco_env_name(variant['env'], index=3)
+        for dataset_name in MUJOCO_3_DATASETS:
+            pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, dataset_name)
+        
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_all", "proj3_q_noact_sprime_text_all", "proj3_TD_text_all"]:
+        pretrain_env_name = []
+        for pretrain_task_name in ["hopper", "walker2d", "halfcheetah", "ant"]:
+            pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, variant['dataset']))
+            
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_all_3x", "proj3_q_noact_sprime_text_all_3x", "proj3_TD_text_all_3x"]:
+        pretrain_env_name = []
+        for pretrain_task_name in ["hopper", "walker2d", "halfcheetah", "ant"]:
+            for dataset_name in MUJOCO_3_DATASETS:
+                if pretrain_task_name == variant["env"]:
+                    if dataset_name != variant["dataset"]:
+                        continue
+                pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, dataset_name))
+            
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_allbut", "proj3_q_noact_sprime_text_allbut", "proj3_TD_text_allbut"]:
+        pretrain_env_name = []
+        for i in range(1,4):
+            pretrain_task_name = next_mujoco_env_name(variant['env'], index=i)
+            pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, variant['dataset']))
+    
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_allbut_3x", "proj3_q_noact_sprime_text_allbut_3x", "proj3_TD_text_allbut_3x"]:
+        pretrain_env_name = []
+        for i in range(1,4):
+            pretrain_task_name = next_mujoco_env_name(variant['env'], index=i)
+            for dataset_name in MUJOCO_3_DATASETS:
+                pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, dataset_name))
+    ##########################################################
     else:
         pretrain_env_name = env_full
 
     eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])
 
     # pretrain dataset
+    ############################################################
     if pretrain_env_name:
-        sampler_pretrain = TrajSampler(gym.make(pretrain_env_name).unwrapped, variant['max_traj_length'])
-        pretrain_obs_dim = sampler_pretrain.env.observation_space.shape[0]
-        pretrain_act_dim = sampler_pretrain.env.action_space.shape[0]
+        if isinstance(pretrain_env_name, str):
+            sampler_pretrain = TrajSampler(gym.make(pretrain_env_name).unwrapped, variant['max_traj_length'])
+            pretrain_obs_dim = sampler_pretrain.env.observation_space.shape[0]
+            pretrain_act_dim = sampler_pretrain.env.action_space.shape[0]
+        elif isinstance(pretrain_env_name, list):
+            sampler_pretrain = None
+            pretrain_envs = [gym.make(name).unwrapped for name in pretrain_env_name]
+            pretrain_obs_dim = [env.observation_space.shape[0] for env in pretrain_envs]
+            pretrain_act_dim = [env.action_space.shape[0] for env in pretrain_envs]
+    ############################################################
     else:  # if random mdp pretrain
         if variant['pretrain_mode'] in ['mdp_same_proj', 'mdp_same_noproj']:
             variant['mdppre_state_dim'] = eval_sampler.env.observation_space.shape[0]
             variant['mdppre_action_dim'] = eval_sampler.env.action_space.shape[0]
         pretrain_obs_dim = variant['mdppre_state_dim']
         pretrain_act_dim = variant['mdppre_action_dim']
+    
+    ##############################################################
+    if variant["text_encoder"] is not None:
+        if isinstance(pretrain_obs_dim, list):
+            pretrain_obs_dim = [dim + variant["encoder_model"].config.hidden_size for dim in pretrain_obs_dim]
+            pretrain_act_dim = [dim + variant["encoder_model"].config.hidden_size for dim in pretrain_act_dim]
+        else:
+            pretrain_obs_dim += variant["encoder_model"].config.hidden_size
+            pretrain_act_dim += variant["encoder_model"].config.hidden_size
 
+    ##############################################################
     policy_arch = '-'.join([str(variant['policy_hidden_unit']) for _ in range(variant['policy_hidden_layer'])])
     policy = TanhGaussianPolicy(
         eval_sampler.env.observation_space.shape[0],
@@ -401,6 +507,38 @@ def run_single_exp(variant):
             arch=qf_arch,
             orthogonal_init=variant['orthogonal_init'],
         )
+    #########################################################################
+    elif variant["pretrain_mode"] in ['q_sprime_text', 'q_noact_sprime_text', 'proj0_q_sprime_text', "proj0_q_noact_sprime_text", 'TD', 
+                                        'proj3_q_sprime_text', 'proj3_q_sprime_text_1', 'proj3_q_sprime_text_2',
+                                        'proj3_q_sprime_text_all', 'proj3_q_sprime_text_allbut', 'proj3_q_noact_sprime_text',
+                                        'proj3_q_noact_sprime_text_1', 'proj3_q_noact_sprime_text_2', 'proj3_q_noact_sprime_text_all',
+                                        'proj3_q_noact_sprime_text_allbut', 'proj3_TD_text', 'proj3_TD_text_1', 'proj3_TD_text_2',
+                                        'proj3_TD_text_all', 'proj3_TD_text_allbut',
+                                        'proj3_q_sprime_text_3x', 'proj3_q_sprime_text_1_3x', 'proj3_q_sprime_text_2_3x',
+                                        'proj3_q_sprime_text_all_3x', 'proj3_q_sprime_text_allbut_3x', 'proj3_q_noact_sprime_text_3x',
+                                        'proj3_q_noact_sprime_text_1_3x', 'proj3_q_noact_sprime_text_2_3x', 'proj3_q_noact_sprime_text_all_3x',
+                                        'proj3_q_noact_sprime_text_allbut_3x', 'proj3_TD_text_3x', 'proj3_TD_text_1_3x', 'proj3_TD_text_2_3x',
+                                        'proj3_TD_text_all_3x', 'proj3_TD_text_allbut_3x'
+                                        ]:
+        qf1 = FullyConnectedQFunctionPretrain3(
+            eval_sampler.env.observation_space.shape[0],
+            eval_sampler.env.action_space.shape[0],
+            pretrain_obs_dim,
+            pretrain_act_dim,
+            arch=qf_arch,
+            orthogonal_init=variant['orthogonal_init'],
+            pretrain_env_name
+        )
+        qf2 = FullyConnectedQFunctionPretrain3(
+            eval_sampler.env.observation_space.shape[0],
+            eval_sampler.env.action_space.shape[0],
+            pretrain_obs_dim,
+            pretrain_act_dim,
+            arch=qf_arch,
+            orthogonal_init=variant['orthogonal_init'],
+            pretrain_env_name
+        )
+    #########################################################################
     else:  # no projection layer
         qf1 = FullyConnectedQFunctionPretrain(
             eval_sampler.env.observation_space.shape[0],
@@ -422,6 +560,9 @@ def run_single_exp(variant):
         variant['cql'].target_entropy = -np.prod(eval_sampler.env.action_space.shape).item()
 
     agent = ConservativeSAC(variant['cql'], policy, qf1, qf2, target_qf1, target_qf2, variant)
+    #################################################
+    agent.set_qf_optimizer_lr(variant["pretrain_lr"])
+    #################################################
     agent.torch_to_device(variant['device'])
 
     sampler_policy = SamplerPolicy(policy, variant['device'])
@@ -539,6 +680,65 @@ def run_single_exp(variant):
                     print("Loaded 3 datasets from", pretrain_task_name)
                     if variant['pretrain_data_ratio'] < 1:
                         raise NotImplementedError
+                ##################################################
+                elif variant["pretrain_mode"] in ["proj3_q_sprime_text_all", 'proj3_q_sprime_text_allbut', 'proj3_q_noact_sprime_text_all',
+                                                    'proj3_q_noact_sprime_text_allbut', 'proj3_TD_text_all', 'proj3_TD_text_allbut', 
+                                                    "proj3_q_sprime_text_all_3x", 'proj3_q_sprime_text_allbut_3x', 'proj3_q_noact_sprime_text_all_3x',
+                                                    'proj3_q_noact_sprime_text_allbut_3x', 'proj3_TD_text_all_3x', 'proj3_TD_text_allbut_3x']:
+                    envs = []
+                    for task_name in pretrain_env_name:
+                        envs.append(gym.make(task_name).unwrapped)
+                    dataset = get_d4rl_dataset_from_multiple_different_envs(envs,variant)
+                    safe_q_max = dict()
+                    for task in dataset.keys():
+                        dataset[task]['rewards'] = dataset[task]['rewards'] * variant['reward_scale'] + variant['reward_bias']
+                        dataset[task]['actions'] = np.clip(dataset[task]['actions'], -variant['clip_action'], variant['clip_action'])
+                        max_reward = max(dataset[task]['rewards'])
+                        safe_q_max[task] = max_reward * 100  # when discount is 0.99
+                    print("Loaded datasets from", pretrain_env_name)
+
+                #elif variant["pretrain_mode"] in ["proj3_q_sprime_text_all_3x", 'proj3_q_sprime_text_allbut_3x', 'proj3_q_noact_sprime_text_all_3x',
+                #                                    'proj3_q_noact_sprime_text_allbut_3x', 'proj3_TD_text_all_3x', 'proj3_TD_text_allbut_3x']:
+                #    envs = dict()
+                #    for dataset_name in MUJOCO_3_DATASETS:
+                #        for task_name in pretrain_env_name:
+                #            if 
+                #            name_to_make = '%s-%s-v2' % (task_name, dataset_name)
+                #            envs[name_to_make] = gym.make('%s-%s-v2' % (task_name, dataset_name)).unwrapped
+                #    dataset = get_d4rl_dataset_from_multiple_different_envs(envs, variant)
+                #    print("Loaded 3 datasets from", pretrain_task_name)
+                #    if variant['pretrain_data_ratio'] < 1:
+                #        raise NotImplementedError
+                
+                elif variant["pretrain_mode"] in ["q_sprime_text", "q_noact_sprime_text", "proj0_q_sprime_text", "proj0_q_noact_sprime_text",
+                                                    "TD", "proj3_q_sprime_text", "proj3_q_sprime_text_1", "proj3_q_sprime_text_2", 
+                                                    "proj3_q_noact_sprime_text", "proj3_q_noact_sprime_text_1", "proj3_q_noact_sprime_text_2",
+                                                    "proj3_TD_text", "proj3_TD_text_1", "proj3_TD_text_2"
+                                                    ]:
+                    dataset = get_d4rl_dataset_with_text(sampler_pretrain.env, variant)
+                    #dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
+                    #dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
+                    dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
+                    dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
+                    max_reward = max(dataset['rewards'])
+                    safe_q_max = max_reward * 100  # when discount is 0.99
+                    print("D4RL dataset loaded for", pretrain_env_name)
+                    
+                elif variant["pretrain_mode"] in ["proj3_q_sprime_text_3x", "proj3_q_sprime_text_1_3x", "proj3_q_sprime_text_2_3x", 
+                                                    "proj3_q_noact_sprime_text_3x", "proj3_q_noact_sprime_text_1_3x", "proj3_q_noact_sprime_text_2_3x",
+                                                    "proj3_TD_text_3x", "proj3_TD_text_1_3x", "proj3_TD_text_2_3x"
+                                                    ]:
+                    envs = []
+                    for task_name in pretrain_env_name:
+                        envs.append(gym.make(task_name).unwrapped)
+                    dataset = get_d4rl_dataset_from_multiple_envs_with_text(envs, variant)
+                    dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
+                    dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
+                    max_reward = max(dataset['rewards'])
+                    safe_q_max = max_reward * 100  # when discount is 0.99
+                    print("Loaded datasets from", pretrain_task_name)
+                    
+                ##################################################
                 else:
                     # TODO add hyper to change pretrain data size, need to reflect that in pretrain model name
                     dataset = get_d4rl_dataset_with_ratio(sampler_pretrain.env, ratio=variant['pretrain_data_ratio'])
@@ -576,12 +776,20 @@ def run_single_exp(variant):
                 index2state = 2 * np.random.rand(1000, pretrain_obs_dim) - 1
                 index2action = 2 * np.random.rand(1000, pretrain_act_dim) - 1
                 index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)
-
+            
+            if "observations" not in dataset.keys():
+                task_weights_for_sampling = get_task_weights(dataset)
+            
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch + 1}
                 for i_pretrain in range(variant['n_pretrain_step_per_epoch']):
-                    batch = subsample_batch(dataset, variant['batch_size'])
-
+                    ###############################################################
+                    if "observations" in dataset.keys():
+                        batch = subsample_batch(dataset, variant['batch_size'])
+                        chosen = None
+                    else:
+                        batch, chosen = subsample_batch_from_multiple_datasets(dataset, variant["batch_size"], task_weights_for_sampling)
+                    #################################################################
                     if not pretrain_env_name:
                         batch['observations'] = index2state[batch['observations']]
                         batch['actions'] = index2action[batch['actions']]
@@ -599,19 +807,51 @@ def run_single_exp(variant):
                         batch['next_observations'] = index2state[rand_next_obs]
 
                     batch = batch_to_torch(batch, variant['device'])
-                    metrics.update(agent.pretrain(batch, variant['pretrain_mode'], variant['mdppre_n_state']))
-
-                pretrain_logger.log_tabular("PretrainIteration", epoch + 1)
-                pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * variant['n_pretrain_step_per_epoch'])
-                pretrain_logger.log_tabular("pretrain_loss", metrics['pretrain_loss'])
-                pretrain_logger.log_tabular("total_pretrain_steps", metrics['total_pretrain_steps'])
-                pretrain_logger.log_tabular("current_hours", (time.time() - st) / 3600)
-                pretrain_logger.log_tabular("est_total_hours",
-                                            (variant['n_pretrain_epochs'] / (epoch + 1) * (time.time() - st)) / 3600)
+                    ######################################################################
+                    if variant["pretrain_mode"] in ["TD", "proj3_TD_text", "proj3_TD_text_3x", "proj3_TD_text_1", "proj3_TD_text_1_3x",
+                                                        "proj3_TD_text_2", "proj3_TD_text_2_3x", "proj3_TD_text_all", "proj3_TD_text_all_3x",
+                                                        "proj3_TD_text_allbut", "proj3_TD_text_allbut_3x"]:
+                        metrics.update(prefix_metrics(agent.train(batch, bc=epoch < variant['bc_epochs'],
+                                                                  ready_agent=ready_agent,
+                                                                  q_distill_weight=variant['q_distill_weight'],
+                                                                  distill_only=variant['distill_only'],
+                                                                  safe_q_max=safe_q_max[chosen],
+                                                                  chosen=chosen
+                                                                  ), 'sac', connector_string='_'))
+                    else:
+                        metrics.update(agent.pretrain(batch, variant['pretrain_mode'], variant['mdppre_n_state'], chosen))
+                if variant["pretrain_mode"] in ["TD", "proj3_TD_text", "proj3_TD_text_3x", "proj3_TD_text_1", "proj3_TD_text_1_3x",
+                                                        "proj3_TD_text_2", "proj3_TD_text_2_3x", "proj3_TD_text_all", "proj3_TD_text_all_3x",
+                                                        "proj3_TD_text_allbut", "proj3_TD_text_allbut_3x"]:
+                    pretrain_logger.log_tabular("PretrainIteration", epoch + 1)
+                    pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * variant['n_pretrain_step_per_epoch'])
+                    #pretrain_logger.log_tabular("pretrain_loss", metrics['pretrain_loss'])
+                    things_to_log = ['sac_log_pi', 'sac_policy_loss', 'sac_qf1_loss', 'sac_qf2_loss', 'sac_alpha_loss', 'sac_alpha',
+                                    'sac_average_qf1', 'sac_average_qf2', 'average_traj_length',
+                                    'sac_qf1_distill_loss', 'sac_qf2_distill_loss',
+                                    'sac_combined_loss', 'sac_cql_conservative_loss', 'sac_qf_average_loss']
+                    for m in things_to_log:
+                        if m not in metrics:
+                            pretrain_logger.log_tabular(m, 0)
+                        else:
+                            pretrain_logger.log_tabular(m, metrics[m])
+                    pretrain_logger.log_tabular("total_pretrain_steps", metrics['total_pretrain_steps'])
+                    pretrain_logger.log_tabular("current_hours", (time.time() - st) / 3600)
+                    pretrain_logger.log_tabular("est_total_hours",
+                                                (variant['n_pretrain_epochs'] / (epoch + 1) * (time.time() - st)) / 3600)
+                    
+                else:
+                    pretrain_logger.log_tabular("PretrainIteration", epoch + 1)
+                    pretrain_logger.log_tabular("PretrainSteps", (epoch + 1) * variant['n_pretrain_step_per_epoch'])
+                    pretrain_logger.log_tabular("pretrain_loss", metrics['pretrain_loss'])
+                    pretrain_logger.log_tabular("total_pretrain_steps", metrics['total_pretrain_steps'])
+                    pretrain_logger.log_tabular("current_hours", (time.time() - st) / 3600)
+                    pretrain_logger.log_tabular("est_total_hours",
+                                                (variant['n_pretrain_epochs'] / (epoch + 1) * (time.time() - st)) / 3600)
                 pretrain_logger.dump_tabular()
                 sys.stdout.flush()
-
-                if (epoch + 1) in (150, 250, 350):
+                ##############################################################################################################
+                if (epoch + 1) % 50 == 0:
                     pretrain_model_name_mid = pretrain_model_name[:-4] + '_%d' % (epoch + 1) + pretrain_model_name[-4:]
 
                     pretrain_full_path_mid = os.path.join(pretrain_model_folder_path, pretrain_model_name_mid)
@@ -687,7 +927,11 @@ def run_single_exp(variant):
             batch = batch_to_torch(batch, variant['device'])
             agent.q_distill_only(batch, ready_agent, 1)
         agent.update_target_network(1)
+    #################################
+    agent.set_qf_optimizer_lr(variant["finetune_qf_lr"])
+    agent.set_policy_optimizer_lr(variant["finetune_policy_lr"])
 
+    ###################################
     # TODO: Add the below line to modify finetuning lr
     agent.update_qf_feature_lr(variant['q_network_feature_lr_scale'])
 

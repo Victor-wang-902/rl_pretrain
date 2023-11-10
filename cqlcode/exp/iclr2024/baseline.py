@@ -36,8 +36,8 @@ def main():
     ###########################################################
     exp_prefix = 'iclr_cqlr3n'
     settings = [
-        'env', '', MUJOCO_4_ENVS,
-        'dataset', '', MUJOCO_3_DATASETS,
+        'env', '', ["maze2d"],
+        'dataset', '', ["open", "large", "medium", "umaze"],
         'pretrain_mode', 'pre', ['none'],  # 'none', 'q_sprime', 'mdp_q_sprime'
         'qf_hidden_layer', 'l', [2],
         'seed', '', [4069]#[42, 666, 1024, 2048, 4069] + list(range(15)),

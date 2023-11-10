@@ -98,6 +98,31 @@ class ConservativeSAC(object):
         self._total_steps = 0
         self._total_pretrain_steps = 0
 
+    ####################################
+    def set_qf_optimizer_lr(self, lr):
+        if self.config.qf_lr != lr:
+            self.config.qf_lr = lr
+            self.qf_optimizer = optimizer_class(
+                    list(self.qf1.parameters()) + list(self.qf2.parameters()), self.config.qf_lr
+                )
+            if self.config.cql_lagrange:
+                self.log_alpha_prime = Scalar(1.0)
+                self.alpha_prime_optimizer = optimizer_class(
+                    self.log_alpha_prime.parameters(),
+                    lr=self.config.qf_lr,
+                )
+
+    def set_policy_optimizer_lr(self, lr):
+        if self.config.policy_lr != lr:
+            self.config.policy_lr = lr
+            self.policy_optimizer = optimizer_class(
+                self.policy.parameters(), self.config.policy_lr,
+            if self.config.use_automatic_entropy_tuning:
+                self.alpha_optimizer = optimizer_class(
+                    self.log_alpha.parameters(),
+                    lr=self.config.policy_lr,
+                )
+    ####################################
     def update_qf_feature_lr(self, scale):
         if scale != 1:
             if scale == 0:
@@ -139,7 +164,7 @@ class ConservativeSAC(object):
         self.qf_optimizer.step()
 
     def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0, distill_only=False,
-              safe_q_max=None):
+              safe_q_max=Nonem chosen=None):
         self._total_steps += 1
 
         observations = batch['observations']
@@ -384,7 +409,7 @@ class ConservativeSAC(object):
 
         return metrics
 
-    def pretrain(self, batch, pretrain_mode, mdppre_n_state):
+    def pretrain(self, batch, pretrain_mode, mdppre_n_state, chosen=None):
         # pretrain mode:  q_sprime, 4. q_mc
         self._total_pretrain_steps += 1
 
@@ -434,6 +459,7 @@ class ConservativeSAC(object):
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
             pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
+        elif pretrain_mode in [""]
         else:
             raise NotImplementedError
 
