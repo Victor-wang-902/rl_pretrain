@@ -25,7 +25,7 @@ import absl.flags
 
 from SimpleSAC.conservative_sac import ConservativeSAC
 from SimpleSAC.replay_buffer import batch_to_torch, get_d4rl_dataset_with_ratio, subsample_batch, \
-    index_batch, get_mdp_dataset_with_ratio, get_d4rl_dataset_from_multiple_envs, get_d4rl_dataset_from_multiple_different_envs, get_d4rl_dataset_from_multiple_envs_with_text, get_d4rl_dataset_with_text, subsample_batch_from_multiple_datasets, get_task_weights
+    index_batch, get_mdp_dataset_with_ratio, get_d4rl_dataset_from_multiple_envs, get_d4rl_dataset_from_multiple_different_envs, get_d4rl_dataset_from_multiple_datasets_with_text, get_d4rl_dataset_with_text, subsample_batch_from_different_datasets, get_task_weights
 from SimpleSAC.model import TanhGaussianPolicy, SamplerPolicy, FullyConnectedQFunctionPretrain, \
     FullyConnectedQFunctionPretrain2, FullyConnectedQFunctionPretrain3
 from SimpleSAC.sampler import StepSampler, TrajSampler
@@ -111,9 +111,8 @@ def get_default_variant_dict():
 
         hard_update_target_after_pretrain=True,  # if True, hard update target networks after pretraining stage.
         ############################
+        policy_with_text=False,
         text_encoder=None,
-        target_env_data_ratio=1.0,
-        other_env_data_ratio=1.0,
         pretrain_lr=3e-4,
         finetune_qf_lr=3e-4,
         finetune_policy_lr=3e-4
@@ -333,7 +332,10 @@ def run_single_exp(variant):
     if variant["text_encoder"] is not None:
         variant["encoder_model"] = AutoModel.from_pretrained(variant["text_encoder"], is_decoder=False)
         variant["text_tokenizer"] = AutoTokenizer.from_pretrained(variant["text_encoder"])
-    
+    else:
+        variant["encoder_model"] = None
+        variant["text_tokenizer"] = None
+
     if variant['mdppre_same_as_s_and_policy']:
         variant['mdppre_n_action'] = variant['mdppre_n_state']
         variant['mdppre_transition_temperature'] = variant['mdppre_policy_temperature']
@@ -376,7 +378,7 @@ def run_single_exp(variant):
     elif variant['pretrain_mode'] in ['mdp_q_sprime', 'mdp_same_proj', 'mdp_same_noproj']:
         pretrain_env_name = None
     #########################################################
-    elif variant["pretrain_mode"] in ['q_sprime_text', 'q_noact_sprime_text', 'proj0_q_sprime_text', 'TD']:
+    elif variant["pretrain_mode"] in ['q_sprime_text', 'q_noact_sprime_text', 'proj0_q_sprime_text', 'TD', 'proj0_TD']:
         pretrain_env_name = env_full
     
     #elif variant["pretrain_mode"] in ['q_sprime_text_3x', 'q_noact_sprime_text_3x', 'proj0_q_sprime_text_3x', 'TD_3x']:
@@ -388,7 +390,7 @@ def run_single_exp(variant):
         pretrain_task_name = next_mujoco_env_name(variant['env'])
         pretrain_env_name = '%s-%s-v2' % (pretrain_task_name, variant['dataset'])
         
-    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_3x", "proj3_q_noact_sprime_text_3x", "proj3_TD_text_3x"]:\
+    elif variant["pretrain_mode"] in ["proj3_q_sprime_text_3x", "proj3_q_noact_sprime_text_3x", "proj3_TD_text_3x"]:
         pretrain_env_name = []
         pretrain_task_name = next_mujoco_env_name(variant['env'])
         for dataset_name in MUJOCO_3_DATASETS:
@@ -402,7 +404,7 @@ def run_single_exp(variant):
         pretrain_env_name = []
         pretrain_task_name = next_mujoco_env_name(variant['env'], index=2)
         for dataset_name in MUJOCO_3_DATASETS:
-            pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, dataset_name)
+            pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, dataset_name))
             
     elif variant["pretrain_mode"] in ["proj3_q_sprime_text_2", "proj3_q_noact_sprime_text_2", "proj3_TD_text_2"]:
         pretrain_task_name = next_mujoco_env_name(variant['env'], index=3)
@@ -412,7 +414,7 @@ def run_single_exp(variant):
         pretrain_env_name = []
         pretrain_task_name = next_mujoco_env_name(variant['env'], index=3)
         for dataset_name in MUJOCO_3_DATASETS:
-            pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, dataset_name)
+            pretrain_env_name.append('%s-%s-v2' % (pretrain_task_name, dataset_name))
         
     elif variant["pretrain_mode"] in ["proj3_q_sprime_text_all", "proj3_q_noact_sprime_text_all", "proj3_TD_text_all"]:
         pretrain_env_name = []
@@ -444,6 +446,8 @@ def run_single_exp(variant):
     else:
         pretrain_env_name = env_full
 
+    print(f"pretrain environments: {pretrain_env_name}")
+
     eval_sampler = TrajSampler(gym.make(env_full).unwrapped, variant['max_traj_length'])
 
     # pretrain dataset
@@ -459,32 +463,103 @@ def run_single_exp(variant):
             pretrain_obs_dim = [env.observation_space.shape[0] for env in pretrain_envs]
             pretrain_act_dim = [env.action_space.shape[0] for env in pretrain_envs]
     ############################################################
+    
+
     else:  # if random mdp pretrain
         if variant['pretrain_mode'] in ['mdp_same_proj', 'mdp_same_noproj']:
             variant['mdppre_state_dim'] = eval_sampler.env.observation_space.shape[0]
             variant['mdppre_action_dim'] = eval_sampler.env.action_space.shape[0]
         pretrain_obs_dim = variant['mdppre_state_dim']
         pretrain_act_dim = variant['mdppre_action_dim']
-    
+    ##DEBUG
+    #print(f"pretrain obs dim: {pretrain_obs_dim}")
+    #print(f"pretrain act dim: {pretrain_act_dim}")
+    ##
     ##############################################################
     if variant["text_encoder"] is not None:
-        if isinstance(pretrain_obs_dim, list):
-            pretrain_obs_dim = [dim + variant["encoder_model"].config.hidden_size for dim in pretrain_obs_dim]
-            pretrain_act_dim = [dim + variant["encoder_model"].config.hidden_size for dim in pretrain_act_dim]
-        else:
-            pretrain_obs_dim += variant["encoder_model"].config.hidden_size
-            pretrain_act_dim += variant["encoder_model"].config.hidden_size
+        encoder_dim = variant["encoder_model"].config.hidden_size
+        
+    else:
+        encoder_dim = 0
+    
 
     ##############################################################
+    
+    '''
+    ##DEBUG
+    print(f"pretrain obs dim after adding text: {pretrain_obs_dim}")
+    print(f"pretrain act dim after adding text: {pretrain_act_dim}")
+    ##
+    '''
     policy_arch = '-'.join([str(variant['policy_hidden_unit']) for _ in range(variant['policy_hidden_layer'])])
-    policy = TanhGaussianPolicy(
-        eval_sampler.env.observation_space.shape[0],
-        eval_sampler.env.action_space.shape[0],
-        arch=policy_arch,
-        log_std_multiplier=variant['policy_log_std_multiplier'],
-        log_std_offset=variant['policy_log_std_offset'],
-        orthogonal_init=variant['orthogonal_init'],
-    )
+    if variant["pretrain_mode"] in ['TD', 'proj0_TD',
+                                    'proj3_TD_text', 'proj3_TD_text_1', 'proj3_TD_text_2',
+                                    'proj3_TD_text_all', 'proj3_TD_text_allbut',
+                                    'proj3_TD_text_3x', 'proj3_TD_text_1_3x', 'proj3_TD_text_2_3x',
+                                    'proj3_TD_text_all_3x', 'proj3_TD_text_allbut_3x'
+                                        ]:
+        if variant["policy_with_text"]:
+
+            policy = TanhGaussianPolicy(
+                eval_sampler.env.observation_space.shape[0],
+                eval_sampler.env.action_space.shape[0],
+                pretrain_obs_dim=pretrain_obs_dim,
+                pretrain_act_dim=pretrain_act_dim,
+                encoder_dim=encoder_dim,
+                arch=policy_arch,
+                log_std_multiplier=variant['policy_log_std_multiplier'],
+                log_std_offset=variant['policy_log_std_offset'],
+                orthogonal_init=variant['orthogonal_init'],
+                pretrain_env_name=pretrain_env_name,
+                offline_env_name=env_full,
+                encoder=variant["encoder_model"],
+                tokenizer=variant["text_tokenizer"],
+                
+            )
+        else:
+            policy = TanhGaussianPolicy(
+                eval_sampler.env.observation_space.shape[0],
+                eval_sampler.env.action_space.shape[0],
+                pretrain_obs_dim=pretrain_obs_dim,
+                pretrain_act_dim=pretrain_act_dim,
+                encoder_dim=0,
+                arch=policy_arch,
+                log_std_multiplier=variant['policy_log_std_multiplier'],
+                log_std_offset=variant['policy_log_std_offset'],
+                orthogonal_init=variant['orthogonal_init'],
+                pretrain_env_name=pretrain_env_name
+            )
+    else:
+        if variant["policy_with_text"]:
+
+            policy = TanhGaussianPolicy(
+                eval_sampler.env.observation_space.shape[0],
+                eval_sampler.env.action_space.shape[0],
+                pretrain_obs_dim=None,
+                pretrain_act_dim=None,
+                encoder_dim=encoder_dim,
+                arch=policy_arch,
+                log_std_multiplier=variant['policy_log_std_multiplier'],
+                log_std_offset=variant['policy_log_std_offset'],
+                orthogonal_init=variant['orthogonal_init'],
+                pretrain_env_name=None,
+                offline_env_name=env_full,
+                encoder=variant["encoder_model"],
+                tokenizer=variant["text_tokenizer"]
+            )
+        else:
+            policy = TanhGaussianPolicy(
+                eval_sampler.env.observation_space.shape[0],
+                eval_sampler.env.action_space.shape[0],
+                pretrain_obs_dim=None,
+                pretrain_act_dim=None,
+                encoder_dim=0,
+                arch=policy_arch,
+                log_std_multiplier=variant['policy_log_std_multiplier'],
+                log_std_offset=variant['policy_log_std_offset'],
+                orthogonal_init=variant['orthogonal_init'],
+                pretrain_env_name=None,
+            )
 
     # TODO has to decide pretraining dataset and their obs and act dims, based on pretraining mode.
     qf_arch = '-'.join([str(variant['qf_hidden_unit']) for _ in range(variant['qf_hidden_layer'])])
@@ -508,7 +583,7 @@ def run_single_exp(variant):
             orthogonal_init=variant['orthogonal_init'],
         )
     #########################################################################
-    elif variant["pretrain_mode"] in ['q_sprime_text', 'q_noact_sprime_text', 'proj0_q_sprime_text', "proj0_q_noact_sprime_text", 'TD', 
+    elif variant["pretrain_mode"] in ['q_sprime_text', 'q_noact_sprime_text', 'proj0_q_sprime_text', "proj0_q_noact_sprime_text", 'TD', 'proj0_TD',
                                         'proj3_q_sprime_text', 'proj3_q_sprime_text_1', 'proj3_q_sprime_text_2',
                                         'proj3_q_sprime_text_all', 'proj3_q_sprime_text_allbut', 'proj3_q_noact_sprime_text',
                                         'proj3_q_noact_sprime_text_1', 'proj3_q_noact_sprime_text_2', 'proj3_q_noact_sprime_text_all',
@@ -525,18 +600,26 @@ def run_single_exp(variant):
             eval_sampler.env.action_space.shape[0],
             pretrain_obs_dim,
             pretrain_act_dim,
+            encoder_dim=encoder_dim,
             arch=qf_arch,
             orthogonal_init=variant['orthogonal_init'],
-            pretrain_env_name
+            pretrain_env_name=pretrain_env_name,
+            offline_env_name=env_full,
+            encoder=variant["encoder_model"],
+            tokenizer=variant["text_tokenizer"]
         )
         qf2 = FullyConnectedQFunctionPretrain3(
             eval_sampler.env.observation_space.shape[0],
             eval_sampler.env.action_space.shape[0],
             pretrain_obs_dim,
             pretrain_act_dim,
+            encoder_dim=encoder_dim,
             arch=qf_arch,
             orthogonal_init=variant['orthogonal_init'],
-            pretrain_env_name
+            pretrain_env_name=pretrain_env_name,
+            offline_env_name=env_full,
+            encoder=variant["encoder_model"],
+            tokenizer=variant["text_tokenizer"]
         )
     #########################################################################
     else:  # no projection layer
@@ -558,11 +641,17 @@ def run_single_exp(variant):
 
     if variant['cql'].target_entropy >= 0.0:
         variant['cql'].target_entropy = -np.prod(eval_sampler.env.action_space.shape).item()
+    ###############################################################
+    variant["cql"].policy_with_text = variant["policy_with_text"]
+    ###############################################################
 
     agent = ConservativeSAC(variant['cql'], policy, qf1, qf2, target_qf1, target_qf2, variant)
     #################################################
     agent.set_qf_optimizer_lr(variant["pretrain_lr"])
+    agent.set_policy_optimizer_lr(variant["pretrain_lr"])
     #################################################
+    print(f"agent config: {agent.config}")
+
     agent.torch_to_device(variant['device'])
 
     sampler_policy = SamplerPolicy(policy, variant['device'])
@@ -582,10 +671,10 @@ def run_single_exp(variant):
                 dataset_name_string = variant['dataset']
             else:
                 dataset_name_string = '%s_preR%s' % (variant['dataset'], str(variant['pretrain_data_ratio']))
-            pretrain_model_name = '%s_%s_%s_preM%s_l%d_hs%d_preUps%s_preEp%s.pth' % (
+            pretrain_model_name = '%s_%s_%s_preM%s_l%d_hs%d_preUps%s_preEp%s_prelr%s_prepwt%s_prete%s.pth' % (
                 'cql', variant['env'], dataset_name_string, variant['pretrain_mode'],
                 variant['qf_hidden_layer'], variant['qf_hidden_unit'], variant['n_pretrain_step_per_epoch'],
-                variant['n_pretrain_epochs'])
+                variant['n_pretrain_epochs'], variant["pretrain_lr"], variant["policy_with_text"], variant["text_encoder"] is not None)
         else:  # mdp pretrain
             if variant['pretrain_data_ratio'] == 1:
                 dataset_name_string = variant['mdppre_n_traj']
@@ -711,11 +800,11 @@ def run_single_exp(variant):
                 #        raise NotImplementedError
                 
                 elif variant["pretrain_mode"] in ["q_sprime_text", "q_noact_sprime_text", "proj0_q_sprime_text", "proj0_q_noact_sprime_text",
-                                                    "TD", "proj3_q_sprime_text", "proj3_q_sprime_text_1", "proj3_q_sprime_text_2", 
+                                                    "TD", "proj0_TD", "proj3_q_sprime_text", "proj3_q_sprime_text_1", "proj3_q_sprime_text_2", 
                                                     "proj3_q_noact_sprime_text", "proj3_q_noact_sprime_text_1", "proj3_q_noact_sprime_text_2",
                                                     "proj3_TD_text", "proj3_TD_text_1", "proj3_TD_text_2"
                                                     ]:
-                    dataset = get_d4rl_dataset_with_text(sampler_pretrain.env, variant)
+                    dataset = get_d4rl_dataset_with_text(sampler_pretrain.env, variant, pretrain=True)
                     #dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
                     #dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
                     dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
@@ -731,7 +820,7 @@ def run_single_exp(variant):
                     envs = []
                     for task_name in pretrain_env_name:
                         envs.append(gym.make(task_name).unwrapped)
-                    dataset = get_d4rl_dataset_from_multiple_envs_with_text(envs, variant)
+                    dataset = get_d4rl_dataset_from_multiple_datasets_with_text(envs, variant)
                     dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
                     dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
                     max_reward = max(dataset['rewards'])
@@ -745,6 +834,25 @@ def run_single_exp(variant):
                     dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
                     dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
                     print("D4RL dataset loaded for", pretrain_env_name)
+
+                ##DEBUG
+                '''
+                print(f"max_reward: {max_reward}")
+                print(f"safe_q_max: {safe_q_max}")
+                
+                if "observations" not in dataset:
+                    print(f"multi-dataset keys: {dataset.keys()}")
+                    for debug_key in dataset.keys():
+                        print(f"for dataset: {debug_key}")
+                        for debug_nested_key, debug_nested_value in dataset[debug_key].items():
+                            print(f"key: {debug_nested_key}")
+                            print(f"value shape: {debug_nested_value.shape}")
+                else:
+                    for debug_key, debug_value in dataset.items():
+                        print(f"dataset keys: {debug_key}")
+                        print(f"dataset value shape: {debug_value.shape}")
+                '''
+                ##
             else:
                 dataset = get_mdp_dataset_with_ratio(variant['mdppre_n_traj'],
                                                      variant['mdppre_n_state'],
@@ -777,9 +885,20 @@ def run_single_exp(variant):
                 index2action = 2 * np.random.rand(1000, pretrain_act_dim) - 1
                 index2state, index2action = index2state.astype(np.float32), index2action.astype(np.float32)
             
+
+            ####################################################
             if "observations" not in dataset.keys():
                 task_weights_for_sampling = get_task_weights(dataset)
-            
+                ##DEBUG
+                #print(f"sample weights: {task_weights_for_sampling}")
+                #task_weights_for_sampling = {'hopper': 0.1, 'walker2d': 0.2, 'halfcheetah': 0.6, 'ant': 0.1}
+                #for i in range(100):
+                #    batch, chosen = subsample_batch_from_different_datasets(dataset, variant["batch_size"], task_weights_for_sampling)
+                #    print(chosen)
+                #raise Exception
+                ##
+            ####################################################
+
             for epoch in range(variant['n_pretrain_epochs']):
                 metrics = {'pretrain_epoch': epoch + 1}
                 for i_pretrain in range(variant['n_pretrain_step_per_epoch']):
@@ -788,8 +907,10 @@ def run_single_exp(variant):
                         batch = subsample_batch(dataset, variant['batch_size'])
                         chosen = None
                     else:
-                        batch, chosen = subsample_batch_from_multiple_datasets(dataset, variant["batch_size"], task_weights_for_sampling)
+                        batch, chosen = subsample_batch_from_different_datasets(dataset, variant["batch_size"], task_weights_for_sampling)
                     #################################################################
+                    
+
                     if not pretrain_env_name:
                         batch['observations'] = index2state[batch['observations']]
                         batch['actions'] = index2action[batch['actions']]
@@ -805,22 +926,68 @@ def run_single_exp(variant):
                         batch['observations'] = index2state[rand_obs]
                         batch['actions'] = index2action[rand_acts]
                         batch['next_observations'] = index2state[rand_next_obs]
-
+                    #print("debug", batch)
                     batch = batch_to_torch(batch, variant['device'])
+                    ##DEBUG
+                    '''
+                    print("debug", variant["pretrain_mode"])
+                    print(f"chosen: {chosen}")
+                    print(f"batch obs dim: {batch['observations'].shape}")
+                    print(f"batch act dim: {batch['actions'].shape}")
+                    print(f"batch next obs dim: {batch['next_observations'].shape}")
+                    print(f"batch rewards dim: {batch['rewards'].shape}")
+                    print(f"batch dones dim: {batch['dones'].shape}")
+                    if "observations_text" in batch:
+                        print(f"batch obs text dim: {batch['observations_text'].shape}")
+                        print(f"batch act text dim: {batch['actions_text'].shape}")
+                        print(f"batch next obs text dim : {batch['next_observations_text'].shape}")
+                    #raise Exception
+                    '''
+                    ##
+
                     ######################################################################
-                    if variant["pretrain_mode"] in ["TD", "proj3_TD_text", "proj3_TD_text_3x", "proj3_TD_text_1", "proj3_TD_text_1_3x",
-                                                        "proj3_TD_text_2", "proj3_TD_text_2_3x", "proj3_TD_text_all", "proj3_TD_text_all_3x",
+                    if variant["pretrain_mode"] in ["proj3_TD_text", "proj3_TD_text_3x", "proj3_TD_text_1", "proj3_TD_text_1_3x",
+                                                        "proj3_TD_text_2", "proj3_TD_text_2_3x"]:
+                        metrics.update(prefix_metrics(agent.pretrain_td(batch, bc=epoch < variant['bc_epochs'],
+                                                                  ready_agent=ready_agent,
+                                                                  q_distill_weight=variant['q_distill_weight'],
+                                                                  distill_only=variant['distill_only'],
+                                                                  safe_q_max=safe_q_max,
+                                                                  chosen=chosen,
+                                                                  proj=True
+                                                                  ), 'sac', connector_string='_'))
+                    
+                    elif variant["pretrain_mode"] in ["proj3_TD_text_all", "proj3_TD_text_all_3x",
                                                         "proj3_TD_text_allbut", "proj3_TD_text_allbut_3x"]:
-                        metrics.update(prefix_metrics(agent.train(batch, bc=epoch < variant['bc_epochs'],
+                        metrics.update(prefix_metrics(agent.pretrain_td(batch, bc=epoch < variant['bc_epochs'],
                                                                   ready_agent=ready_agent,
                                                                   q_distill_weight=variant['q_distill_weight'],
                                                                   distill_only=variant['distill_only'],
                                                                   safe_q_max=safe_q_max[chosen],
-                                                                  chosen=chosen
+                                                                  chosen=chosen,
+                                                                  proj=True
                                                                   ), 'sac', connector_string='_'))
+
+                    elif variant["pretrain_mode"] in ["TD", ]:
+                        metrics.update(prefix_metrics(agent.train_with_text(batch, bc=epoch < variant['bc_epochs'],
+                                                                  ready_agent=ready_agent,
+                                                                  q_distill_weight=variant['q_distill_weight'],
+                                                                  distill_only=variant['distill_only'],
+                                                                  safe_q_max=safe_q_max,
+                                                                  ), 'sac', connector_string='_'))
+                    elif variant["pretrain_mode"] in ["proj0_TD", ]:
+                        metrics.update(prefix_metrics(agent.pretrain_td(batch, bc=epoch < variant['bc_epochs'],
+                                                                  ready_agent=ready_agent,
+                                                                  q_distill_weight=variant['q_distill_weight'],
+                                                                  distill_only=variant['distill_only'],
+                                                                  safe_q_max=safe_q_max,
+                                                                  proj=True
+                                                                  ), 'sac', connector_string='_'))
+
                     else:
                         metrics.update(agent.pretrain(batch, variant['pretrain_mode'], variant['mdppre_n_state'], chosen))
-                if variant["pretrain_mode"] in ["TD", "proj3_TD_text", "proj3_TD_text_3x", "proj3_TD_text_1", "proj3_TD_text_1_3x",
+                #print("debug", metrics)
+                if variant["pretrain_mode"] in ["TD", "proj0_TD", "proj3_TD_text", "proj3_TD_text_3x", "proj3_TD_text_1", "proj3_TD_text_1_3x",
                                                         "proj3_TD_text_2", "proj3_TD_text_2_3x", "proj3_TD_text_all", "proj3_TD_text_all_3x",
                                                         "proj3_TD_text_allbut", "proj3_TD_text_allbut_3x"]:
                     pretrain_logger.log_tabular("PretrainIteration", epoch + 1)
@@ -835,7 +1002,7 @@ def run_single_exp(variant):
                             pretrain_logger.log_tabular(m, 0)
                         else:
                             pretrain_logger.log_tabular(m, metrics[m])
-                    pretrain_logger.log_tabular("total_pretrain_steps", metrics['total_pretrain_steps'])
+                    #pretrain_logger.log_tabular("total_pretrain_steps", metrics['total_pretrain_steps'])
                     pretrain_logger.log_tabular("current_hours", (time.time() - st) / 3600)
                     pretrain_logger.log_tabular("est_total_hours",
                                                 (variant['n_pretrain_epochs'] / (epoch + 1) * (time.time() - st)) / 3600)
@@ -851,7 +1018,7 @@ def run_single_exp(variant):
                 pretrain_logger.dump_tabular()
                 sys.stdout.flush()
                 ##############################################################################################################
-                if (epoch + 1) % 50 == 0:
+                if (epoch + 1) % 5 == 0:
                     pretrain_model_name_mid = pretrain_model_name[:-4] + '_%d' % (epoch + 1) + pretrain_model_name[-4:]
 
                     pretrain_full_path_mid = os.path.join(pretrain_model_folder_path, pretrain_model_name_mid)
@@ -862,6 +1029,8 @@ def run_single_exp(variant):
                                          'pretrain_mode': variant['pretrain_mode'],
                                          'hidden_layer': variant['qf_hidden_layer'],
                                          'hidden_size': variant['qf_hidden_unit'],
+                                         'text_encoder': variant['text_encoder'],
+                                         'policy_with_text': variant["policy_with_text"],
                                          'n_pretrain_epochs': epoch + 1,
                                          }
                     if not os.path.exists(pretrain_full_path_mid):
@@ -878,6 +1047,8 @@ def run_single_exp(variant):
                              'hidden_layer': variant['qf_hidden_layer'],
                              'hidden_size': variant['qf_hidden_unit'],
                              'n_pretrain_epochs': variant['n_pretrain_epochs'],
+                             'text_encoder': variant['text_encoder'],
+                             'policy_with_text': variant["policy_with_text"],
                              }
             if not os.path.exists(pretrain_full_path):
                 torch.save(pretrain_dict, pretrain_full_path)
@@ -899,13 +1070,17 @@ def run_single_exp(variant):
     """offline stage"""
     print("============================ OFFLINE STAGE STARTED! ============================")
     # TODO we can load offline dataset here... but load pretrain dataset earlier
-    dataset = get_d4rl_dataset_with_ratio(eval_sampler.env, variant['offline_data_ratio'])
+    #########################################################################################
+    #dataset = get_d4rl_dataset_with_ratio(eval_sampler.env, variant['offline_data_ratio'])
+    dataset = get_d4rl_dataset_with_text(eval_sampler.env, variant)
+    #########################################################################################
     print("D4RL dataset loaded for", env_full)
     dataset['rewards'] = dataset['rewards'] * variant['reward_scale'] + variant['reward_bias']
     dataset['actions'] = np.clip(dataset['actions'], -variant['clip_action'], variant['clip_action'])
     max_reward = max(dataset['rewards'])
     safe_q_max = max_reward * 100  # when discount is 0.99
     print('max reward:', max_reward)
+    print("safe q max:", safe_q_max)
 
     best_agent = deepcopy(agent)
     prev_agent = deepcopy(agent)
@@ -930,10 +1105,11 @@ def run_single_exp(variant):
     #################################
     agent.set_qf_optimizer_lr(variant["finetune_qf_lr"])
     agent.set_policy_optimizer_lr(variant["finetune_policy_lr"])
-
-    ###################################
+    print(f"agent config offline: {agent.config}")
     # TODO: Add the below line to modify finetuning lr
-    agent.update_qf_feature_lr(variant['q_network_feature_lr_scale'])
+    #agent.update_qf_feature_lr(variant['q_network_feature_lr_scale'])
+    ###################################
+    
 
     # TODO before we start offline stage, might want to copy q network into target network??????
     for epoch in range(variant['n_epochs']):
@@ -943,7 +1119,23 @@ def run_single_exp(variant):
             for batch_idx in range(variant['n_train_step_per_epoch']):
                 batch = subsample_batch(dataset, variant['batch_size'])
                 batch = batch_to_torch(batch, variant['device'])
-                metrics.update(prefix_metrics(agent.train(batch, bc=epoch < variant['bc_epochs'],
+                ##DEBUG
+                '''
+                #print(f"batch: {batch}")
+                print(f"batch obs dim: {batch['observations'].shape}")
+                print(f"batch act dim: {batch['actions'].shape}")
+                print(f"batch next obs dim: {batch['next_observations'].shape}")
+                print(f"batch rewards dim: {batch['rewards'].shape}")
+                print(f"batch dones dim: {batch['dones'].shape}")
+                if "observations_text" in batch:
+                    print(f"batch obs text dim: {batch['observations_text'].shape}")
+                    print(f"batch act text dim: {batch['actions_text'].shape}")
+                    print(f"batch next obs text dim : {batch['next_observations_text'].shape}")
+                #raise Exception
+                '''
+                ##
+
+                metrics.update(prefix_metrics(agent.train_with_text(batch, bc=epoch < variant['bc_epochs'],
                                                           ready_agent=ready_agent,
                                                           q_distill_weight=variant['q_distill_weight'],
                                                           distill_only=variant['distill_only'],
@@ -981,7 +1173,7 @@ def run_single_exp(variant):
                 agent_e20 = deepcopy(agent)
                 return_e20, return_normalized_e20 = metrics['average_return'], metrics['average_normalizd_return']
 
-            if variant['save_model'] and (epoch + 1) in (50, 150, 250, 350):
+            if variant['save_model'] and (epoch + 1) in (25, 50, 75, 100, 125, 150, 175, 200, 250, 275, 300, 325, 350):
                 save_dict = {'agent': agent, 'variant': variant, 'epoch': epoch + 1}
                 logger.save_dict(save_dict, 'agent_e%d.pth' % (epoch + 1))
                 # wandb_logger.save_pickle(save_data, 'model.pkl')

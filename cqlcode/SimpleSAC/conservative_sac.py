@@ -38,7 +38,9 @@ class ConservativeSAC(object):
         config.cql_max_target_backup = False
         config.cql_clip_diff_min = -np.inf
         config.cql_clip_diff_max = np.inf
-
+        #####################################
+        config.policy_with_text = False
+        #####################################
         if updates is not None:
             config.update(ConfigDict(updates).copy_and_resolve_references())
         return config
@@ -50,7 +52,8 @@ class ConservativeSAC(object):
         self.qf2 = qf2
         self.target_qf1 = target_qf1
         self.target_qf2 = target_qf2
-
+        print(f"policy: {self.policy}")
+        print(f"qf: {self.qf1}")
         optimizer_class = {
             'adam': torch.optim.Adam,
             'sgd': torch.optim.SGD,
@@ -100,6 +103,10 @@ class ConservativeSAC(object):
 
     ####################################
     def set_qf_optimizer_lr(self, lr):
+        optimizer_class = {
+            'adam': torch.optim.Adam,
+            'sgd': torch.optim.SGD,
+        }[self.config.optimizer_type]
         if self.config.qf_lr != lr:
             self.config.qf_lr = lr
             self.qf_optimizer = optimizer_class(
@@ -113,10 +120,14 @@ class ConservativeSAC(object):
                 )
 
     def set_policy_optimizer_lr(self, lr):
+        optimizer_class = {
+            'adam': torch.optim.Adam,
+            'sgd': torch.optim.SGD,
+        }[self.config.optimizer_type]
         if self.config.policy_lr != lr:
             self.config.policy_lr = lr
             self.policy_optimizer = optimizer_class(
-                self.policy.parameters(), self.config.policy_lr,
+                self.policy.parameters(), self.config.policy_lr,)
             if self.config.use_automatic_entropy_tuning:
                 self.alpha_optimizer = optimizer_class(
                     self.log_alpha.parameters(),
@@ -162,9 +173,9 @@ class ConservativeSAC(object):
         self.qf_optimizer.zero_grad()
         qf_loss.backward()
         self.qf_optimizer.step()
-
+    ######################################################################################
     def train(self, batch, bc=False, ready_agent=None, q_distill_weight=0, distill_only=False,
-              safe_q_max=Nonem chosen=None):
+              safe_q_max=None):
         self._total_steps += 1
 
         observations = batch['observations']
@@ -410,14 +421,26 @@ class ConservativeSAC(object):
         return metrics
 
     def pretrain(self, batch, pretrain_mode, mdppre_n_state, chosen=None):
-        # pretrain mode:  q_sprime, 4. q_mc
+        # next state prediction with text
         self._total_pretrain_steps += 1
-
-        observations = batch['observations']
-        actions = batch['actions']
-        # rewards = batch['rewards']
-        next_observations = batch['next_observations']
-        # dones = batch['dones']
+        if "observations_text" in batch:
+            #print("debug", batch["observations"].shape)
+            #print("debug", batch["observations_text"].shape)
+            observations = torch.concat([batch["observations"], batch["observations_text"].expand(batch["observations"].shape[0], -1)], dim=1)
+            actions = torch.concat([batch["actions"], batch["actions_text"].expand(batch["actions"].shape[0], -1)], dim=1)
+            next_observations = batch["next_observations"]
+        else:
+            observations = batch['observations']
+            actions = batch['actions']
+            # rewards = batch['rewards']
+            next_observations = batch['next_observations']
+            # dones = batch['dones']
+        ##DEBUG
+        #print("pretrain forward pass")
+        #print(f"obsevations shape: {observations.shape}")
+        #print(f"actions shape: {actions.shape}")
+        #print(f"next obs shape: {next_observations.shape}")
+        ##
 
         if pretrain_mode in ['q_sprime', 'mdp_same_noproj', 'q_sprime_3x', 'random_fd_1000_state']:
             # here use both q networks to predict next obs
@@ -459,9 +482,55 @@ class ConservativeSAC(object):
             pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
             pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
             pretrain_loss = pretrain_loss1 + pretrain_loss2
-        elif pretrain_mode in [""]
+        #########################################################
+
+        elif pretrain_mode in ['q_sprime_text'
+                                ]:
+            obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
+            obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
+            pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+            pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+            pretrain_loss = pretrain_loss1 + pretrain_loss2
+
+        elif pretrain_mode in ['proj0_q_sprime_text', 'proj3_q_sprime_text', 'proj3_q_sprime_text_1', 'proj3_q_sprime_text_2',
+                                'proj3_q_sprime_text_all', 'proj3_q_sprime_text_allbut',
+                                'proj3_q_sprime_text_3x', 'proj3_q_sprime_text_1_3x', 'proj3_q_sprime_text_2_3x',
+                                'proj3_q_sprime_text_all_3x', 'proj3_q_sprime_text_allbut_3x', ]:
+            obs_next_q1 = self.qf1.get_pretrain_next_obs(observations, actions, chosen)
+            obs_next_q2 = self.qf2.get_pretrain_next_obs(observations, actions, chosen)
+            pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+            pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+            pretrain_loss = pretrain_loss1 + pretrain_loss2
+
+        elif pretrain_mode in ['q_noact_sprime_text']:
+            actions = torch.zeros(actions.shape, device=actions.device)
+            obs_next_q1 = self.qf1.predict_next_obs(observations, actions)
+            obs_next_q2 = self.qf2.predict_next_obs(observations, actions)
+            pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+            pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+            pretrain_loss = pretrain_loss1 + pretrain_loss2
+            
+        elif pretrain_mode in ["proj0_q_noact_sprime_text", 'proj3_q_noact_sprime_text',
+                                'proj3_q_noact_sprime_text_1', 'proj3_q_noact_sprime_text_2', 'proj3_q_noact_sprime_text_all',
+                                'proj3_q_noact_sprime_text_allbut', 'proj3_q_noact_sprime_text_3x',
+                                'proj3_q_noact_sprime_text_1_3x', 'proj3_q_noact_sprime_text_2_3x', 'proj3_q_noact_sprime_text_all_3x',
+                                'proj3_q_noact_sprime_text_allbut_3x',
+                                ]:
+            actions = torch.zeros(actions.shape, device=actions.device)
+            obs_next_q1 = self.qf1.get_pretrain_next_obs(observations, actions, chosen)
+            obs_next_q2 = self.qf2.get_pretrain_next_obs(observations, actions, chosen)
+            pretrain_loss1 = F.mse_loss(obs_next_q1, next_observations)
+            pretrain_loss2 = F.mse_loss(obs_next_q2, next_observations)
+            pretrain_loss = pretrain_loss1 + pretrain_loss2
+        
+
+        ####################################################################
         else:
             raise NotImplementedError
+
+        ## DEBUG
+        #print(f"predicted next obs shape: {obs_next_q1.shape}")
+        ##
 
         self.qf_optimizer.zero_grad()
         pretrain_loss.backward()
@@ -474,6 +543,648 @@ class ConservativeSAC(object):
         )
 
         return metrics
+
+    def pretrain_td(self, batch, bc=False, ready_agent=None, q_distill_weight=0, distill_only=False,
+                safe_q_max=None, chosen=None, proj=False):
+            self._total_steps += 1
+            
+            if "observations_text" in batch:
+                #observations = torch.concat([batch["observations"], batch["observations_text"].expand(batch["observations"].shape[0])], dim=1)
+                #actions = torch.concat([batch["actions"], batch["actions_text"].expand(batch["actions"].shape[0])], dim=1)
+                #next_observations = torch.concat([batch["next_observations"], batch["next_observations_text"].expand(batch["next_observations"].shape[0])], dim=1)
+                observations = batch["observations"]
+                actions = batch["actions"]
+                next_observations = batch["next_observations"]
+                observations_text = batch["observations_text"]
+                actions_text = batch["actions_text"]
+                next_observations_text = batch["next_observations_text"]
+            else:
+                observations = batch['observations']
+                actions = batch['actions']
+                # rewards = batch['rewards']
+                next_observations = batch['next_observations']
+                # dones = batch['dones']
+                observations_text = None
+                actions_text = None
+                next_observations_text = None
+            #observations = batch['observations']
+            #actions = batch['actions']
+            rewards = batch['rewards']
+            #next_observations = batch['next_observations']
+            dones = batch['dones']
+
+            ##DEBUG
+            #print(f"batch observations shape : {observations.shape}")
+            #print(f"batch actions shape: {actions.shape}")
+            #print(f"next_observations shape: {next_observations.shape}")
+            #if observations_text is not None:
+            #    print(f"observation text shape: {observations_text.shape}")
+            #    print(f"action text shape: {actions_text.shape}")
+            #    print(f"next obs text shape: {next_observations_text.shape}")
+            #print(f"rewards shape: {rewards.shape}")
+            #print(f"dones shape: {dones.shape}")
+            #print(f"proj: {proj}")
+            ##
+
+
+            if distill_only:
+                # distill Q
+                q1_pred = self.qf1(observations, actions)
+                q2_pred = self.qf2(observations, actions)
+
+                with torch.no_grad():
+                    q1_ready = ready_agent.qf1(observations, actions)
+                    q2_ready = ready_agent.qf2(observations, actions)
+                qf1_distill_loss = F.mse_loss(q1_pred, q1_ready)
+                qf2_distill_loss = F.mse_loss(q2_pred, q2_ready)
+
+                qf_loss = qf1_distill_loss + qf2_distill_loss
+
+                # distill policy
+                new_actions, log_pi = self.policy(observations)
+                with torch.no_grad():
+                    actions_ready, log_pi_ready = ready_agent.policy(observations)
+                policy_loss = F.mse_loss(new_actions, actions_ready)
+
+                # optimizer
+                self.policy_optimizer.zero_grad()
+                policy_loss.backward()
+                self.policy_optimizer.step()
+
+                self.qf_optimizer.zero_grad()
+                qf_loss.backward()
+                self.qf_optimizer.step()
+
+                metrics = dict(
+                    log_pi=log_pi.mean().item(),
+                    policy_loss=policy_loss.item(),
+                    qf1_loss=qf1_distill_loss.item(),
+                    qf2_loss=qf2_distill_loss.item(),
+                    average_qf1=q1_pred.mean().item(),
+                    average_qf2=q2_pred.mean().item(),
+                    total_steps=self.total_steps,
+                    qf1_distill_loss=qf1_distill_loss.item(),
+                    qf2_distill_loss=qf2_distill_loss.item(),
+                )
+
+                return metrics
+            if self.config.policy_with_text:
+                new_actions, log_pi = self.policy(observations, observations_text=observations_text, chosen=chosen, proj=proj)
+            else:
+                new_actions, log_pi = self.policy(observations, chosen=chosen, proj=proj)
+            ##DEBUG
+            #print(f"new_actions shape: {new_actions.shape}")
+            #print(f"log pi shape: {log_pi.shape}")
+            ##
+            if self.config.use_automatic_entropy_tuning:
+                alpha_loss = -(self.log_alpha() * (log_pi + self.config.target_entropy).detach()).mean()
+                alpha = self.log_alpha().exp() * self.config.alpha_multiplier
+            else:
+                alpha_loss = observations.new_tensor(0.0)
+                alpha = observations.new_tensor(self.config.alpha_multiplier)
+
+            """ Policy loss """
+            if bc:
+                log_probs = self.policy.log_prob(observations, actions)
+                policy_loss = (alpha*log_pi - log_probs).mean()
+            else:
+                q_new_actions = torch.min(
+                    self.qf1(observations=observations, actions=new_actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj),
+                    self.qf2(observations=observations, actions=new_actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj),
+                )
+                policy_loss = (alpha*log_pi - q_new_actions).mean()
+
+            """ Q function loss """
+            q1_pred = self.qf1(observations=observations, actions=actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj)
+            q2_pred = self.qf2(observations=observations, actions=actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj)
+
+            if self.config.cql_max_target_backup:
+                if self.config.policy_with_text:
+                    new_next_actions, next_log_pi = self.policy(next_observations, observations_text=next_observations_text, repeat=self.config.cql_n_actions, chosen=chosen, proj=proj)
+                else:
+                    new_next_actions, next_log_pi = self.policy(next_observations, repeat=self.config.cql_n_actions, chosen=chosen, proj=proj)
+                ##DEBUG
+                #print(f"new_next_actions shape: {new_next_actions.shape}")
+                #print(f"next_log_pi shape: {next_log_pi.shape}")
+                ##
+
+                target_q_values, max_target_indices = torch.max(
+                    torch.min(
+                        self.target_qf1(observations=next_observations, actions=new_next_actions, observations_text=next_observations_text, actions_text=actions_text, chosen=chosen, proj=proj),
+                        self.target_qf2(observations=next_observations, actions=new_next_actions, observations_text=next_observations_text, actions_text=actions_text, chosen=chosen, proj=proj),
+                    ),
+                    dim=-1
+                )
+                next_log_pi = torch.gather(next_log_pi, -1, max_target_indices.unsqueeze(-1)).squeeze(-1)
+            else:
+                if self.config.policy_with_text:
+                    new_next_actions, next_log_pi = self.policy(next_observations, observations_text=next_observations_text, chosen=chosen, proj=proj)
+                else:
+                    new_next_actions, next_log_pi = self.policy(next_observations, chosen=chosen, proj=proj)
+                ##DEBUG
+                #print(f"new_next_actions shape: {new_next_actions.shape}")
+                #print(f"next_log_pi shape: {next_log_pi.shape}")
+                ##
+                
+                target_q_values = torch.min(
+                    self.target_qf1(observations=next_observations, actions=new_next_actions, observations_text=next_observations_text, actions_text=actions_text, chosen=chosen, proj=proj),
+                    self.target_qf2(observations=next_observations, actions=new_next_actions, observations_text=next_observations_text, actions_text=actions_text, chosen=chosen, proj=proj),
+                )
+                if safe_q_max is not None:
+                    target_q_values[target_q_values > safe_q_max] = safe_q_max
+
+            if self.config.backup_entropy:
+                target_q_values = target_q_values - alpha * next_log_pi
+
+            td_target = rewards + (1. - dones) * self.config.discount * target_q_values
+            qf1_loss = F.mse_loss(q1_pred, td_target.detach())
+            qf2_loss = F.mse_loss(q2_pred, td_target.detach())
+
+
+            ### CQL
+            if not self.config.use_cql:
+                qf_loss = qf1_loss + qf2_loss
+            else:
+                batch_size = actions.shape[0]
+                action_dim = actions.shape[-1]
+                cql_random_actions = actions.new_empty((batch_size, self.config.cql_n_actions, action_dim), requires_grad=False).uniform_(-1, 1)
+                if self.config.policy_with_text:
+                    cql_current_actions, cql_current_log_pis = self.policy(observations, observations_text=observations_text, repeat=self.config.cql_n_actions, chosen=chosen, proj=proj)
+                    cql_next_actions, cql_next_log_pis = self.policy(next_observations, observations_text=next_observations_text, repeat=self.config.cql_n_actions, chosen=chosen, proj=proj)
+                    ##DEBUG
+                    #print(f"cql current actions dim: {cql_current_actions.shape}")
+                    #print(f"cql current log pis dim: {cql_current_log_pis.shape}")
+                    #print(f"cql next actions dim: {cql_next_actions.shape}")
+                    #print(f"cql next log pis dim: {cql_next_log_pis.shape} ")
+                    ##
+
+                else:
+                    cql_current_actions, cql_current_log_pis = self.policy(observations, repeat=self.config.cql_n_actions, chosen=chosen, proj=proj)
+                    cql_next_actions, cql_next_log_pis = self.policy(next_observations, repeat=self.config.cql_n_actions, chosen=chosen, proj=proj)
+                    ##DEBUG
+                    #print(f"cql current actions dim: {cql_current_actions.shape}")
+                    #print(f"cql current log pis dim: {cql_current_log_pis.shape}")
+                    #print(f"cql next actions dim: {cql_next_actions.shape}")
+                    #print(f"cql next log pis dim: {cql_next_log_pis.shape} ")
+                    ##
+
+                cql_current_actions, cql_current_log_pis = cql_current_actions.detach(), cql_current_log_pis.detach()
+                cql_next_actions, cql_next_log_pis = cql_next_actions.detach(), cql_next_log_pis.detach()
+                ##DEBUG
+                #print(f"observation after cql policy: {observations.shape}")
+                ##
+                cql_q1_rand = self.qf1(observations=observations, actions=cql_random_actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj)
+                cql_q2_rand = self.qf2(observations=observations, actions=cql_random_actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj)
+                cql_q1_current_actions = self.qf1(observations=observations, actions=cql_current_actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj)
+                cql_q2_current_actions = self.qf2(observations=observations, actions=cql_current_actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj)
+                cql_q1_next_actions = self.qf1(observations=observations, actions=cql_next_actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj)
+                cql_q2_next_actions = self.qf2(observations=observations, actions=cql_next_actions, observations_text=observations_text, actions_text=actions_text, chosen=chosen, proj=proj)
+
+                cql_cat_q1 = torch.cat(
+                    [cql_q1_rand, torch.unsqueeze(q1_pred, 1), cql_q1_next_actions, cql_q1_current_actions], dim=1
+                )
+                cql_cat_q2 = torch.cat(
+                    [cql_q2_rand, torch.unsqueeze(q2_pred, 1), cql_q2_next_actions, cql_q2_current_actions], dim=1
+                )
+                cql_std_q1 = torch.std(cql_cat_q1, dim=1)
+                cql_std_q2 = torch.std(cql_cat_q2, dim=1)
+
+                if self.config.cql_importance_sample:
+                    random_density = np.log(0.5 ** action_dim)
+                    cql_cat_q1 = torch.cat(
+                        [cql_q1_rand - random_density,
+                        cql_q1_next_actions - cql_next_log_pis.detach(),
+                        cql_q1_current_actions - cql_current_log_pis.detach()],
+                        dim=1
+                    )
+                    cql_cat_q2 = torch.cat(
+                        [cql_q2_rand - random_density,
+                        cql_q2_next_actions - cql_next_log_pis.detach(),
+                        cql_q2_current_actions - cql_current_log_pis.detach()],
+                        dim=1
+                    )
+
+                cql_qf1_ood = torch.logsumexp(cql_cat_q1 / self.config.cql_temp, dim=1) * self.config.cql_temp
+                cql_qf2_ood = torch.logsumexp(cql_cat_q2 / self.config.cql_temp, dim=1) * self.config.cql_temp
+
+                """Subtract the log likelihood of data"""
+                cql_qf1_diff = torch.clamp(
+                    cql_qf1_ood - q1_pred,
+                    self.config.cql_clip_diff_min,
+                    self.config.cql_clip_diff_max,
+                ).mean()
+                cql_qf2_diff = torch.clamp(
+                    cql_qf2_ood - q2_pred,
+                    self.config.cql_clip_diff_min,
+                    self.config.cql_clip_diff_max,
+                ).mean()
+
+                if self.config.cql_lagrange:
+                    alpha_prime = torch.clamp(torch.exp(self.log_alpha_prime()), min=0.0, max=1000000.0)
+                    cql_min_qf1_loss = alpha_prime * self.config.cql_min_q_weight * (cql_qf1_diff - self.config.cql_target_action_gap)
+                    cql_min_qf2_loss = alpha_prime * self.config.cql_min_q_weight * (cql_qf2_diff - self.config.cql_target_action_gap)
+
+                    self.alpha_prime_optimizer.zero_grad()
+                    alpha_prime_loss = (-cql_min_qf1_loss - cql_min_qf2_loss)*0.5
+                    alpha_prime_loss.backward(retain_graph=True)
+                    self.alpha_prime_optimizer.step()
+                else:
+                    cql_min_qf1_loss = cql_qf1_diff * self.config.cql_min_q_weight
+                    cql_min_qf2_loss = cql_qf2_diff * self.config.cql_min_q_weight
+                    alpha_prime_loss = observations.new_tensor(0.0)
+                    alpha_prime = observations.new_tensor(0.0)
+
+                if q_distill_weight > 0:
+                    with torch.no_grad():
+                        q1_ready = ready_agent.qf1(observations, actions)
+                        q2_ready = ready_agent.qf2(observations, actions)
+                    qf1_distill_loss = F.mse_loss(q1_pred, q1_ready) * q_distill_weight
+                    qf2_distill_loss = F.mse_loss(q2_pred, q2_ready) * q_distill_weight
+                else:
+                    device = q1_pred.device
+                    qf1_distill_loss, qf2_distill_loss = torch.zeros(1).to(device), torch.zeros(1).to(device)
+                conservative_loss = cql_min_qf1_loss + cql_min_qf2_loss + qf1_distill_loss + qf2_distill_loss
+                qf_loss = qf1_loss + qf2_loss + conservative_loss
+
+
+            if self.config.use_automatic_entropy_tuning:
+                self.alpha_optimizer.zero_grad()
+                alpha_loss.backward()
+                self.alpha_optimizer.step()
+
+            self.policy_optimizer.zero_grad()
+            policy_loss.backward()
+            self.policy_optimizer.step()
+
+            self.qf_optimizer.zero_grad()
+            qf_loss.backward()
+            self.qf_optimizer.step()
+
+            if self.total_steps % self.config.target_update_period == 0:
+                self.update_target_network(
+                    self.config.soft_target_update_rate
+                )
+
+
+            metrics = dict(
+                log_pi=log_pi.mean().item(),
+                policy_loss=policy_loss.item(),
+                qf1_loss=qf1_loss.item(),
+                qf2_loss=qf2_loss.item(),
+                qf_average_loss=(qf1_loss.item() + qf2_loss.item())/2,
+                alpha_loss=alpha_loss.item(),
+                alpha=alpha.item(),
+                average_qf1=q1_pred.mean().item(),
+                average_qf2=q2_pred.mean().item(),
+                average_target_q=target_q_values.mean().item(),
+                total_steps=self.total_steps,
+                qf1_distill_loss=qf1_distill_loss.item(),
+                qf2_distill_loss=qf2_distill_loss.item(),
+                combined_loss=qf_loss.item()
+            )
+
+            if self.config.use_cql:
+                metrics.update(prefix_metrics(dict(
+                    cql_std_q1=cql_std_q1.mean().item(),
+                    cql_std_q2=cql_std_q2.mean().item(),
+                    cql_q1_rand=cql_q1_rand.mean().item(),
+                    cql_q2_rand=cql_q2_rand.mean().item(),
+                    cql_min_qf1_loss=cql_min_qf1_loss.mean().item(),
+                    cql_min_qf2_loss=cql_min_qf2_loss.mean().item(),
+                    cql_qf1_diff=cql_qf1_diff.mean().item(),
+                    cql_qf2_diff=cql_qf2_diff.mean().item(),
+                    cql_q1_current_actions=cql_q1_current_actions.mean().item(),
+                    cql_q2_current_actions=cql_q2_current_actions.mean().item(),
+                    cql_q1_next_actions=cql_q1_next_actions.mean().item(),
+                    cql_q2_next_actions=cql_q2_next_actions.mean().item(),
+                    alpha_prime_loss=alpha_prime_loss.item(),
+                    alpha_prime=alpha_prime.item(),
+                    conservative_loss=conservative_loss.item(),
+                ), 'cql'))
+
+            return metrics
+
+
+    def train_with_text(self, batch, bc=False, ready_agent=None, q_distill_weight=0, distill_only=False,
+                safe_q_max=None):
+            self._total_steps += 1
+            
+            if "observations_text" in batch:
+                #observations = torch.concat([batch["observations"], batch["observations_text"].expand(batch["observations"].shape[0])], dim=1)
+                #actions = torch.concat([batch["actions"], batch["actions_text"].expand(batch["actions"].shape[0])], dim=1)
+                #next_observations = torch.concat([batch["next_observations"], batch["next_observations_text"].expand(batch["next_observations"].shape[0])], dim=1)
+                observations = batch["observations"]
+                actions = batch["actions"]
+                next_observations = batch["next_observations"]
+                observations_text = batch["observations_text"]
+                actions_text = batch["actions_text"]
+                next_observations_text = batch["next_observations_text"]
+            else:
+                observations = batch['observations']
+                actions = batch['actions']
+                # rewards = batch['rewards']
+                next_observations = batch['next_observations']
+                # dones = batch['dones']
+                observations_text = None
+                actions_text = None
+                next_observations_text = None
+            #observations = batch['observations']
+            #actions = batch['actions']
+            rewards = batch['rewards']
+            #next_observations = batch['next_observations']
+            dones = batch['dones']
+
+
+            ##DEBUG
+            #print(f"batch observations shape : {observations.shape}")
+            #print(f"batch actions shape: {actions.shape}")
+            #print(f"next_observations shape: {next_observations.shape}")
+            #if observations_text is not None:
+            #    print(f"observation text shape: {observations_text.shape}")
+            #    print(f"action text shape: {actions_text.shape}")
+            #    print(f"next obs text shape: {next_observations_text.shape}")
+            #print(f"rewards shape: {rewards.shape}")
+            #print(f"dones shape: {dones.shape}")
+            ##
+
+            if distill_only:
+                # distill Q
+                q1_pred = self.qf1(observations, actions)
+                q2_pred = self.qf2(observations, actions)
+
+                with torch.no_grad():
+                    q1_ready = ready_agent.qf1(observations, actions)
+                    q2_ready = ready_agent.qf2(observations, actions)
+                qf1_distill_loss = F.mse_loss(q1_pred, q1_ready)
+                qf2_distill_loss = F.mse_loss(q2_pred, q2_ready)
+
+                qf_loss = qf1_distill_loss + qf2_distill_loss
+
+                # distill policy
+                new_actions, log_pi = self.policy(observations)
+                with torch.no_grad():
+                    actions_ready, log_pi_ready = ready_agent.policy(observations)
+                policy_loss = F.mse_loss(new_actions, actions_ready)
+
+                # optimizer
+                self.policy_optimizer.zero_grad()
+                policy_loss.backward()
+                self.policy_optimizer.step()
+
+                self.qf_optimizer.zero_grad()
+                qf_loss.backward()
+                self.qf_optimizer.step()
+
+                metrics = dict(
+                    log_pi=log_pi.mean().item(),
+                    policy_loss=policy_loss.item(),
+                    qf1_loss=qf1_distill_loss.item(),
+                    qf2_loss=qf2_distill_loss.item(),
+                    average_qf1=q1_pred.mean().item(),
+                    average_qf2=q2_pred.mean().item(),
+                    total_steps=self.total_steps,
+                    qf1_distill_loss=qf1_distill_loss.item(),
+                    qf2_distill_loss=qf2_distill_loss.item(),
+                )
+
+                return metrics
+            if self.config.policy_with_text:
+                new_actions, log_pi = self.policy(observations, observations_text=observations_text)
+            else:
+                new_actions, log_pi = self.policy(observations)
+            ##DEBUG
+            #print(f"new_actions shape: {new_actions.shape}")
+            #print(f"log pi shape: {log_pi.shape}")
+            ##
+            if self.config.use_automatic_entropy_tuning:
+                alpha_loss = -(self.log_alpha() * (log_pi + self.config.target_entropy).detach()).mean()
+                alpha = self.log_alpha().exp() * self.config.alpha_multiplier
+            else:
+                alpha_loss = observations.new_tensor(0.0)
+                alpha = observations.new_tensor(self.config.alpha_multiplier)
+
+            """ Policy loss """
+            if bc:
+                log_probs = self.policy.log_prob(observations, actions)
+                policy_loss = (alpha*log_pi - log_probs).mean()
+            else:
+                q_new_actions = torch.min(
+                    self.qf1(observations=observations, actions=new_actions, observations_text=observations_text, actions_text=actions_text),
+                    self.qf2(observations=observations, actions=new_actions, observations_text=observations_text, actions_text=actions_text),
+                )
+                policy_loss = (alpha*log_pi - q_new_actions).mean()
+
+            """ Q function loss """
+            q1_pred = self.qf1(observations=observations, actions=actions, observations_text=observations_text, actions_text=actions_text)
+            q2_pred = self.qf2(observations=observations, actions=actions, observations_text=observations_text, actions_text=actions_text)
+
+            if self.config.cql_max_target_backup:
+                if self.config.policy_with_text:
+                    new_next_actions, next_log_pi = self.policy(next_observations, observations_text=next_observations_text, repeat=self.config.cql_n_actions)
+                else:
+                    new_next_actions, next_log_pi = self.policy(next_observations, repeat=self.config.cql_n_actions)
+                ##DEBUG
+                #print(f"new_next_actions shape: {new_next_actions.shape}")
+                #print(f"next_log_pi shape: {next_log_pi.shape}")
+                ##
+                target_q_values, max_target_indices = torch.max(
+                    torch.min(
+                        self.target_qf1(observations=next_observations, actions=new_next_actions, observations_text=next_observations_text, actions_text=actions_text),
+                        self.target_qf2(observations=next_observations, actions=new_next_actions, observations_text=next_observations_text, actions_text=actions_text),
+                    ),
+                    dim=-1
+                )
+                next_log_pi = torch.gather(next_log_pi, -1, max_target_indices.unsqueeze(-1)).squeeze(-1)
+            else:
+                if self.config.policy_with_text:
+                    new_next_actions, next_log_pi = self.policy(next_observations, observations_text=next_observations_text)
+                else:
+                    new_next_actions, next_log_pi = self.policy(next_observations)
+                ##DEBUG
+                #print(f"new_next_actions shape: {new_next_actions.shape}")
+                #print(f"next_log_pi shape: {next_log_pi.shape}")
+                ##
+                target_q_values = torch.min(
+                    self.target_qf1(observations=next_observations, actions=new_next_actions, observations_text=next_observations_text, actions_text=actions_text),
+                    self.target_qf2(observations=next_observations, actions=new_next_actions, observations_text=next_observations_text, actions_text=actions_text),
+                )
+                if safe_q_max is not None:
+                    target_q_values[target_q_values > safe_q_max] = safe_q_max
+
+            if self.config.backup_entropy:
+                target_q_values = target_q_values - alpha * next_log_pi
+
+            td_target = rewards + (1. - dones) * self.config.discount * target_q_values
+            qf1_loss = F.mse_loss(q1_pred, td_target.detach())
+            qf2_loss = F.mse_loss(q2_pred, td_target.detach())
+
+
+            ### CQL
+            if not self.config.use_cql:
+                qf_loss = qf1_loss + qf2_loss
+            else:
+                batch_size = actions.shape[0]
+                action_dim = actions.shape[-1]
+                cql_random_actions = actions.new_empty((batch_size, self.config.cql_n_actions, action_dim), requires_grad=False).uniform_(-1, 1)
+                if self.config.policy_with_text:
+                    cql_current_actions, cql_current_log_pis = self.policy(observations, observations_text=observations_text, repeat=self.config.cql_n_actions)
+                    cql_next_actions, cql_next_log_pis = self.policy(next_observations, observations_text=next_observations_text, repeat=self.config.cql_n_actions)
+                    ##DEBUG
+                    '''
+                    print(f"cql current actions dim: {cql_current_actions.shape}")
+                    print(f"cql current log pis dim: {cql_current_log_pis.shape}")
+                    print(f"cql next actions dim: {cql_next_actions.shape}")
+                    print(f"cql next log pis dim: {cql_next_log_pis.shape} ")
+                    '''
+                    ##
+                else:
+                    cql_current_actions, cql_current_log_pis = self.policy(observations, repeat=self.config.cql_n_actions)
+                    cql_next_actions, cql_next_log_pis = self.policy(next_observations, repeat=self.config.cql_n_actions)
+                    ##DEBUG
+                    '''
+                    print(f"cql current actions dim: {cql_current_actions.shape}")
+                    print(f"cql current log pis dim: {cql_current_log_pis.shape}")
+                    print(f"cql next actions dim: {cql_next_actions.shape}")
+                    print(f"cql next log pis dim: {cql_next_log_pis.shape} ")
+                    '''
+                    ##
+                    
+                cql_current_actions, cql_current_log_pis = cql_current_actions.detach(), cql_current_log_pis.detach()
+                cql_next_actions, cql_next_log_pis = cql_next_actions.detach(), cql_next_log_pis.detach()
+                ##DEBUG
+                #print(f"observation after cql policy: {observations.shape}")
+                ##
+                cql_q1_rand = self.qf1(observations=observations, actions=cql_random_actions, observations_text=observations_text, actions_text=actions_text)
+                cql_q2_rand = self.qf2(observations=observations, actions=cql_random_actions, observations_text=observations_text, actions_text=actions_text)
+                cql_q1_current_actions = self.qf1(observations=observations, actions=cql_current_actions, observations_text=observations_text, actions_text=actions_text)
+                cql_q2_current_actions = self.qf2(observations=observations, actions=cql_current_actions, observations_text=observations_text, actions_text=actions_text)
+                cql_q1_next_actions = self.qf1(observations=observations, actions=cql_next_actions, observations_text=observations_text, actions_text=actions_text)
+                cql_q2_next_actions = self.qf2(observations=observations, actions=cql_next_actions, observations_text=observations_text, actions_text=actions_text)
+
+                cql_cat_q1 = torch.cat(
+                    [cql_q1_rand, torch.unsqueeze(q1_pred, 1), cql_q1_next_actions, cql_q1_current_actions], dim=1
+                )
+                cql_cat_q2 = torch.cat(
+                    [cql_q2_rand, torch.unsqueeze(q2_pred, 1), cql_q2_next_actions, cql_q2_current_actions], dim=1
+                )
+                cql_std_q1 = torch.std(cql_cat_q1, dim=1)
+                cql_std_q2 = torch.std(cql_cat_q2, dim=1)
+
+                if self.config.cql_importance_sample:
+                    random_density = np.log(0.5 ** action_dim)
+                    cql_cat_q1 = torch.cat(
+                        [cql_q1_rand - random_density,
+                        cql_q1_next_actions - cql_next_log_pis.detach(),
+                        cql_q1_current_actions - cql_current_log_pis.detach()],
+                        dim=1
+                    )
+                    cql_cat_q2 = torch.cat(
+                        [cql_q2_rand - random_density,
+                        cql_q2_next_actions - cql_next_log_pis.detach(),
+                        cql_q2_current_actions - cql_current_log_pis.detach()],
+                        dim=1
+                    )
+
+                cql_qf1_ood = torch.logsumexp(cql_cat_q1 / self.config.cql_temp, dim=1) * self.config.cql_temp
+                cql_qf2_ood = torch.logsumexp(cql_cat_q2 / self.config.cql_temp, dim=1) * self.config.cql_temp
+
+                """Subtract the log likelihood of data"""
+                cql_qf1_diff = torch.clamp(
+                    cql_qf1_ood - q1_pred,
+                    self.config.cql_clip_diff_min,
+                    self.config.cql_clip_diff_max,
+                ).mean()
+                cql_qf2_diff = torch.clamp(
+                    cql_qf2_ood - q2_pred,
+                    self.config.cql_clip_diff_min,
+                    self.config.cql_clip_diff_max,
+                ).mean()
+
+                if self.config.cql_lagrange:
+                    alpha_prime = torch.clamp(torch.exp(self.log_alpha_prime()), min=0.0, max=1000000.0)
+                    cql_min_qf1_loss = alpha_prime * self.config.cql_min_q_weight * (cql_qf1_diff - self.config.cql_target_action_gap)
+                    cql_min_qf2_loss = alpha_prime * self.config.cql_min_q_weight * (cql_qf2_diff - self.config.cql_target_action_gap)
+
+                    self.alpha_prime_optimizer.zero_grad()
+                    alpha_prime_loss = (-cql_min_qf1_loss - cql_min_qf2_loss)*0.5
+                    alpha_prime_loss.backward(retain_graph=True)
+                    self.alpha_prime_optimizer.step()
+                else:
+                    cql_min_qf1_loss = cql_qf1_diff * self.config.cql_min_q_weight
+                    cql_min_qf2_loss = cql_qf2_diff * self.config.cql_min_q_weight
+                    alpha_prime_loss = observations.new_tensor(0.0)
+                    alpha_prime = observations.new_tensor(0.0)
+
+                if q_distill_weight > 0:
+                    with torch.no_grad():
+                        q1_ready = ready_agent.qf1(observations, actions)
+                        q2_ready = ready_agent.qf2(observations, actions)
+                    qf1_distill_loss = F.mse_loss(q1_pred, q1_ready) * q_distill_weight
+                    qf2_distill_loss = F.mse_loss(q2_pred, q2_ready) * q_distill_weight
+                else:
+                    device = q1_pred.device
+                    qf1_distill_loss, qf2_distill_loss = torch.zeros(1).to(device), torch.zeros(1).to(device)
+                conservative_loss = cql_min_qf1_loss + cql_min_qf2_loss + qf1_distill_loss + qf2_distill_loss
+                qf_loss = qf1_loss + qf2_loss + conservative_loss
+
+
+            if self.config.use_automatic_entropy_tuning:
+                self.alpha_optimizer.zero_grad()
+                alpha_loss.backward()
+                self.alpha_optimizer.step()
+
+            self.policy_optimizer.zero_grad()
+            policy_loss.backward()
+            self.policy_optimizer.step()
+
+            self.qf_optimizer.zero_grad()
+            qf_loss.backward()
+            self.qf_optimizer.step()
+
+            if self.total_steps % self.config.target_update_period == 0:
+                self.update_target_network(
+                    self.config.soft_target_update_rate
+                )
+
+
+            metrics = dict(
+                log_pi=log_pi.mean().item(),
+                policy_loss=policy_loss.item(),
+                qf1_loss=qf1_loss.item(),
+                qf2_loss=qf2_loss.item(),
+                qf_average_loss=(qf1_loss.item() + qf2_loss.item())/2,
+                alpha_loss=alpha_loss.item(),
+                alpha=alpha.item(),
+                average_qf1=q1_pred.mean().item(),
+                average_qf2=q2_pred.mean().item(),
+                average_target_q=target_q_values.mean().item(),
+                total_steps=self.total_steps,
+                qf1_distill_loss=qf1_distill_loss.item(),
+                qf2_distill_loss=qf2_distill_loss.item(),
+                combined_loss=qf_loss.item()
+            )
+
+            if self.config.use_cql:
+                metrics.update(prefix_metrics(dict(
+                    cql_std_q1=cql_std_q1.mean().item(),
+                    cql_std_q2=cql_std_q2.mean().item(),
+                    cql_q1_rand=cql_q1_rand.mean().item(),
+                    cql_q2_rand=cql_q2_rand.mean().item(),
+                    cql_min_qf1_loss=cql_min_qf1_loss.mean().item(),
+                    cql_min_qf2_loss=cql_min_qf2_loss.mean().item(),
+                    cql_qf1_diff=cql_qf1_diff.mean().item(),
+                    cql_qf2_diff=cql_qf2_diff.mean().item(),
+                    cql_q1_current_actions=cql_q1_current_actions.mean().item(),
+                    cql_q2_current_actions=cql_q2_current_actions.mean().item(),
+                    cql_q1_next_actions=cql_q1_next_actions.mean().item(),
+                    cql_q2_next_actions=cql_q2_next_actions.mean().item(),
+                    alpha_prime_loss=alpha_prime_loss.item(),
+                    alpha_prime=alpha_prime.item(),
+                    conservative_loss=conservative_loss.item(),
+                ), 'cql'))
+
+            return metrics
+
 
     def layers_for_weight_diff(self):
         layer_list = []
@@ -490,15 +1201,40 @@ class ConservativeSAC(object):
         return layer1, layer2, layer_fc
 
     def features_from_batch_no_grad(self, batch):
+        if "observations_text" in batch:
+            #observations = torch.concat([batch["observations"], batch["observations_text"].expand(batch["observations"].shape[0])], dim=1)
+            #actions = torch.concat([batch["actions"], batch["actions_text"].expand(batch["actions"].shape[0])], dim=1)
+            #next_observations = torch.concat([batch["next_observations"], batch["next_observations_text"].expand(batch["next_observations"].shape[0])], dim=1)
+            observations_text = batch["observations_text"]
+            actions_text = batch["actions_text"]
+            next_observations_text = batch["next_observations_text"]
+        else:
+            observations_text = None
+            actions_text = None
+            next_observations_text = None
         observations = batch['observations']
         actions = batch['actions']
         rewards = batch['rewards']
         next_observations = batch['next_observations']
         dones = batch['dones']
-
+        ##DEBUG
+        '''
+        print(f"observations dim: {observations.shape}")
+        print(f"actions dim: {actions.shape}")
+        print(f"rewards dim: {rewards.shape}")
+        print(f"next_observations: {next_observations.shape}")
+        print(f"dones dim: {dones.shape}")
+        print(f"observations text: {observations_text}")
+        print(f"actions text: {actions_text}")
+        print(f"next observations text: {next_observations_text}")
+        '''
+        ##
         with torch.no_grad():
-            feature_q1 = self.qf1.get_feature(observations, actions)
-            feature_q2 = self.qf2.get_feature(observations, actions)
+            feature_q1 = self.qf1.get_feature_extra(observations, actions, observations_text, actions_text)
+            feature_q2 = self.qf2.get_feature_extra(observations, actions, observations_text, actions_text)
+            ##DEBUG
+            #print(f"feature from q1: {feature_q1.shape}")
+            ##
             return torch.cat([feature_q1, feature_q2], 1)
 
     def torch_to_device(self, device):

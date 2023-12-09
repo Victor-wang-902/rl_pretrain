@@ -6,6 +6,9 @@ from torch.distributions import Normal
 from torch.distributions.transformed_distribution import TransformedDistribution
 from torch.distributions.transforms import TanhTransform
 from torch.nn import functional as F
+from text_encoding.utils import get_text_embedding, get_text_embedding_tensor
+from text_encoding.info import TEXT_DESCRIPTIONS
+
 
 
 def extend_and_repeat(tensor, dim, repeat):
@@ -119,12 +122,12 @@ class ReparameterizedTanhGaussian(nn.Module):
 
         return action_sample, log_prob
 
-
+#########################################################################################
 class TanhGaussianPolicy(nn.Module):
 
-    def __init__(self, observation_dim, action_dim, arch='256-256',
+    def __init__(self, observation_dim, action_dim, pretrain_obs_dim=None, pretrain_act_dim=None, encoder_dim=0, arch='256-256',
                  log_std_multiplier=1.0, log_std_offset=-1.0,
-                 orthogonal_init=False, no_tanh=False):
+                 orthogonal_init=False, no_tanh=False, pretrain_env_name=None, offline_env_name=None, encoder=None, tokenizer=None):
         super().__init__()
         self.observation_dim = observation_dim
         self.action_dim = action_dim
@@ -133,11 +136,83 @@ class TanhGaussianPolicy(nn.Module):
         self.no_tanh = no_tanh
 
         self.base_network = FullyConnectedNetwork(
-            observation_dim, 2 * action_dim, arch, orthogonal_init
+            observation_dim + encoder_dim, 2 * action_dim, arch, orthogonal_init
         )
         self.log_std_multiplier = Scalar(log_std_multiplier)
         self.log_std_offset = Scalar(log_std_offset)
         self.tanh_gaussian = ReparameterizedTanhGaussian(no_tanh=no_tanh)
+        if pretrain_obs_dim is not None:
+            self.has_proj = True
+            if isinstance(pretrain_obs_dim, list):
+                pretrain_env_unique = list(dict.fromkeys([name.split("-")[0] for name in pretrain_env_name]))
+                pretrain_obs_unique = list(dict.fromkeys(pretrain_obs_dim))
+                pretrain_act_unique = list(dict.fromkeys(pretrain_act_dim))
+                #print("debug", pretrain_env_unique)
+                #print("debug", pretrain_obs_unique)
+                #print("debug", pretrain_act_unique)
+                #assert len(pretrain_env_unique) == len(pretrain_obs_unique) and len(pretrain_obs_unique) == len(pretrain_act_unique)
+                if len(pretrain_env_unique) == 1:
+                    self.proj = nn.Linear(pretrain_obs_unique[0] + encoder_dim, observation_dim)
+                    self.out = nn.Linear(2 * action_dim, 2 * pretrain_act_unique[0])
+                else:
+                    self.proj = nn.ModuleDict({name.split("-")[0]: nn.Linear(obs + encoder_dim, observation_dim) for (name, obs) in zip(pretrain_env_name, pretrain_obs_dim)})
+                    self.out = nn.ModuleDict({name.split("-")[0]: nn.Linear(2 * action_dim, 2 * act) for (name, act) in zip(pretrain_env_name, pretrain_act_dim)})
+                    #self.proj = nn.ModuleDict({name: nn.Linear(obs + encoder_dim, observation_dim) for (name, obs) in zip(pretrain_env_unique, pretrain_obs_unique)})
+                    #self.out = nn.ModuleDict({name: nn.Linear(2 * action_dim, 2 * act) for (name, act) in zip(pretrain_env_unique, pretrain_act_unique)})
+            else:
+                self.proj = nn.Linear(pretrain_obs_dim + encoder_dim, observation_dim)
+                self.out = nn.Linear(2 * action_dim, 2 * pretrain_act_dim)
+            ##DEBUG
+            #print(f"self proj: {self.proj}")
+            #print(f"self out: {self.out}")
+            ##
+
+            if orthogonal_init:
+                if isinstance(self.proj, nn.ModuleDict):
+                    for name in self.proj.keys():
+                        nn.init.orthogonal_(self.proj[name].weight, gain=1e-2)
+                else:
+                    nn.init.orthogonal_(self.proj.weight, gain=1e-2)
+
+                if isinstance(self.out, nn.ModuleDict):
+                    for name in self.out.keys():
+                        nn.init.orthogonal_(self.out[name].weight, gain=1e-2)
+                else:
+                    nn.init.orthogonal_(self.out.weight, gain=1e-2)
+            else:
+                if isinstance(self.proj, nn.ModuleDict):
+                    for name in self.proj.keys():
+                        nn.init.xavier_uniform_(self.proj[name].weight, gain=1e-2)
+                else:
+                    nn.init.xavier_uniform_(self.proj.weight, gain=1e-2)
+
+                if isinstance(self.out, nn.ModuleDict):
+                    for name in self.out.keys():
+                        nn.init.xavier_uniform_(self.out[name].weight, gain=1e-2)
+                else:
+                    nn.init.xavier_uniform_(self.out.weight, gain=1e-2)
+            
+            if isinstance(self.proj, nn.ModuleDict):
+                for name in self.proj.keys():
+                    nn.init.constant_(self.proj[name].bias, 0.0)
+            else:
+                nn.init.constant_(self.proj.bias, 0.0)
+
+            if isinstance(self.out, nn.ModuleDict):
+                for name in self.out.keys():
+                    nn.init.constant_(self.out[name].bias, 0.0)
+            else:
+                nn.init.constant_(self.out.bias, 0.0)
+
+        else:
+            self.has_proj = False
+        if encoder_dim != 0:
+            self.observations_text, _ = get_text_embedding_tensor(encoder, tokenizer, TEXT_DESCRIPTIONS[offline_env_name])
+        else:
+            self.observations_text = None
+        ##DEBUG
+        #print(f"self observation text: {self.observations_text}")
+        ##
 
     def log_prob(self, observations, actions):
         if actions.ndim == 3:
@@ -147,11 +222,71 @@ class TanhGaussianPolicy(nn.Module):
         log_std = self.log_std_multiplier() * log_std + self.log_std_offset()
         return self.tanh_gaussian.log_prob(mean, log_std, actions)
 
-    def forward(self, observations, deterministic=False, repeat=None):
+    def forward(self, observations, observations_text=None, deterministic=False, repeat=None, chosen=None, proj=None):
+
+
+        if observations_text is not None:
+            #print("debug", observations_text)
+            observations = torch.concat([observations, observations_text.expand(observations.shape[0], -1)], dim=1)
+        '''
+        if not deterministic:
+            ##DEBUG
+            #print("policy forward")
+            #print(f"policy observations dim: {observations.shape}")
+            #print(f"policy observations text dim: {observations_text}")
+            #print(f"policy chosen: {chosen}")
+            #print(f"policy proj: {proj}")
+            #print(f"policy observations after concat: {observations.shape}")
+            ##
+        '''
         if repeat is not None:
             observations = extend_and_repeat(observations, 1, repeat)
+        '''
+        if not deterministic:
+            ##DEBUG
+            #print(f"policy observations after repeat: {observations.shape}")
+            ##
+        '''
+        if proj:
+            if chosen is not None:
+                projection = self.proj[chosen]
+                out = self.out[chosen]
+            else:
+                projection = self.proj
+                out = self.out
+            observations = projection(observations)
+            #print("debug", observations.shape)
+            if observations_text is not None:
+                if len(observations.shape) == 3:
+                    observations = torch.concat([observations, self.observations_text.expand(observations.shape[0], observations.shape[1], -1)], dim=-1)
+                else:
+                    observations = torch.concat([observations, self.observations_text.expand(observations.shape[0], -1)], dim=1)
+            '''
+            if not deterministic:
+                ##DEBUG
+                #print(f"policy observations after projection and concat: {observations.shape}")
+                ##
+            '''
         base_network_output = self.base_network(observations)
-        mean, log_std = torch.split(base_network_output, self.action_dim, dim=-1)
+        
+        ##DEBUG
+        '''
+        if not deterministic:
+            print(f"base network output dim: {base_network_output.shape}")
+        '''
+        ##
+        if proj:
+            base_network_output = out(base_network_output)
+            ##DEBUG
+            '''
+            if not deterministic:
+                print(f"base network output after output layer: {base_network_output.shape}")
+            '''
+            ##
+            mean, log_std = torch.split(base_network_output, base_network_output.shape[-1] // 2, dim=-1)
+
+        else:
+            mean, log_std = torch.split(base_network_output, self.action_dim, dim=-1)
         log_std = self.log_std_multiplier() * log_std + self.log_std_offset()
         return self.tanh_gaussian(mean, log_std, deterministic)
 
@@ -167,11 +302,11 @@ class SamplerPolicy(object):
             observations = torch.tensor(
                 observations, dtype=torch.float32, device=self.device
             )
-            actions, _ = self.policy(observations, deterministic)
+            actions, _ = self.policy(observations, observations_text=self.policy.observations_text, deterministic=deterministic)
             actions = actions.cpu().numpy()
         return actions
 
-
+################################################################################################
 class FullyConnectedQFunction(nn.Module):
 
     def __init__(self, observation_dim, action_dim, arch='256-256', orthogonal_init=False):
@@ -364,10 +499,12 @@ class FullyConnectedQFunctionPretrain2(nn.Module):
         h = self.get_feature(observations, actions)
         return torch.squeeze(self.last_fc_layer(h), dim=-1)
 
+
+############################################################################
 class FullyConnectedQFunctionPretrain3(nn.Module):
     # this version can support pretraining on data from a different task, with a projection layer...
 
-    def __init__(self, obs_dim, action_dim, pre_obs_dim, pre_act_dim, arch='256-256', orthogonal_init=False, pretrain_env_name=None):
+    def __init__(self, obs_dim, action_dim, pre_obs_dim, pre_act_dim, encoder_dim=0, arch='256-256', orthogonal_init=False, pretrain_env_name=None, offline_env_name=None, encoder=None, tokenizer=None):
         super().__init__()
         self.obs_dim = obs_dim
         self.action_dim = action_dim
@@ -379,8 +516,12 @@ class FullyConnectedQFunctionPretrain3(nn.Module):
 
         self.hidden_layers = nn.ModuleList()
         self.hidden_activation = F.relu
-        d = obs_dim + action_dim
-
+        d = obs_dim + action_dim + 2 * encoder_dim
+        if encoder_dim != 0:
+            self.observations_text, self.actions_text = get_text_embedding_tensor(encoder, tokenizer, TEXT_DESCRIPTIONS[offline_env_name])
+        else:
+            self.observations_text = None
+            self.actions_text = None
         hidden_sizes = [int(h) for h in arch.split('-')]
         for hidden_size in hidden_sizes:
             fc = nn.Linear(d, hidden_size)
@@ -402,13 +543,28 @@ class FullyConnectedQFunctionPretrain3(nn.Module):
         # use a linear layer to project whatever pretraining task data dim into downstream task input dim.
         # this proj layer is not used in downstream task
         if isinstance(pre_obs_dim, list):
-            self.proj = nn.ModuleDict({name.split("-")[0]: nn.Linear(obs + act, obs_dim + action_dim) for (name, obs, act) in zip(pretrain_env_name, pre_obs_dim, pre_act_dim)})
+            #print("debug", pre_obs_dim)
+            pretrain_env_unique = list(dict.fromkeys([name.split("-")[0] for name in pretrain_env_name]))
+            pretrain_obs_unique = list(dict.fromkeys(pre_obs_dim))
+            pretrain_act_unique = list(dict.fromkeys(pre_act_dim))
+            #print("debug", pretrain_env_unique)
+            #print("debug", pretrain_obs_unique)
+            #assert len(pretrain_env_unique) == len(pretrain_obs_unique) and len(pretrain_obs_unique) == len(pretrain_act_unique)
+            if len(pretrain_env_unique) == 1:
+                self.proj = nn.Linear(pretrain_obs_unique[0] + pretrain_act_unique[0] + 2 * encoder_dim, obs_dim + action_dim)
+            else:
+                #self.proj = nn.ModuleDict({name: nn.Linear(obs + act + 2 * encoder_dim, obs_dim + action_dim) for (name, obs, act) in zip(pretrain_env_unique, pretrain_obs_unique, pretrain_act_unique)})
+                self.proj = nn.ModuleDict({name.split("-")[0]: nn.Linear(obs + act + 2 * encoder_dim, obs_dim + action_dim) for (name, obs, act) in zip(pretrain_env_name, pre_obs_dim, pre_act_dim)})
         else:
-            self.proj = nn.Linear(pre_obs_dim + pre_act_dim, obs_dim + action_dim)
+            self.proj = nn.Linear(pre_obs_dim + pre_act_dim + 2 * encoder_dim, obs_dim + action_dim)
 
         # pretrain mode: q_sprime
         if isinstance(pre_obs_dim, list):
-            self.hidden_to_next_obs = nn.ModuleDict({name.split("-")[0]: nn.Linear(d, obs) for (name, obs) in zip(pretrain_env_name, pre_obs_dim)})
+            if len(pretrain_env_unique) == 1:
+                self.hidden_to_next_obs = nn.Linear(d, pretrain_obs_unique[0])
+            else:
+                #self.hidden_to_next_obs = nn.ModuleDict({name: nn.Linear(d, obs) for (name, obs) in zip(pretrain_env_name, pretrain_obs_unique)})
+                self.hidden_to_next_obs = nn.ModuleDict({name.split("-")[0]: nn.Linear(d, obs) for (name, obs) in zip(pretrain_env_name, pre_obs_dim)})
         else:
             self.hidden_to_next_obs = nn.Linear(d, pre_obs_dim)
         # pretrain mode: q_mc
@@ -447,24 +603,127 @@ class FullyConnectedQFunctionPretrain3(nn.Module):
         nn.init.constant_(self.hidden_to_value.bias, 0.0)
         if isinstance(self.proj, nn.ModuleDict):
             for name in self.proj.keys():
-                nn.init.xavier_uniform_(self.proj[name].bias, 0.0)
+                nn.init.constant_(self.proj[name].bias, 0.0)
         else:
-            nn.init.xavier_uniform_(self.proj.bias, 0.0)
+            nn.init.constant_(self.proj.bias, 0.0)
+        ##DEBUG
+        '''
+        print(f"q proj: {self.proj}")
+        print(f"q hidden to next obs: {self.hidden_to_next_obs}")
+        if self.observations_text is not None:
+            print(f"q observations text: {self.observations_text.shape}")
+            print(f"q actions text: {self.actions_text.shape}")
+        else:
+            print(f"q observations text: {self.observations_text}")
+            print(f"q actions text: {self.actions_text}")
+        '''
+        ##
 
-    def get_feature(self, observations, actions):
+    def get_feature(self, observations, actions): # has to be used after concat
         h = torch.cat([observations, actions], dim=-1)
         for fc_layer in self.hidden_layers:
             h = self.hidden_activation(fc_layer(h))
         return h
+    ########################################
 
-    def get_pretrain_next_obs(self, observations, actions):
+    def get_feature_extra(self, observations, actions, observations_text=None, actions_text=None): # get feature forward style for offline
+        if observations_text is not None:
+            observations = torch.concat([observations, observations_text.expand(observations.shape[0], -1)], dim=1)
+            actions = torch.concat([actions, actions_text.expand(actions.shape[0], -1)], dim=1)
+        h = self.get_feature(observations, actions)
+        return h
+
+    def get_pretrain_feature(self, observations, actions, env=None): # get feature assuming projection and after concat
+        if env is not None:
+            projection = self.proj[env]
+        else:
+            projection = self.proj
+        ##DEBUG
+        #print(f"projection used: {projection}")
+        ##
         h = torch.cat([observations, actions], dim=-1)
-        h = self.proj(h)
-        for fc_layer in self.hidden_layers:
-            h = self.hidden_activation(fc_layer(h))
-        return self.hidden_to_next_obs(h)
+        h = projection(h)
+        ##DEBUG
+        #print(f"hidden after projection: {h.shape}")
+        ##
+        if self.observations_text is not None:
+            observations, actions = torch.split(h, [self.obs_dim, self.action_dim], dim=1)
+            ##DEBUG
+            #print(f"observations after split: {observations.shape}")
+            #print(f"actions after split: {actions.shape}")
+            ##
+            observations = torch.concat([observations, self.observations_text.expand(observations.shape[0], -1)], dim=1)
+            actions = torch.concat([actions, self.actions_text.expand(actions.shape[0], -1)], dim=1)
+            ##DEBUG
+            #print(f"observations after concat: {observations.shape}")
+            #print(f"actions after concat: {actions.shape}")
+            ##
+            return self.get_feature(observations, actions)
 
+        else:
+            for fc_layer in self.hidden_layers:
+                h = self.hidden_activation(fc_layer(h))
+            return h
+        #if self.
+        #for fc_layer in self.hidden_layers:
+        #    h = self.hidden_activation(fc_layer(h))
+        #return h
+    '''
+    @multiple_action_q_function
+    def forward_pretrain(self, observations, actions, env=None):
+        h = self.get_pretrain_feature(observations, actions, env)
+        return torch.squeeze(self.last_fc_layer(h), dim=-1)
+    '''
+    @multiple_action_q_function
+    def forward(self, observations, actions, observations_text=None, actions_text=None, chosen=None, proj=False):
+        ##DEBUG
+        '''
+        print("q forward")
+        print(f"observation dim: {observations.shape}")
+        print(f"actions dim: {actions.shape}")
+        if observations_text is not None:
+            print(f"observations text: {observations_text.shape}")
+            print(f"actions text: {actions_text.shape}")
+        else:
+            print(f"observations text: {observations_text}")
+            print(f"actions text: {actions_text}")
+        print(f"chosen: {chosen}")
+        print(f"proj: {proj}")
+        '''
+        ##
+        if observations_text is not None:
+            observations = torch.concat([observations, observations_text.expand(observations.shape[0], -1)], dim=1)
+            actions = torch.concat([actions, actions_text.expand(actions.shape[0], -1)], dim=1)
+        if not proj:
+            h = self.get_feature(observations, actions)
+        else:
+            h = self.get_pretrain_feature(observations, actions, chosen)
+        ##DEBUG
+        #print(f"feature after: {h.shape}")
+        ##
+        return torch.squeeze(self.last_fc_layer(h), dim=-1)
+
+    def get_pretrain_next_obs(self, observations, actions, env=None):
+        ##DEBUG
+        #print(f"env: {env}")
+        #print("proj used")
+        ##
+        h = self.get_pretrain_feature(observations, actions, env)
+        if env is not None:
+            hidden_to_next_obs = self.hidden_to_next_obs[env]
+        else:
+            hidden_to_next_obs =  self.hidden_to_next_obs
+        ##DEBUG
+        #print(f"hidden to next obs: {hidden_to_next_obs}")
+        ##
+        return hidden_to_next_obs(h)
+
+    
+    ##########################################
     def predict_next_obs(self, observations, actions):
+        ##DEBUG
+        #print("no proj used")
+        ##
         h = self.get_feature(observations, actions)
         return self.hidden_to_next_obs(h)
 
@@ -472,12 +731,14 @@ class FullyConnectedQFunctionPretrain3(nn.Module):
         h = self.get_feature(observations, actions)
         return self.hidden_to_value(h)
 
+    ###############################################
+    '''
     @multiple_action_q_function
     def forward(self, observations, actions):
         h = self.get_feature(observations, actions)
         return torch.squeeze(self.last_fc_layer(h), dim=-1)
-
-
+    '''
+    ############################################################################################
 class Scalar(nn.Module):
     def __init__(self, init_value):
         super().__init__()

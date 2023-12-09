@@ -58,10 +58,11 @@ def get_setting_dt(settings, setting_number, random_setting_seed=0, random_order
         hyper2logname[hypers[-1]] = lognames[-1]
 
     total = 1
+    #print(values_list)
     for values in values_list:
         total *= len(values)
     max_job = total
-
+    #print(total)
     new_indexes = np.random.choice(total, total, replace=False) if random_order else np.arange(total)
     new_index = new_indexes[setting_number]
 
@@ -84,11 +85,18 @@ def get_auto_exp_name(actual_setting, hyper2logname, exp_prefix=None, suffix_bef
     # if use this, make sure there is the underscore before
     exp_name_full = exp_prefix
     for hyper, value in actual_setting.items():
-        if hyper not in ['env', 'dataset', 'seed']:
-            if exp_name_full is not None:
-                exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value))
-            else:
-                exp_name_full = '%s' % (hyper2logname[hyper] + str(value))
+        if isinstance(value, tuple):
+            if hyper not in ['env', 'dataset', 'seed']:
+                if exp_name_full is not None:
+                    exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value[1]))
+                else:
+                    exp_name_full = '%s' % (hyper2logname[hyper] + str(value[1]))
+        else:
+            if hyper not in ['env', 'dataset', 'seed']:
+                if exp_name_full is not None:
+                    exp_name_full = exp_name_full + '_%s' % (hyper2logname[hyper] + str(value))
+                else:
+                    exp_name_full = '%s' % (hyper2logname[hyper] + str(value))
     exp_name_full = exp_name_full + suffix_before_env_dataset + '_%s_%s' % (actual_setting['env'], actual_setting['dataset'])
     return exp_name_full
 

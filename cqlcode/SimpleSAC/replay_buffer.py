@@ -8,7 +8,8 @@ import numpy as np
 import torch
 import joblib
 ####################################
-from info import TEXT_DESCRIPTIONS
+from text_encoding.info import TEXT_DESCRIPTIONS
+from text_encoding.utils import preprocess_with_text, add_text_emb_to_dataset
 ####################################
 
 class ReplayBuffer(object):
@@ -153,31 +154,59 @@ def get_d4rl_dataset_from_multiple_envs(envs):
                 d[key] = np.concatenate((d[key], dataset[key]), axis=0)
     return d
 ########################################################################
-def get_d4rl_dataset_with_text(env, variant):
+def get_d4rl_dataset_with_text(env, variant, pretrain=False):
+
     dataset = d4rl.qlearning_dataset(env)
     n_data = dataset['observations'].shape[0]
-    use_size = int(n_data * variant["target_env_ratio"])
+    if pretrain:
+        use_size = int(n_data * variant["pretrain_data_ratio"])
+    else:
+        use_size = int(n_data * variant["offline_data_ratio"])
     np.random.seed(variant["seed"])
     idxs = np.random.choice(n_data, use_size, replace=False)
     env_name = env.unwrapped.spec.id
-    encoder = variant["encoder_model"]
-    tokenizer = variant["text_tokenizer"]
-    dataset = preprocess_with_text(dataset, encoder, tokenizer, TEXT_DESCRIPTION[env_name])
+    if variant["text_encoder"]:
+
+        encoder = variant["encoder_model"]
+        tokenizer = variant["text_tokenizer"]
+    else:
+        encoder = None
+        tokenizer = None
+    if variant["text_encoder"] is not None:
+        ##DEBUG
+        #print(f"env dataset for text processing: {env_name}")
+        ##
+        dataset = add_text_emb_to_dataset(dataset, encoder, tokenizer, TEXT_DESCRIPTIONS[env_name])
     
-    return dict(
-        observations=dataset['observations'][idxs],
-        actions=dataset['actions'][idxs],
-        next_observations=dataset['next_observations'][idxs],
-        rewards=dataset['rewards'][idxs],
-        dones=dataset['terminals'][idxs].astype(np.float32),
-    )
+        return dict(
+            observations=dataset['observations'][idxs],
+            actions=dataset['actions'][idxs],
+            next_observations=dataset['next_observations'][idxs],
+            observations_text=dataset['observations_text'],
+            actions_text=dataset["actions_text"],
+            next_observations_text=dataset["next_observations_text"],
+            rewards=dataset['rewards'][idxs],
+            dones=dataset['terminals'][idxs].astype(np.float32),
+        )
+    else:
+        return dict(
+            observations=dataset['observations'][idxs],
+            actions=dataset['actions'][idxs],
+            next_observations=dataset['next_observations'][idxs],
+            rewards=dataset['rewards'][idxs],
+            dones=dataset['terminals'][idxs].astype(np.float32),
+        )
 
 
-def get_d4rl_dataset_from_multiple_envs_with_text(envs, variant):
+def get_d4rl_dataset_from_multiple_datasets_with_text(envs, variant):
     n_data = 0
     d = None
-    encoder = variant["encoder_model"]
-    tokenizer = variant["text_tokenizer"]
+    if variant["text_encoder"]:
+        encoder = variant["encoder_model"]
+        tokenizer = variant["text_tokenizer"]
+    else:
+        encoder = None
+        tokenizer = None
     for env in envs:
         dataset = d4rl.qlearning_dataset(env)
         dataset['dones'] = dataset['terminals']
@@ -186,34 +215,59 @@ def get_d4rl_dataset_from_multiple_envs_with_text(envs, variant):
         env_name = env.unwrapped.spec.id
         
         if env_name == "%s-%s-v2" % (variant["env"], variant["dataset"]):
-            use_size = int(n_data * variant["target_env_ratio"])
+            use_size = int(n_data * variant["offline_data_ratio"])
             np.random.seed(variant["seed"])
             idxs = np.random.choice(n_data, use_size, replace=False)
         else:
-            use_size = int(n_data * variant["other_env_ratio"])
+            use_size = int(n_data * variant["pretrain_data_ratio"])
             np.random.seed(variant["seed"])
             idxs = np.random.choice(n_data, use_size, replace=False)
-            
-        dataset = preprocess_with_text(dataset, encoder, tokenizer, TEXT_DESCRIPTION[env_name])
         
-        if not d:
-            d = dict(
-                observations=dataset['observations'][idxs],
-                actions=dataset['actions'][idxs],
-                next_observations=dataset['next_observations'][idxs],
-                rewards=dataset['rewards'][idxs],
-                dones=dataset['dones'][idxs].astype(np.float32),
-            )
+        if variant["text_encoder"] is not None:
+            ##DEBUG
+            #print(f"env dataset for text processing: {env_name}")
+            ##
+            dataset = add_text_emb_to_dataset(dataset, encoder, tokenizer, TEXT_DESCRIPTIONS[env_name])
+        
+            if not d:
+                d = dict(
+                    observations=dataset['observations'][idxs],
+                    actions=dataset['actions'][idxs],
+                    next_observations=dataset['next_observations'][idxs],
+                    observations_text=dataset['observations_text'],
+                    actions_text=dataset["actions_text"],
+                    next_observations_text=dataset["next_observations_text"],
+                    rewards=dataset['rewards'][idxs],
+                    dones=dataset['dones'][idxs].astype(np.float32),
+                )
+            else:
+                #print("debug", d)
+                for key in d:
+                    if "text" not in key:
+                        d[key] = np.concatenate((d[key], dataset[key][idxs]), axis=0)
         else:
-            for key in d:
-                d[key] = np.concatenate((d[key], dataset[key][idxs]), axis=0)
+            if not d:
+                d = dict(
+                    observations=dataset['observations'][idxs],
+                    actions=dataset['actions'][idxs],
+                    next_observations=dataset['next_observations'][idxs],
+                    rewards=dataset['rewards'][idxs],
+                    dones=dataset['dones'][idxs].astype(np.float32),
+                )
+            else:
+                for key in d:
+                    d[key] = np.concatenate((d[key], dataset[key][idxs]), axis=0)
     return d
     
 def get_d4rl_dataset_from_multiple_different_envs(envs, variant):
     n_data = 0
     d = dict()
-    encoder = variant["encoder_model"]
-    tokenizer = variant["text_tokenizer"]
+    if variant["text_encoder"] is not None:
+        encoder = variant["encoder_model"]
+        tokenizer = variant["text_tokenizer"]
+    else:
+        encoder = None
+        tokenizer = None
     for env in envs:
         dataset = d4rl.qlearning_dataset(env)
         dataset['dones'] = dataset['terminals']
@@ -222,26 +276,45 @@ def get_d4rl_dataset_from_multiple_different_envs(envs, variant):
         env_name = env.unwrapped.spec.id
         task_name = env_name.split("-")[0]
         if env_name == "%s-%s-v2" % (variant["env"], variant["dataset"]):
-            use_size = int(n_data * variant["target_env_ratio"])
+            use_size = int(n_data * variant["offline_data_ratio"])
             np.random.seed(variant["seed"])
             idxs = np.random.choice(n_data, use_size, replace=False)
         else:
-            use_size = int(n_data * variant["other_env_ratio"])
+            use_size = int(n_data * variant["pretrain_data_ratio"])
             np.random.seed(variant["seed"])
             idxs = np.random.choice(n_data, use_size, replace=False)
-        
-        dataset = preprocess_with_text(dataset, encoder, tokenizer, TEXT_DESCRIPTION[env_name])
-        if task_name not in d.keys():
-            d[task_name] = dict(
-                observations=dataset['observations'][idxs],
-                actions=dataset['actions'][idxs],
-                next_observations=dataset['next_observations'][idxs],
-                rewards=dataset['rewards'][idxs],
-                dones=dataset['dones'][idxs].astype(np.float32),
-            )
+        if variant["text_encoder"] is not None:
+            ##DEBUG
+            #print(f"env dataset for text processing: {env_name}")
+            ##
+            dataset = add_text_emb_to_dataset(dataset, encoder, tokenizer, TEXT_DESCRIPTIONS[env_name])
+            if task_name not in d.keys():
+                d[task_name] = dict(
+                    observations=dataset['observations'][idxs],
+                    actions=dataset['actions'][idxs],
+                    next_observations=dataset['next_observations'][idxs],
+                    observations_text=dataset['observations_text'],
+                    actions_text=dataset["actions_text"],
+                    next_observations_text=dataset["next_observations_text"],
+                    rewards=dataset['rewards'][idxs],
+                    dones=dataset['dones'][idxs].astype(np.float32),
+                )
+            else:
+                for key in d[task_name]:
+                    if "text" not in key:
+                        d[task_name][key] = np.concatenate((d[task_name][key], dataset[key][idxs]), axis=0)
         else:
-            for key in d[task_name]:
-                d[task_name][key] = np.concatenate((d[task_name][key], dataset[key][idxs]), axis=0)
+            if task_name not in d.keys():
+                d[task_name] = dict(
+                    observations=dataset['observations'][idxs],
+                    actions=dataset['actions'][idxs],
+                    next_observations=dataset['next_observations'][idxs],
+                    rewards=dataset['rewards'][idxs],
+                    dones=dataset['dones'][idxs].astype(np.float32),
+                )
+            else:
+                for key in d[task_name]:
+                    d[task_name][key] = np.concatenate((d[task_name][key], dataset[key][idxs]), axis=0)
     return d
 
 def subsample_batch_from_different_datasets(batch, size, weights):
@@ -291,7 +364,10 @@ def get_mdp_dataset_with_ratio(n_traj, n_state, n_action, policy_temperature, tr
 def index_batch(batch, indices):
     indexed = {}
     for key in batch.keys():
-        indexed[key] = batch[key][indices, ...]
+        if "text" not in key:
+            indexed[key] = batch[key][indices, ...]
+        else:
+            indexed[key] = batch[key]
     return indexed
 
 
