@@ -1,0 +1,69 @@
+{
+    "exp_name":	"chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2_ant_medium",
+    "exp_prefix":	"gym-experiment",
+    "logger":	{
+        "<logx.EpochLogger object at 0x14f1d7553700>":	{
+            "epoch_dict":	{},
+            "exp_name":	"chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2_ant_medium",
+            "first_row":	true,
+            "log_current_row":	{},
+            "log_headers":	[],
+            "output_dir":	"/checkpoints/chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2_ant_medium/chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2_ant_medium_s6049",
+            "output_file":	{
+                "<_io.TextIOWrapper name='/checkpoints/chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2_ant_medium/chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2_ant_medium_s6049/progress.csv' mode='w' encoding='UTF-8'>":	{
+                    "mode":	"w"
+                }
+            }
+        }
+    },
+    "variant":	{
+        "K":	20,
+        "activation_function":	"relu",
+        "batch_size":	64,
+        "calculate_extra":	false,
+        "data_size":	0.2,
+        "dataset":	"medium",
+        "device":	"cpu",
+        "dropout":	0.2,
+        "embed_dim":	128,
+        "env":	"ant",
+        "exp_name":	"chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2_ant_medium",
+        "extend_positions":	true,
+        "fp16":	false,
+        "frozen":	false,
+        "gpt_kmeans":	null,
+        "gpt_kmeans_const":	null,
+        "kmeans_cache":	null,
+        "kmeans_mean":	false,
+        "learning_rate":	0.0001,
+        "lm_learning_rate":	null,
+        "load_checkpoint":	null,
+        "log_to_wandb":	false,
+        "max_iters":	20,
+        "mode":	"normal",
+        "model_type":	"dt",
+        "n_head":	1,
+        "n_layer":	3,
+        "not_perturb_attn":	false,
+        "not_perturb_ln":	false,
+        "not_perturb_mlp":	false,
+        "num_eval_episodes":	10,
+        "num_steps_per_iter":	5000,
+        "outdir":	"/checkpoints/chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2_ant_medium/chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2_ant_medium_s6049",
+        "output_fname":	"progress.csv",
+        "pct_traj":	1.0,
+        "perturb":	false,
+        "perturb_absolute":	null,
+        "perturb_attn_only":	false,
+        "perturb_ln_only":	false,
+        "perturb_mlp_only":	false,
+        "perturb_per_layer":	null,
+        "perturb_transformer_only":	false,
+        "pretrained_lm":	"/scratch/zw2374/public/can-wikipedia-help-offline-rl-old/ngram/pretrain/checkpoints_ngram/chibiT_IID_rerun/model_20000",
+        "seed":	6049,
+        "share_input_output_proj":	true,
+        "target_return_finding":	false,
+        "warmup_steps":	5000,
+        "weight_decay":	0.0001
+    }
+}

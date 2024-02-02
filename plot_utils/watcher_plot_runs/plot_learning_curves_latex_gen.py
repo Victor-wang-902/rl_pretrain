@@ -49,14 +49,14 @@ def print_figures_latex(figure_folder, figure_names, sub_figure_captions, captio
     print()
 
 
-MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah',  ]
+MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah', "ant" ]
 MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
 d4rl_9_datasets_envs = []
 for e in MUJOCO_3_ENVS:
     for d in MUJOCO_3_DATASETS:
         d4rl_9_datasets_envs.append('%s_%s' % (e, d))
 
-MUJOCO_3_ENVS_captions = ['Hopper', 'Walker', 'HalfCheetah',  ]
+MUJOCO_3_ENVS_captions = ['Hopper', 'Walker', 'HalfCheetah', "ant" ]
 MUJOCO_3_DATASETS_captions = ['medium','medium-replay','medium-expert',]
 d4rl_9_datasets_envs_captions = []
 for e in MUJOCO_3_ENVS_captions:
@@ -148,7 +148,40 @@ def gen_dt_curves():
         ref_label,
     )
 
+def gen_dt_curves_offset():
+    figure_folder=  'figure-curves'
+    figure_names = []
+    subfigure_captions = d4rl_9_datasets_envs_captions
+
+    # performance
+    for e in d4rl_9_datasets_envs:
+        figure_names.append('ind-dt-offset_TestEpNormRet_%s.png' % e)
+
+    caption = 'Learning curves for DT, DT with Wikipedia pretraining, and DT with MC pretraining.'
+    ref_label = 'fig:dt-performance-curves-offset'
+    print_figures_latex(
+        figure_folder,
+        figure_names,
+        subfigure_captions,
+        caption,
+        ref_label,
+    )
+
+    # q loss
+    figure_names = []
+    for e in d4rl_9_datasets_envs:
+        figure_names.append('ind-dt-offset_current_itr_train_loss_mean_%s.png' % e)
+
+    caption = 'Training loss curves for DT, DT with Wikipedia pretraining, and DT with MC pretraining.'
+    ref_label = 'fig:dt-train-loss-curves-offset'
+    print_figures_latex(
+        figure_folder,
+        figure_names,
+        subfigure_captions,
+        caption,
+        ref_label,
+    )
 
 
-gen_cql_curves()
-# gen_dt_curves()
+#gen_cql_curves()
+gen_dt_curves_offset()

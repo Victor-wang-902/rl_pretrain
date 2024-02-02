@@ -1,5 +1,8 @@
-from plot_utils.quick_plot_helper import quick_plot, quick_plot_with_full_name
-from plot_utils.log_alias import *
+import sys
+sys.path.append('../..')
+
+from quick_plot_helper import quick_plot, quick_plot_with_full_name, quick_plot_with_full_name_new, quick_plot_with_full_name_data_ratio
+from log_alias import *
 # standard plotting, might not be useful for us...
 
 
@@ -15,7 +18,22 @@ def get_full_names_with_envs(base_names, envs):
         to_return.append(new_list)
     return to_return
 
-MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah',  ]
+def get_full_names_with_envs_data_ratio(base_names, envs):
+    # envs can be offline or online envs, offline envs will need to also have dataset name
+    n = len(base_names)
+    to_return = []
+    for i in range(n):
+        new_list = []
+        for env in envs:
+            sub_list = []
+            for sub_base_name in base_names[i]:
+                full_name = sub_base_name + '_' + env
+                sub_list.append(full_name)
+            new_list.append(sub_list)
+        to_return.append(new_list)
+    return to_return
+
+MUJOCO_3_ENVS = ['hopper', 'walker2d', 'halfcheetah',  'ant']
 MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
 d4rl_9_datasets_envs = []
 for e in MUJOCO_3_ENVS:
@@ -204,9 +222,9 @@ def plot_dt_performance_curves():
         'DT MC',
     ]
     base_names = [
-        dt,
-        chibiT,
-        dt_mc_1step_vocab100,
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        "chibiT-syn-20seeds-steps-wo_step20000",
         ]
 
     y = d4rl_test_performance_col_name
@@ -223,7 +241,8 @@ def plot_dt_performance_curves():
         y_value=[y],
         x_to_use=d4rl_x_axis_col_name,
         ymax=ymax,
-        smooth=default_performance_smooth
+        smooth=default_performance_smooth,
+        
     )
 
     # separate
@@ -240,6 +259,56 @@ def plot_dt_performance_curves():
             save_name_suffix=env_dataset_name,
         smooth=default_performance_smooth
         )
+        
+def plot_dt_performance_curves_offset():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        'DT+Synthetic',
+    ]
+    base_names = [
+        'dt-long-20seeds_dt_36',
+        'chibiT-rerun-20seeds',
+        "chibiT-syn-20seeds-steps-wo_step20000",
+        ]
+
+    y = d4rl_test_performance_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-offset-new'
+    quick_plot_with_full_name(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        smooth=default_performance_smooth,
+        offset_labels = ['DT+Synthetic', 'DT+Wiki'],
+        offset_amount = [4, 16]
+        
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-offset-new',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            smooth=default_performance_smooth,
+            offset_labels = ['DT+Synthetic', 'DT+Wiki'],
+            offset_amount = [4, 16]
+        )        
+
 
 def plot_dt_loss_curves():
     labels = [
@@ -248,9 +317,9 @@ def plot_dt_loss_curves():
         'DT MC',
     ]
     base_names = [
-        dt,
-        chibiT,
-        dt_mc_1step_vocab100,
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        'chibiT-syn-20seeds-steps-wo_step20000',
         ]
 
     y = d4rl_dt_loss_col_name
@@ -286,11 +355,57 @@ def plot_dt_loss_curves():
         )
 
 
-# plot_cql_performance_curves()
-# plot_cql_q_loss_curves()
-plot_cql_combined_loss_curves()
-# plot_dt_performance_curves()
-# plot_dt_loss_curves()
+def plot_dt_loss_curves_offset():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        'DT+Synthetic',
+    ]
+    base_names = [
+        'dt-long-20seeds_dt_36',
+        'chibiT-rerun-20seeds',
+        'chibiT-syn-20seeds-steps-wo_step20000',
+        ]
+
+    y = d4rl_dt_loss_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-offset-new'
+    quick_plot_with_full_name(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        y_log_scale=True,
+        offset_labels = ['DT+Synthetic', 'DT+Wiki'],
+        offset_amount = [4, 16]
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-offset-new',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            y_log_scale=True,
+            offset_labels = ['DT+Synthetic', 'DT+Wiki'],
+            offset_amount = [4, 16]
+        )
+
+
+
+
 
 
 
@@ -391,3 +506,582 @@ plot_cql_combined_loss_curves()
 
 # plot_july_new1()
 # plot_july_new2()
+
+
+def plot_dt_performance_curves_offset_new():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        'DT+Synthetic',
+    ]
+    base_names = [
+        'dt-long-20seeds_dt_36',
+        'chibiT-rerun-20seeds',
+        "chibiT-syn-long-20seeds-steps-wo_S100_32",
+        ]
+
+    y = d4rl_test_performance_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-offset-new-new'
+    quick_plot_with_full_name(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        smooth=default_performance_smooth,
+        xlabel="Total Number of Updates",
+        offset_labels = ['DT+Synthetic', 'DT+Wiki'],
+        offset_amount = [4, 16]
+        
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-offset-new-new',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            smooth=default_performance_smooth,
+            xlabel="Total Number of Updates",
+
+            offset_labels = ['DT+Synthetic', 'DT+Wiki'],
+            offset_amount = [4, 16]
+        )      
+
+def plot_dt_loss_curves_offset_new():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        'DT+Synthetic',
+    ]
+    base_names = [
+        'dt-long-20seeds_dt_36',
+        'chibiT-rerun-20seeds',
+        "chibiT-syn-long-20seeds-steps-wo_S100_32",
+        ]
+
+    y = d4rl_dt_loss_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-offset-new-new'
+    quick_plot_with_full_name(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        y_log_scale=True,
+        xlabel="Total Number of Updates",
+
+        offset_labels = ['DT+Synthetic', 'DT+Wiki'],
+        offset_amount = [4, 16]
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-offset-new-new',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            y_log_scale=True,
+            xlabel="Total Number of Updates",
+
+            offset_labels = ['DT+Synthetic', 'DT+Wiki'],
+            offset_amount = [4, 16]
+        )
+
+
+
+
+def plot_dt_performance_curves_states_abl():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        'S10',
+        'S100',
+        'S1000',
+        'S10000',
+
+    ]
+    base_names = [
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        'chibiT-syn-20seeds-states-wo_S10',
+        'chibiT-syn-20seeds-steps-wo_step20000',
+        'chibiT-syn-20seeds-states-wo_S1000',
+        'chibiT-syn-20seeds-states-wo_S10000',
+        ]
+
+    y = d4rl_test_performance_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-ftsteps-states'
+    quick_plot_with_full_name_new(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        smooth=default_performance_smooth,
+        xlabel="Number of Finetune Updates",
+        take_every=4,
+        dot=True
+
+        
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name_new(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-ftsteps-states',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            xlabel="Number of Finetune Updates",
+
+            smooth=default_performance_smooth,
+            take_every=4,
+            dot=True
+
+        )      
+
+def plot_dt_performance_curves_temp_abl():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        'T0.1',
+        'T1.0',
+        'T10.0',
+        'IID',
+
+    ]
+    base_names = [
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        'chibiT-syn-20seeds-temps-wo_T0.1',
+        'chibiT-syn-20seeds-steps-wo_step20000',
+        'chibiT-syn-20seeds-temps-wo_T10.0',
+        'chibiT-iid_wo_step20000'
+        ]
+
+    y = d4rl_test_performance_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-ftsteps-temp'
+    quick_plot_with_full_name_new(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        smooth=default_performance_smooth,
+        take_every=4,
+        xlabel="Number of Finetune Updates",
+        dot=True
+
+        
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name_new(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-ftsteps-temp',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            smooth=default_performance_smooth,
+            take_every=4,
+            xlabel="Number of Finetune Updates",
+
+            dot=True
+
+        )   
+
+
+def plot_dt_performance_curves_step_abl():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        '1-MC',
+        '2-MC',
+        '5-MC',
+
+    ]
+    base_names = [
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        'chibiT-syn-20seeds-steps-wo_step20000',
+        'chibiT-syn-20seeds-steps-wo_MC-2',
+        'chibiT-syn-20seeds-steps-wo_MC-5',
+        ]
+
+    y = d4rl_test_performance_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-ftsteps-step'
+    quick_plot_with_full_name_new(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        smooth=default_performance_smooth,
+        take_every=4,
+        xlabel="Number of Finetune Updates",
+
+        dot=True
+
+        
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name_new(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-ftsteps-step',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            smooth=default_performance_smooth,
+            take_every=4,
+            xlabel="Number of Finetune Updates",
+
+            dot=True
+
+        ) 
+
+
+
+def plot_dt_performance_curves_states_abl_data_ratio():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        'S10',
+        'S100',
+        'S1000',
+        'S10000',
+
+    ]
+    base_names = [
+        ('dt-rerun-5seeds_data_size_dt_0.1',
+            'dt-rerun-5seeds_data_size_dt_0.2',
+            'dt-rerun-5seeds_data_size_dt_0.4',
+            'dt-rerun-5seeds_data_size_dt_0.6',
+            'dt-rerun-5seeds_data_size_dt_0.8',
+            'dt-rerun-20seeds_dt',),
+        ('chibiT-rerun-5seeds-ftratio_0.1',
+            'chibiT-rerun-5seeds-ftratio_0.2',
+            'chibiT-rerun-5seeds-ftratio_0.4',
+            'chibiT-rerun-5seeds-ftratio_0.6',
+            'chibiT-rerun-5seeds-ftratio_0.8',
+            'chibiT-rerun-20seeds',),
+        ('chibiT-syn-5seeds-states-ftratio-wo_S10_0.1',
+            'chibiT-syn-5seeds-states-ftratio-wo_S10_0.2',
+            'chibiT-syn-5seeds-states-ftratio-wo_S10_0.4',
+            'chibiT-syn-5seeds-states-ftratio-wo_S10_0.6',
+            'chibiT-syn-5seeds-states-ftratio-wo_S10_0.8',
+            'chibiT-syn-20seeds-states-wo_S10',),
+        ('chibiT-syn-5seeds-states-ftratio-wo_S100_0.1'
+            'chibiT-syn-5seeds-states-ftratio-wo_S100_0.2',
+            'chibiT-syn-5seeds-states-ftratio-wo_S100_0.4',
+            'chibiT-syn-5seeds-states-ftratio-wo_S100_0.6',
+            'chibiT-syn-5seeds-states-ftratio-wo_S100_0.8',
+            'chibiT-syn-20seeds-steps-wo_step20000',),
+        ('chibiT-syn-5seeds-states-ftratio-wo_S1000_0.1',
+            'chibiT-syn-5seeds-states-ftratio-wo_S1000_0.2',
+            'chibiT-syn-5seeds-states-ftratio-wo_S1000_0.4',
+            'chibiT-syn-5seeds-states-ftratio-wo_S1000_0.6',
+            'chibiT-syn-5seeds-states-ftratio-wo_S1000_0.8',
+            'chibiT-syn-20seeds-states-wo_S1000',),
+        ('chibiT-syn-5seeds-states-ftratio-wo_S10000_0.1',
+            'chibiT-syn-5seeds-states-ftratio-wo_S10000_0.2',
+            'chibiT-syn-5seeds-states-ftratio-wo_S10000_0.4',
+            'chibiT-syn-5seeds-states-ftratio-wo_S10000_0.6',
+            'chibiT-syn-5seeds-states-ftratio-wo_S10000_0.8',
+            'chibiT-syn-20seeds-states-wo_S10000',),
+        ]
+
+    y = d4rl_test_performance_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-ftratio-states'
+    quick_plot_with_full_name_data_ratio(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs_data_ratio(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        smooth=default_performance_smooth,
+        xlabel="Finetune Data Ratio",
+        take_every=4,
+        dot=True
+
+        
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name_data_ratio(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs_data_ratio(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-ftratio-states',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            xlabel="Finetune Data Ratio",
+
+            smooth=default_performance_smooth,
+            take_every=4,
+            dot=True
+
+        )      
+
+
+def plot_dt_performance_curves_step_abl_data_ratio():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        '1-MC',
+        '2-MC',
+        '5-MC',
+
+    ]
+    base_names = [
+        ('dt-rerun-5seeds_data_size_dt_0.1',
+            'dt-rerun-5seeds_data_size_dt_0.2',
+            'dt-rerun-5seeds_data_size_dt_0.4',
+            'dt-rerun-5seeds_data_size_dt_0.6',
+            'dt-rerun-5seeds_data_size_dt_0.8',
+            'dt-rerun-20seeds_dt',),
+        ('chibiT-rerun-5seeds-ftratio_0.1',
+            'chibiT-rerun-5seeds-ftratio_0.2',
+            'chibiT-rerun-5seeds-ftratio_0.4',
+            'chibiT-rerun-5seeds-ftratio_0.6',
+            'chibiT-rerun-5seeds-ftratio_0.8',
+            'chibiT-rerun-20seeds',),
+        ('chibiT-syn-5seeds-states-ftratio-wo_MC-1_0.1',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-1_0.2',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-1_0.4',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-1_0.6',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-1_0.8',
+            'chibiT-syn-20seeds-steps-wo_step20000',),
+        ('chibiT-syn-5seeds-states-ftratio-wo_MC-2_0.1'
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-2_0.2',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-2_0.4',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-2_0.6',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-2_0.8',
+            'chibiT-syn-20seeds-steps-wo_MC-2',),
+        ('chibiT-syn-5seeds-states-ftratio-wo_MC-5_0.1',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-5_0.2',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-5_0.4',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-5_0.6',
+            'chibiT-syn-5seeds-states-ftratio-wo_MC-5_0.8',
+            'chibiT-syn-20seeds-steps-wo_MC-5',),
+        ]
+
+    y = d4rl_test_performance_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-ftratio-step'
+    quick_plot_with_full_name_data_ratio(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs_data_ratio(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        smooth=default_performance_smooth,
+        xlabel="Finetune Data Ratio",
+        take_every=4,
+        dot=True
+
+        
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name_data_ratio(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs_data_ratio(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-ftratio-step',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            xlabel="Finetune Data Ratio",
+
+            smooth=default_performance_smooth,
+            take_every=4,
+            dot=True
+
+        )      
+
+
+
+def plot_dt_performance_curves_temp_abl_data_ratio():
+    labels = [
+        'DT',
+        'DT+Wiki',
+        'T0.1',
+        'T1.0',
+        'T10.0',
+        'IID'
+
+    ]
+    base_names = [
+        ('dt-rerun-5seeds_data_size_dt_0.1',
+            'dt-rerun-5seeds_data_size_dt_0.2',
+            'dt-rerun-5seeds_data_size_dt_0.4',
+            'dt-rerun-5seeds_data_size_dt_0.6',
+            'dt-rerun-5seeds_data_size_dt_0.8',
+            'dt-rerun-20seeds_dt',),
+        ('chibiT-rerun-5seeds-ftratio_0.1',
+            'chibiT-rerun-5seeds-ftratio_0.2',
+            'chibiT-rerun-5seeds-ftratio_0.4',
+            'chibiT-rerun-5seeds-ftratio_0.6',
+            'chibiT-rerun-5seeds-ftratio_0.8',
+            'chibiT-rerun-20seeds',),
+        ('chibiT-syn-20seeds-temps-ftratio-wo_T0.1_0.1',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T0.1_0.2',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T0.1_0.4',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T0.1_0.6',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T0.1_0.8',
+            'chibiT-syn-20seeds-temps-wo_T0.1',),
+        ('chibiT-syn-20seeds-temps-ftratio-wo_T1.0_0.1'
+            'chibiT-syn-20seeds-temps-ftratio-wo_T1.0_0.2',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T1.0_0.4',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T1.0_0.6',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T1.0_0.8',
+            'chibiT-syn-20seeds-steps-wo_step20000',),
+        ('chibiT-syn-20seeds-temps-ftratio-wo_T10.0_0.1',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T10.0_0.2',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T10.0_0.4',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T10.0_0.6',
+            'chibiT-syn-20seeds-temps-ftratio-wo_T10.0_0.8',
+            'chibiT-syn-20seeds-temps-wo_T10.0',),
+        ('chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.1',
+            'chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.2',
+            'chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.4',
+            'chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.6',
+            'chibiT-syn-20seeds-temps-ftratio-wo_TIID_0.8',
+            'chibiT-iid_wo_step20000',),
+        ]
+
+    y = d4rl_test_performance_col_name
+    ymax = None
+
+    # aggregate
+    aggregate_name = 'agg-dt-ftratio-temp'
+    quick_plot_with_full_name_data_ratio(  # labels, folder name prefix, envs
+        labels,
+        get_full_names_with_envs_data_ratio(base_names, d4rl_9_datasets_envs),
+        save_name_prefix=aggregate_name,
+        base_data_folder_path=data_path,
+        save_folder_path=save_path,
+        y_value=[y],
+        x_to_use=d4rl_x_axis_col_name,
+        ymax=ymax,
+        smooth=default_performance_smooth,
+        xlabel="Finetune Data Ratio",
+        take_every=4,
+        dot=True
+
+        
+    )
+
+    # separate
+    for env_dataset_name in d4rl_9_datasets_envs:
+        quick_plot_with_full_name_data_ratio(  # labels, folder name prefix, envs
+            labels,
+            get_full_names_with_envs_data_ratio(base_names, [env_dataset_name]),
+            save_name_prefix='ind-dt-ftratio-temp',
+            base_data_folder_path=data_path,
+            save_folder_path=save_path,
+            y_value=[y],
+            x_to_use=d4rl_x_axis_col_name,
+            ymax=ymax,
+            save_name_suffix=env_dataset_name,
+            xlabel="Finetune Data Ratio",
+
+            smooth=default_performance_smooth,
+            take_every=4,
+            dot=True
+
+        )  
+
+
+# plot_cql_performance_curves()
+# plot_cql_q_loss_curves()
+# plot_cql_combined_loss_curves()
+#plot_dt_performance_curves()
+#plot_dt_performance_curves_offset()
+#plot_dt_loss_curves()
+#plot_dt_loss_curves_offset()
+#plot_dt_loss_curves_offset_new()
+#plot_dt_performance_curves_offset_new()
+#plot_dt_performance_curves_states_abl()
+#plot_dt_performance_curves_temp_abl()
+#plot_dt_performance_curves_step_abl()
+plot_dt_performance_curves_states_abl_data_ratio()
+plot_dt_performance_curves_step_abl_data_ratio()
+plot_dt_performance_curves_temp_abl_data_ratio()
