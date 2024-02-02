@@ -19,6 +19,8 @@ base_measures = ['best_return_normalized', 'best_return',
         "best_1_weight_sim",
 
         'convergence_iter',
+        'convergence_step',
+        #'target_steps',
 
          'final_feature_diff',
          'final_weight_diff',
@@ -30,7 +32,19 @@ base_measures = ['best_return_normalized', 'best_return',
          'best_25percent_normalized',
          'best_50percent_normalized',
          'best_100percent_normalized',
-         'best_later_half_normalized'
+         'best_later_half_normalized',
+         'last_four_normalized',
+
+        #'pretrain_best_weight_diff',
+        #'pretrain_best_weight_sim',
+
+        #'pretrain_best_feature_diff',
+        #'pretrain_best_feature_sim',
+
+         #'pretrain_final_feature_diff',
+         #'pretrain_final_weight_diff',
+         #'pretrain_final_feature_sim',
+         #'pretrain_final_weight_sim',
                  ]
 
 def get_extra_dict_multiple_seeds(datafolder_path):
@@ -70,23 +84,89 @@ def get_extra_dict_multiple_seeds(datafolder_path):
         aggregate_dict[measure] = [np.mean(aggregate_dict[measure]), np.std(aggregate_dict[measure])]
     for measure in ['final_test_returns', 'final_test_normalized_returns', 'best_return', 'best_return_normalized',
                     'best_5percent_normalized', 'best_10percent_normalized', 'best_25percent_normalized',
-                    'best_50percent_normalized', 'best_100percent_normalized', 'best_later_half_normalized'
+                    'best_50percent_normalized', 'best_100percent_normalized', 'best_later_half_normalized', 'last_four_normalized'
                     ]:
         aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1],]
     return aggregate_dict
 
-data_path = '../../code/checkpoints/'
+
+def get_extra_dict_multiple_seeds_pretrain(datafolder_path):
+    # for a alg-dataset variant, obtain a dictionary with key-value pairs as measure:[avg across seeds, std across seeds]
+    if not os.path.exists(datafolder_path):
+        raise FileNotFoundError("Path does not exist: %s" % datafolder_path)
+    # return a list, each entry is the final performance of a seed
+    aggregate_dict = {}
+    measures = base_measures
+    for measure in measures:
+        aggregate_dict[measure] = []
+    aggregate_dict['weight_diff_100k'] = [] # TODO might want to extend later...
+    aggregate_dict['feature_diff_100k'] = []
+
+    for subdir, dirs, files in os.walk(datafolder_path):
+        pretrain_extra_dict_file_path = os.path.join(subdir, 'extra_pretrain.json')
+        if 'extra_new.json' in files or 'extra.json' in files:
+            if 'extra_new.json' in files:
+                extra_dict_file_path = os.path.join(subdir, 'extra_new.json')
+            else:
+                extra_dict_file_path = os.path.join(subdir, 'extra.json')
+
+            with open(extra_dict_file_path, 'r') as file:
+                extra_dict = json.load(file)
+                for measure in measures:
+                    if 'pretrain' not in measure:
+                        aggregate_dict[measure].append(float(extra_dict[measure]))
+                # if 'weight_diff_100k' not in extra_dict:
+                #     aggregate_dict['weight_diff_100k'].append(float(extra_dict['final_weight_diff']))
+                #     aggregate_dict['feature_diff_100k'].append(float(extra_dict['final_feature_diff']))
+                # else:
+                #     print(extra_dict['feature_diff_100k'])
+                #     aggregate_dict['weight_diff_100k'].append(float(extra_dict['weight_diff_100k']))
+                #     aggregate_dict['feature_diff_100k'].append(float(extra_dict['feature_diff_100k']))
+            with open(pretrain_extra_dict_file_path, 'r') as file:
+                pretrain_extra_dict = json.load(file)
+                for measure in measures:
+                    if 'pretrain' in measure:
+                        aggregate_dict[measure].append(float(pretrain_extra_dict[measure]))
+                # if 'weight_diff_100k' not in extra_dict:
+                #     aggregate_dict['weight_diff_100k'].append(float(extra_dict['final_weight_diff']))
+                #     aggregate_dict['feature_diff_100k'].append(float(extra_dict['final_feature_diff']))
+                # else:
+                #     print(extra_dict['feature_diff_100k'])
+                #     aggregate_dict['weight_diff_100k'].append(float(extra_dict['weight_diff_100k']))
+                #     aggregate_dict['feature_diff_100k'].append(float(extra_dict['feature_diff_100k']))
+
+    for measure in measures:
+        if len(aggregate_dict[measure]) == 0:
+            print(datafolder_path, 'has nothing for measure:',measure)
+        aggregate_dict[measure] = [np.mean(aggregate_dict[measure]), np.std(aggregate_dict[measure])]
+    for measure in ['final_test_returns', 'final_test_normalized_returns', 'best_return', 'best_return_normalized',
+                    'best_5percent_normalized', 'best_10percent_normalized', 'best_25percent_normalized',
+                    'best_50percent_normalized', 'best_100percent_normalized', 'best_later_half_normalized', 'best_last_four_normalized'
+                    ]:
+        aggregate_dict[measure + '_std'] = [aggregate_dict[measure][1],]
+    return aggregate_dict
+
+data_path = '../../code/sendback_cross/'
 
 MUJOCO_3_ENVS = [
                 'hopper',
                  'halfcheetah',
                 'walker2d',
+                "ant"
 ]
 MUJOCO_3_DATASETS = ['medium','medium-replay','medium-expert',]
+MUJOCO_2_DATASETS = ['medium','medium-replay',]
+
 all_envs = []
 for e in MUJOCO_3_ENVS:
     for dataset in MUJOCO_3_DATASETS:
+        if '%s_%s' % (e, dataset) == 'ant_medium-expert':
+            continue
         all_envs.append('%s_%s' % (e, dataset))
+exc_me = []
+for e in MUJOCO_3_ENVS:
+    for dataset in MUJOCO_2_DATASETS:
+        exc_me.append('%s_%s' % (e, dataset))
 
 def get_alg_dataset_dict(algs, envs):
     # load extra dict for all alg, all envs, all seeds
@@ -96,6 +176,17 @@ def get_alg_dataset_dict(algs, envs):
         for env in envs:
             folderpath = os.path.join(data_path, '%s_%s' % (alg, env))
             alg_dataset_dict[alg][env] = get_extra_dict_multiple_seeds(folderpath)
+    return alg_dataset_dict
+
+
+def get_alg_dataset_dict_pretrain(algs, envs):
+    # load extra dict for all alg, all envs, all seeds
+    alg_dataset_dict = {}
+    for alg in algs:
+        alg_dataset_dict[alg] = {}
+        for env in envs:
+            folderpath = os.path.join(data_path, '%s_%s' % (alg, env))
+            alg_dataset_dict[alg][env] = get_extra_dict_multiple_seeds_pretrain(folderpath)
     return alg_dataset_dict
 
 def get_aggregated_value(alg_dataset_dict, alg, measure):
@@ -175,7 +266,9 @@ change_std_rows = [
     'best_50percent_normalized',
     'best_100percent_normalized',
     'best_later_half_normalized',
+    'best_last_four_normalized'
 ]
+
 
 row_names_higher_is_better = [
     'Best Score',
@@ -207,7 +300,7 @@ row_names_use_1_precision = [
 ]
 
 """table generation"""
-def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05):
+def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.01):
     print("\nNow generate latex table:\n")
     # each row is a measure, each column is an algorithm variant
     rows = NEW_PERFORMANCE_ROWS
@@ -264,8 +357,8 @@ def generate_aggregate_table(algs, alg_dataset_dict, column_names, best_value_bo
         print(row_string)
 
 
-def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05,
-                                   measure='best_return_normalized', row_name='Average (All Settings)'):
+def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.01,
+                                   measure='best_return_normalized', row_name='Average (All Settings)', higher_is_better=True):
     # each row is a measure, each column is an algorithm variant
     rows = [measure]
     row_names = [row_name]
@@ -292,8 +385,14 @@ def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_va
             mean, std = table[0, i, j], table[1, i, j]
             bold = False
             if best_value_bold:
-                if mean >= (1-bold_threshold)*max_values[i]:
-                    bold = True
+                if not higher_is_better:
+                    if mean <= (1+bold_threshold)*min_values[i]:
+                        bold = True
+                else:
+                    if mean >= (1-bold_threshold)*max_values[i]:
+                        bold = True
+                #if mean >= (1-bold_threshold)*max_values[i]:
+                #    bold = True
                 if bold:
                     row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
                 else:
@@ -301,15 +400,75 @@ def generate_aggregate_performance(algs, alg_dataset_dict, column_names, best_va
         row_string += '\\\\'
         print(row_string)
 
+
+
+
+def generate_aggregate_performance_pretrain(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05,
+                                   measure='best_return_normalized', row_name='Average (All Settings)', higher_is_better=True):
+    # each row is a measure, each column is an algorithm variant
+    if isinstance(measure, list):
+        rows = measure
+        row_names = row_name
+    else:
+        rows = [measure]
+        row_names = [row_name]
+
+    table = np.zeros((2, len(rows), len(algs)))
+    # each iter we generate a row
+    for i, row in enumerate(rows):
+        for j, alg in enumerate(algs):
+            table[0,i,j], table[1,i,j] = get_aggregated_value(alg_dataset_dict, alg, row)
+            if row in change_std_rows: # TODO
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, alg, row+'_std')
+                table[1, i, j] = std_mean
+            if row == 'final_test_normalized_returns':
+                std_mean, std_std = get_aggregated_value(alg_dataset_dict, alg, 'final_test_normalized_returns_std')
+                table[1, i, j] = std_mean
+
+    max_values = np.max(table[0], axis=1)
+    min_values = np.min(table[0], axis=1)
+
+    print("		\\hline ")
+    for i, row_name in enumerate(row_names):
+        row_string = row_name
+        for j in range(len(algs)):
+            mean, std = table[0, i, j], table[1, i, j]
+            bold = False
+            if best_value_bold:
+                if not higher_is_better:
+                    if mean <= (1+bold_threshold)*min_values[i]:
+                        bold = True
+                else:
+                    if mean >= (1-bold_threshold)*max_values[i]:
+                        bold = True
+                #if mean >= (1-bold_threshold)*max_values[i]:
+                #    bold = True
+                if bold:
+                    if mean < 0.1:
+                        row_string += (' & \\textbf{%.1E} ' % mean)
+                    else:
+                        row_string += (' & \\textbf{%.2f} ' % mean)
+                else:
+                    if mean < 0.1:
+                        row_string += (' & %.1E ' % mean)
+                    else:
+                        row_string += (' & %.2f ' % mean)
+        row_string += '\\\\'
+        print(row_string)
+
+
+
 # TODO add an aggregate score at the end
-def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05, measure='best_return_normalized'):
+def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.01, measure='best_return_normalized', higher_is_better = True):
     print("\nNow generate latex table:\n")
     # measure = 'best_100percent_normalized'
     # each row is a env-dataset pair, each column is an algorithm variant
     rows = []
     row_names = []
     for dataset in ['medium-expert', 'medium', 'medium-replay', ]:
-        for e in ['halfcheetah', 'hopper', 'walker2d', ]:
+        for e in ['halfcheetah', 'hopper', 'walker2d',"ant" ]:
+            if '%s_%s' % (e, dataset) == "ant_medium-expert":
+                continue
             rows.append('%s_%s' % (e, dataset))
             row_names.append('%s-%s' % (e, dataset))
 
@@ -320,6 +479,7 @@ def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_
             try:
                 table[0,i,j], table[1,i,j] = alg_dataset_dict[alg][row][measure]
             except:
+                print(measure)
                 print(alg)
                 print(row)
                 print(alg_dataset_dict[alg][row].keys())
@@ -340,12 +500,136 @@ def generate_per_env_score_table_new(algs, alg_dataset_dict, column_names, best_
             mean, std = table[0, i, j], table[1, i, j]
             bold = False
             if best_value_bold:
-                if mean >= (1-bold_threshold)*max_values[i]:
-                    bold = True
+                if not higher_is_better:
+                    if mean <= (1+bold_threshold)*min_values[i]:
+                        bold = True
+                else:
+                    if mean >= (1-bold_threshold)*max_values[i]:
+                        bold = True
+                #if mean >= (1-bold_threshold)*max_values[i]:
+                #    bold = True
                 if bold:
                     row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
                 else:
                     row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
+        row_string += '\\\\'
+        print(row_string)
+
+
+def generate_per_env_score_table_new_2(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.01, measure='best_return_normalized', higher_is_better = True):
+    print("\nNow generate latex table:\n")
+    # measure = 'best_100percent_normalized'
+    # each row is a env-dataset pair, each column is an algorithm variant
+    rows = []
+    row_names = []
+    for dataset in ['medium', 'medium-replay', ]:
+        for e in ['halfcheetah', 'hopper', 'walker2d',"ant" ]:
+            rows.append('%s_%s' % (e, dataset))
+            row_names.append('%s-%s' % (e, dataset))
+
+    table = np.zeros((2, len(rows), len(algs)))
+    # each iter we generate a row
+    for i, row in enumerate(rows):
+        for j, alg in enumerate(algs):
+            try:
+                table[0,i,j], table[1,i,j] = alg_dataset_dict[alg][row][measure]
+            except:
+                print(measure)
+                print(alg)
+                print(row)
+                print(alg_dataset_dict[alg][row].keys())
+                quit()
+
+    max_values = np.max(table[0], axis=1)
+    min_values = np.min(table[0], axis=1)
+
+    col_name_line = ''
+    for col in column_names:
+        col_name_line += str(col) +' & '
+    col_name_line = col_name_line[:-2] + '\\\\'
+    print(col_name_line)
+    print("		\\hline ")
+    for i, row_name in enumerate(row_names):
+        row_string = row_name
+        for j in range(len(algs)):
+            mean, std = table[0, i, j], table[1, i, j]
+            bold = False
+            if best_value_bold:
+                if not higher_is_better:
+                    if mean <= (1+bold_threshold)*min_values[i]:
+                        bold = True
+                else:
+                    if mean >= (1-bold_threshold)*max_values[i]:
+                        bold = True
+                #if mean >= (1-bold_threshold)*max_values[i]:
+                #    bold = True
+                if bold:
+                    row_string += (' & \\textbf{%.1f} $\pm$ %.1f' % (mean, std))
+                else:
+                    row_string += (' & %.1f $\pm$ %.1f' % (mean, std))
+        row_string += '\\\\'
+        print(row_string)
+
+
+def generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, column_names, best_value_bold=True, bold_threshold=0.05, measure='best_return_normalized', higher_is_better = True):
+    print("\nNow generate latex table:\n")
+    # measure = 'best_100percent_normalized'
+    # each row is a env-dataset pair, each column is an algorithm variant
+    rows = []
+    row_names = []
+    for dataset in ['medium-expert', 'medium', 'medium-replay', ]:
+        for e in ['halfcheetah', 'hopper', 'walker2d',"ant" ]:
+            rows.append('%s_%s' % (e, dataset))
+            row_names.append('%s-%s' % (e, dataset))
+
+    table = np.zeros((2, len(rows), len(algs)))
+    # each iter we generate a row
+    for i, row in enumerate(rows):
+        for j, alg in enumerate(algs):
+            try:
+                table[0,i,j], table[1,i,j] = alg_dataset_dict[alg][row][measure]
+            except:
+                print(measure)
+                print(alg)
+                print(row)
+                print(alg_dataset_dict[alg][row].keys())
+                quit()
+
+    max_values = np.max(table[0], axis=1)
+    min_values = np.min(table[0], axis=1)
+
+    col_name_line = ''
+    for col in column_names:
+        col_name_line += str(col) +' & '
+    col_name_line = col_name_line[:-2] + '\\\\'
+    print(col_name_line)
+    print("		\\hline ")
+    for i, row_name in enumerate(row_names):
+        row_string = row_name
+        for j in range(len(algs)):
+            mean, std = table[0, i, j], table[1, i, j]
+                
+            bold = False
+            if best_value_bold:
+                if not higher_is_better:
+                    if mean <= (1+bold_threshold)*min_values[i]:
+                        bold = True
+                else:
+                    if mean >= (1-bold_threshold)*max_values[i]:
+                        bold = True
+                #if mean >= (1-bold_threshold)*max_values[i]:
+                #    bold = True
+                if bold:
+                    if mean < 0.1:
+                        row_string += (' & \\textbf{%.1E} ' % mean)
+                    else:
+                        row_string += (' & \\textbf{%.2f} ' % mean)
+                else:
+                    if mean < 0.1:
+                        row_string += (' & %.1E ' % mean)
+                    else:
+                        row_string += (' & %.2f ' % mean)
+
         row_string += '\\\\'
         print(row_string)
 
@@ -365,7 +649,7 @@ def generate_per_env_score_table(max_value_bold=True, bold_threshold=0.95):
     rows = []
     row_names = []
     for dataset in ['medium-expert', 'medium', 'medium-replay', ]:
-        for e in ['halfcheetah', 'hopper', 'walker2d', ]:
+        for e in ['halfcheetah', 'hopper', 'walker2d',"ant" ]:
             rows.append('%s_%s' % (e, dataset))
             row_names.append('%s-%s' % (e, dataset))
 
@@ -869,15 +1153,398 @@ def iclr_generate_dt_first_table_per_env():
 
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
     generate_aggregate_performance(algs, alg_dataset_dict, col_names)
-    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized', row_name='Average Test (All)')
 
-    col_names = ['Average Score', 'DT', 'DT+Wiki', '1-MC S100']
+    col_names[0] = 'Average Score'
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+def iclr_generate_dt_first_table_per_env_20seeds():
+    algs = [
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        "chibiT-syn-20seeds-steps-wo_step20000",
+    ]
+    col_names = ['Best Score', 'DT', 'DT+Wiki', 'DT+Synthetic']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+def iclr_generate_dt_analysis():
+    algs = [
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        "chibiT-syn-20seeds-steps-wo_step20000",
+        'chibiT-iid_wo_step20000',
+        'chibiT-iid_wo_acl_acl1',
+        'chibiT-iid_wo_acl_acl2'
+    ]
+    col_names = ['Best vs. Pre-trained Feature Difference', 'DT', 'DT+Wiki', 'DT+Synthetic', 'DT+IID', 'DT+Identity', 'DT+Mapping']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict_pretrain(algs, envs)
+
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='best_feature_diff', higher_is_better=False)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='best_feature_diff', higher_is_better=False)
+
+    col_names[0] = 'Final vs. Pre-trained Feature Difference'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='final_feature_diff', higher_is_better=False)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='final_feature_diff', higher_is_better=False)
+
+    col_names[0] = 'Best vs. Pre-trained Feature Similarity'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='best_feature_sim', higher_is_better=True)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='best_feature_sim', higher_is_better=True)
+
+    col_names[0] = 'Final vs. Pre-trained Feature similarity'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='final_feature_sim', higher_is_better=True)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='final_feature_sim', higher_is_better=True)
+
+    col_names[0] = 'Best vs. Pre-trained Weight Difference'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='best_weight_diff', higher_is_better=False)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='best_weight_diff', higher_is_better=False)
+
+    col_names[0] = 'Final vs. Pre-trained Weight Difference'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='final_weight_diff', higher_is_better=False)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='final_weight_diff', higher_is_better=False)
+
+
+    col_names[0] = 'Best vs. Pre-trained Weight Similarity'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='best_weight_sim', higher_is_better=True)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='best_weight_sim', higher_is_better=True)
+
+    col_names[0] = 'Final vs. Pre-trained Weight Similarity'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='final_weight_sim', higher_is_better=True)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='final_weight_sim', higher_is_better=True)
+
+
+    col_names[0] = 'Best vs. Random Init. Feature Difference'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_best_feature_diff', higher_is_better=False)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_best_feature_diff', higher_is_better=False)
+
+    col_names[0] = 'Final vs. Random Init. Feature Difference'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_final_feature_diff', higher_is_better=False)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_final_feature_diff', higher_is_better=False)
+
+    col_names[0] = 'Best vs. Random Init. Feature Similarity'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_best_feature_sim', higher_is_better=True)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_best_feature_sim', higher_is_better=True)
+
+    col_names[0] = 'Final vs. Random Init. Feature similarity'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_final_feature_sim', higher_is_better=True)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_final_feature_sim', higher_is_better=True)
+
+    col_names[0] = 'Best vs. Random Init. Weight Difference'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_best_weight_diff', higher_is_better=False)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_best_weight_diff', higher_is_better=False)
+
+    col_names[0] = 'Final vs. Random Init. Weight Difference'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_final_weight_diff', higher_is_better=False)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_final_weight_diff', higher_is_better=False)
+
+
+    col_names[0] = 'Best vs. Random Init. Weight Similarity'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_best_weight_sim', higher_is_better=True)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_best_weight_sim', higher_is_better=True)
+
+    col_names[0] = 'Final vs. Random Init. Weight Similarity'
+    generate_per_env_score_table_new_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_final_weight_sim', higher_is_better=True)
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure='pretrain_final_weight_sim', higher_is_better=True)
+
+
+
+def iclr_generate_dt_analysis_agg():
+    algs = [
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        "chibiT-syn-20seeds-steps-wo_step20000",
+        'chibiT-iid_wo_step20000',
+        'chibiT-iid_wo_acl_acl1',
+        'chibiT-iid_wo_acl_acl2'
+    ]
+    col_names = ['FT vs. PT Feature Diff.', 'FT vs. RI Feature Diff.', 'DT', 'DT+Wiki', 'DT+Synthetic', 'DT+IID', 'DT+Identity', 'DT+Mapping']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict_pretrain(algs, envs)
+
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure=['final_feature_diff', 'pretrain_final_feature_diff'], row_name = ['FT vs. PT Feature Diff.', 'FT vs. RI Feature Diff.'], higher_is_better=False)
+
+    col_names = ['FT vs. PT Feature Sim.', 'FT vs. RI Feature Sim.', 'DT', 'DT+Wiki', 'DT+Synthetic', 'DT+IID', 'DT+Identity', 'DT+Mapping']
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure=['final_feature_sim', 'pretrain_final_feature_sim'], row_name = ['FT vs. PT Feature Sim.', 'FT vs. RI Feature Sim.'], higher_is_better=True)
+
+    col_names = ['FT vs. PT Weight Diff.', 'FT vs. RI Weight Diff.', 'DT', 'DT+Wiki', 'DT+Synthetic', 'DT+IID', 'DT+Identity', 'DT+Mapping']
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure=['final_weight_diff', 'pretrain_final_weight_diff'], row_name = ['FT vs. PT Weight Diff.', 'FT vs. RI Weight Diff.'], higher_is_better=False)
+
+    col_names = ['FT vs. PT Weight Sim.', 'FT vs. RI Weight Sim.', 'DT', 'DT+Wiki', 'DT+Synthetic', 'DT+IID', 'DT+Identity', 'DT+Mapping']
+    generate_aggregate_performance_pretrain(algs, alg_dataset_dict, col_names, measure=['final_weight_sim', 'pretrain_final_weight_sim'], row_name = ['FT vs. PT Weight Sim.', 'FT vs. RI Weight Sim.'], higher_is_better=True)
+
+def iclr_generate_dt_first_table_per_env_20seeds_diff_pretrain():
+    algs = [
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        'chibiT-iid_wo_acl_acl1',
+        'chibiT-iid_wo_acl_acl2',
+        "chibiT-syn-20seeds-steps-wo_step20000",
+
+    ]
+    col_names = ['Best Score', 'DT', 'DT+Wiki', 'DT+Identity', 'DT+Mapping', 'DT+Synthetic']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+
+
+
+def iclr_generate_dt_first_table_per_env_conv_iter_20seeds():
+    algs = [
+        'dt-rerun-20seeds_dt',
+        'chibiT-rerun-20seeds',
+        "chibiT-syn-20seeds-steps-wo_step20000",
+    ]
+    col_names = ['Number of Updates',  "DT", 'DT+Wiki', 'DT+Synthetic']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure="target_steps")
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure="target_steps")
+
+
+def iclr_generate_dt():
+    algs = [
+        'dt-rerun-20seeds_dt',
+    ]
+    col_names = ['score', 'DT']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure="final_test_returns")
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure="final_test_returns")
+
+
+def iclr_generate_dt_first_table_per_env_conv_iter():
+    algs = [
+        dt,
+        chibiT,
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_20000"    
+        ]
+    col_names = ['Convergence Iteration', 'DT', 'DT+Wiki', 'DT+Synthetic']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure="convergence_iter")
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure="convergence_iter")
+
+    col_names[0] = 'Convergence Step'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure="convergence_step")
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure="convergence_step")
+
+
+def iclr_generate_dt_kmeans():
+    algs = [
+        dt,
+        chibiT,
+        "dt-rerun-20seeds_dt",
+        "chibiT-rerun_wo",
+        "chibiT_w_random",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1_wo"
+        ]
+    col_names = ['Best Score', 'DT', 'DT+Wiki', 'DT 20seeds', "Wiki wo kmeans", "Wiki w kmeans", "Syn wo kmeans"]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+def iclr_generate_dt_kmeans_2():
+    algs = [
+        dt,
+        chibiT,
+        "chibiT-rerun_wo",
+        "chibiT_w_random",
+        "chibiT_wo_random",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1_wo",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step10_wo",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step100_wo",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000_wo",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step10000_wo",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step80000_wo",
+
+        ]
+    col_names = ['Best Score', 'DT', 'DT+Wiki', 'Wiki wo cos', "Wiki w cos", "wiki wo new", "1 step wo", 
+    "10 step wo","100 step wo","1000 step wo","10000 step wo", "80000 step wo"]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+
+
+def iclr_generate_dt_iid_20seeds():
+    algs = [
+        "dt-rerun-20seeds_dt",
+        chibiT,
+        "chibiT-rerun_wo",
+        "chibiT-iid_wo_step1",
+        "chibiT-iid_wo_step8000",
+        "chibiT-iid_wo_step10000",
+        "chibiT-iid_wo_step20000",
+        "chibiT-iid_wo_step40000",
+        "chibiT-iid_wo_step80000",
+        
+
+        ]
+    col_names = ['Best Score', 'DT', 'DT+Wiki', 'DT+Wiki wo' 'Synthetic iid s1', "Synthetic iid s8000", "Synthetic iid s10000", "Synthetic iid s20000", 
+    "Synthetic iid s40000","Synthetic iid s80000"]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+
+def iclr_generate_dt_syn_20seeds():
+    algs = [
+        "dt-rerun-20seeds_dt",
+        "chibiT-syn-20seeds-steps-wo_step1000",
+        "chibiT-syn-20seeds-steps-wo_2_step10000",
+        "chibiT-syn-20seeds-steps-wo_step20000",
+        "chibiT-syn-20seeds-steps-wo_step40000",
+        'chibiT-syn-20seeds-steps-wo_step60000',
+        "chibiT-syn-20seeds-steps-wo_2_step80000",
+        
+
+        ]
+    col_names = ['Best Score', 'DT', '1k updates ', "10k updates", "20k updates", "40k updates", '60k updates', 
+    "80k updates"]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+
+
+
+def iclr_generate_dt_short_table_per_env():
+    algs = [
+        dt,
+        chibiT,
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_10000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_20000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_30000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_40000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_50000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_60000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_70000",
+        dt_mc_1step_vocab100,
+    ]
+    col_names = ['Best Score', 'DT', 'DT+Wiki', 'DT+Synthetic 10K', 'DT+Synthetic 20K', "DT+Synthetic 30K",
+    'DT+Synthetic 40K', 'DT+Synthetic 50K', 'DT+Synthetic 60K', 'DT+Synthetic 70K', 'DT+Synthetic 80K']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+def iclr_generate_dt_very_short_table_per_env():
+    algs = [
+        dt,
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step10",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step100",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_10000",
+        dt_mc_1step_vocab100,
+    ]
+    col_names = ['Best Score', 'DT', 'DT+Synthetic 1 step', 'DT+Synthetic 10 steps', "DT+Synthetic 100 steps",
+    'DT+Synthetic 1000 steps', 'DT+Synthetic 10000 steps', 'DT+Synthetic full']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+def iclr_generate_dt_medium_short_table_per_env():
+    algs = [
+        dt,
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step1000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step2000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step3000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step4000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step5000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step6000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step7000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step8000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_step9000",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_10000",
+        dt_mc_1step_vocab100,
+    ]
+    col_names = ['Best Score', 'DT', 'DT+Synthetic 1000 step', 'DT+Synthetic 2000 steps', "DT+Synthetic 3000 steps",
+    'DT+Synthetic 4000 steps', 'DT+Synthetic 5000 steps', 'DT+Synthetic 6000 steps', 'DT+Synthetic 7000 steps', 'DT+Synthetic 8000 steps', 'DT+Synthetic 9000 steps', 'DT+Synthetic 10000 steps', 'DT+Synthetic full']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+
 
 def iclr_generate_dt_mc_table_100_states_different_steps():
     algs = [
         dt,
+        "chibiT-random2_nvocab100_seed666",
         dt_mc_1step_vocab100,
         dt_mc_2step_vocab100,
         # dt_mc_3step_vocab100,
@@ -886,9 +1553,78 @@ def iclr_generate_dt_mc_table_100_states_different_steps():
     ]
     col_names = ['Best Score',
                  'DT',
-                 '1-MC S100', '2-MC S100',
+                 'DT+0-MC'
+                 'DT+1-MC', 'DT+2-MC',
                  # '3-MC S100', '4-MC S100',
-                 '5-MC S100']
+                 'DT+5-MC']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    #col_names[0] = 'Average Later Half'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+
+
+
+def iclr_generate_dt_mc_table_100_states_different_steps_20seeds():
+    algs = [
+        'dt-rerun-20seeds_dt',
+        #"chibiT-random2_nvocab100_seed666",
+        'chibiT-syn-20seeds-steps-wo_step20000',
+        'chibiT-syn-20seeds-steps-wo_MC-2',
+        # dt_mc_3step_vocab100,
+        # dt_mc_4step_vocab100,
+        'chibiT-syn-20seeds-steps-wo_MC-5',
+    ]
+    col_names = ['Best Score',
+                 'DT',
+                 '1-MC', '2-MC',
+                 # '3-MC S100', '4-MC S100',
+                 '5-MC']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    #col_names[0] = 'Average Later Half'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+def iclr_generate_dt_long():
+    algs = [
+        dt,
+        'dt-long',
+        chibiT,
+        dt_mc_1step_vocab100,
+        'same_new_ft'
+    ]
+    col_names = ['Best Score',
+                 'DT', 'DT 2x steps', 'DT+Wiki',
+                 'Synthetic', 'RL pretraining',
+                 ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
 
@@ -899,10 +1635,214 @@ def iclr_generate_dt_mc_table_100_states_different_steps():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
+
+def iclr_generate_dt_long_new():
+    algs = [
+        dt,
+        'dt-long-20seeds_dt_24',
+        'dt-long-20seeds_dt_36',
+        'chibiT-rerun-20seeds',
+        'chibiT-syn-20seeds-steps-wo_step20000',
+    ]
+    col_names = ['Best Score',
+                 'DT', 'DT 20K more', 'DT 80K more', 'DT+Wiki',
+                 'DT+Synthetic'
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    #col_names[0] = 'Average Later Half'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+
+
+def iclr_generate_dt_random_different_states():
+    algs = [
+        dt,
+        chibiT,
+        'chibiT-random_nvocab10',
+        'chibiT-random_nvocab100',
+        'chibiT-random_nvocab1000',
+        'chibiT-random1_nvocab10',
+        'chibiT-random1_nvocab100',
+        'chibiT-random1_nvocab1000',  
+    ]
+    col_names = ['Best Score',
+                 'DT', 'DT+Wiki',
+                 'Random S10','Random S100','Random S1000','Random Alt S10','Random Alt S100','Random Alt S1000',]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+def iclr_generate_dt_random_different():
+    algs = [
+        dt,
+        chibiT,
+        dt_mc_1step_vocab100,
+        "chibiT-random2_nvocab100_seed666",
+        "chibiT-random_nvocab100",
+        "random_same",
+        "random_itself",
+        "random_short",
+        "random_short_same",
+        "random_short_itself"
+    ]
+    col_names = ['Best Score',
+                 'DT', 'DT+Wiki',
+                 'DT+Synthetic','DT+Synthetic 0-step','DT+random','DT+same','DT+itself','DT+short random',"DT+short same","DT+short itself"]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+def iclr_generate_dt_more_seeds():
+    algs = [
+        dt,
+        chibiT,
+        dt_mc_1step_vocab100,
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_seed42",
+        "chibiT-random2_nvocab100_seed42",
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_shuffled',
+        'same-no-return_new_ft',
+        'same-no-return-shuffled_ft',
+        'chibiT-random1_nvocab100',
+
+    ]
+    col_names = ['Best Score',
+                 'DT', 'DT+Wiki', '1-MC 3',
+                 '1-MC 9', '0-step 9',
+                 '1-MC shuffle','same data', 'same data shuffle',"Bad 0-step 9"]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_dt_early_checkpoint():
+    algs = [
+        dt,
+        chibiT,
+        dt_mc_1step_vocab100,
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_30000'
+        #"chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_seed42",
+        #"chibiT-random2_nvocab100_seed42",
+        #'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_shuffled',
+        #'same-no-return_new_ft',
+        #'same-no-return-shuffled_ft',
+        #'chibiT-random1_nvocab100',
+
+    ]
+    col_names = ['Best Score',
+                 'DT', 'DT+Wiki', '1-MC 3', '1-MC early stop']
+                 #'1-MC 9', '0-step 9',
+                 #'1-MC shuffle','same data', 'same data shuffle',"Bad 0-step 9"]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
+
+def iclr_generate_dt_separate_data():
+    algs = [
+        'chibiT-random2_nvocab100_seed42',
+        'chibiT-random2_nvocab100_seed1024',
+        'chibiT-random2_nvocab100_seed666',
+        'chibiT-random1_nvocab100_seed42',
+        'chibiT-random1_nvocab100_seed1024',
+        'chibiT-random1_nvocab100',
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_seed42',
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_seed1024',
+        'chibiT-rerun-syn_ngram1_nvocab100_temperature1.0_seed666',
+    ]
+    col_names = ['Best Score',
+                 '0-step s42', '0-step s1024', '0-step s666',
+                 'Bad s42', 'Bad s1024', 'Bad s666', 
+                 '1-step MC s42', '1-step MC s1024', '1-step MC s666', ]    
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
 
 def iclr_generate_dt_mc_table_different_number_of_states():
     algs = [
         dt,
+        "chibiT-rerun-syn_ngram1_nvocab1_temperature1.0",
         dt_mc_1step_vocab10,
         dt_mc_1step_vocab100,
         dt_mc_1step_vocab1000,
@@ -911,6 +1851,7 @@ def iclr_generate_dt_mc_table_different_number_of_states():
     ]
     col_names = ['Best Score',
                  'DT',
+                 '1-MC S1',
                  '1-MC S10', '1-MC S100','1-MC S1000', '1-MC S10000', '1-MC S100000']
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -922,21 +1863,63 @@ def iclr_generate_dt_mc_table_different_number_of_states():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+def iclr_generate_dt_mc_table_different_number_of_states_20seeds():
+    algs = [
+        'dt-rerun-20seeds_dt',
+        #"chibiT-rerun-syn_ngram1_nvocab1_temperature1.0",
+        #dt_mc_1step_vocab10,
+        #dt_mc_1step_vocab100,
+        #dt_mc_1step_vocab1000,
+        #dt_mc_1step_vocab10000,
+        #dt_mc_1step_vocab100000,
+        'chibiT-syn-20seeds-states-wo_S10',
+        'chibiT-syn-20seeds-steps-wo_step20000',
+        'chibiT-syn-20seeds-states-wo_S1000',
+        'chibiT-syn-20seeds-states-wo_S10000',
+        'chibiT-syn-20seeds-states-wo_S100000',
+    ]
+    col_names = ['Best Score',
+                 'DT',
+                 'S10', 'S100','S1000', 'S10000', 'S100000']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
 
 
 def iclr_generate_dt_mc_table_different_temperatures():
     algs = [
         dt,
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature0.001",
+        "chibiT-rerun-syn_ngram1_nvocab100_temperature0.01",
         dt_mc_temp0_1_vocab100,
-        dt_mc_temp0_2_vocab100,
-        dt_mc_temp0_4_vocab100,
+        #dt_mc_temp0_2_vocab100,
+        #dt_mc_temp0_4_vocab100,
         # dt_mc_temp0_8_vocab100,
         dt_mc_1step_vocab100,
         dt_mc_temp10_0_vocab100,
+        "chibiT-random_nvocab100"
+        #"chibiT-rerun-syn_ngram1_nvocab100_temperature100.0",
     ]
     col_names = ['Best Score',
                  'DT',
-                 '1-MC S100 t0.1', '1-MC S100 t0.2', '1-MC S100 t0.4', '1-MC S100 t1', '1-MC S100 t10',]
+                 '1-MC S100 t0.001', '1-MC S100 t0.01', '1-MC S100 t0.1', '1-MC S100 t1', '1-MC S100 t10','IID uniform']
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
 
@@ -947,30 +1930,68 @@ def iclr_generate_dt_mc_table_different_temperatures():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
-def iclr_generate_dt_same_data_table():
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+def iclr_generate_dt_mc_table_different_temperatures_20seeds():
     algs = [
-        dt,
-        chibiT,
-        dt_mc_1step_vocab100,
-        dt_same_data,
+        'dt-rerun-20seeds_dt',
+        'chibiT-syn-20seeds-temps-wo_T0.01',
+        'chibiT-syn-20seeds-temps-wo_T0.1',
+        'chibiT-syn-20seeds-steps-wo_step20000',
+        'chibiT-syn-20seeds-temps-wo_T10.0',
+        'chibiT-syn-20seeds-temps-wo_T100.0',
+        'chibiT-iid_wo_step20000'
+
     ]
     col_names = ['Best Score',
                  'DT',
-                 'DT + Wiki', 'DT + synthetic', 'DT + same data']
+                 '\\tau = 0.01', '\\tau = 0.1', '\\tau = 1', '\\tau = 10', '\\tau = 100', 'IID uniform']
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
 
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
     generate_aggregate_performance(algs, alg_dataset_dict, col_names)
 
-    # col_names[0] = 'Average Score'
-    # generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
-    # generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    
 
-    col_names[0] = 'Average 2nd Half'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+
+
+
+def iclr_generate_dt_mc_table_data_size():
+    algs = [
+        'dt-rerun-20seeds_dt',
+        "chibiT-syn-20seeds-ratio-wo_ratio0.125",
+        "chibiT-syn-20seeds-ratio-wo_ratio0.25",
+        "chibiT-syn-20seeds-ratio-wo_ratio0.375",
+        "chibiT-syn-20seeds-ratio-wo_ratio0.5",
+        "chibiT-syn-20seeds-ratio-wo_ratio0.625",
+        "chibiT-syn-20seeds-ratio-wo_ratio0.75",
+        "chibiT-syn-20seeds-ratio-wo_ratio0.875",
+        'chibiT-syn-20seeds-steps-wo_step20000',
+
+            ]
+    col_names = ['Best Score',
+                 'DT',
+                 '12.5\%', '25\%', '37.5\%', '50\%', '62.5\%', '75\%', '87.5\%', '100\%' ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Last Four'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_last_four_normalized')
 
 
 
@@ -996,8 +2017,31 @@ def iclr_generate_cql_section_table():
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
+def iclr_generate_dt_first_table_per_walker_2():
+    algs = [
+        dt,
+        chibiT,
+        dt_mc_1step_vocab100,
+        "same-no-return_new_ft"
+    ]
+    col_names = ['Best Score', 'DT', 'DT+Wiki', '1-MC S100', 'RL pretraining no return']
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
 
-def iclr_generate_cql_mdp_compare_n_state():
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
+##CROSS##
+def iclr_generate_cql_cross_SMC():
     # algs = [
     #     cql_base,
     #     cql_mdp_pretrain_nstate1,
@@ -1007,88 +2051,747 @@ def iclr_generate_cql_mdp_compare_n_state():
     #     cql_mdp_pretrain_nstate10000,
     # ]
     algs = [
-        cql_jul,
-        cql_jul_mdp_noproj_s1_t1,
-        cql_jul_mdp_noproj_s10_t1,
-        cql_jul_mdp_noproj_s100_t1,
-        cql_jul_mdp_noproj_s1000_t1,
-        cql_jul_mdp_noproj_s10000_t1,
-        cql_jul_mdp_noproj_s100000_t1,
-    ]
+        "cql_cross_pretrain_preq_noact_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preq_noact_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preq_noact_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj0_q_noact_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_q_noact_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_q_noact_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        ]
     col_names = ['Best Score',
-                 'CQL',
-                 'CQL MDP S1',
-                 'CQL MDP S10',
-                 'CQL MDP S100',
-                 'CQL MDP S1000',
-                 'CQL MDP S10000',
-                 'CQL MDP S100000',
+                "CQL S.MC.T",
+                "CQL S.MC.T.P",
+                "CQL S.MC",
+
+                "CQL SP.MC.T",
+                "CQL SP.MC.T.P",
+                "CQL SP.MC",
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
     generate_aggregate_performance(algs, alg_dataset_dict, col_names)
 
-    col_names[0] = 'Average Score'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
     col_names[0] = 'Average Later Half'
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
+def iclr_generate_cql_cross_SMDP():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preq_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preq_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preq_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj0_q_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_q_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_q_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        ]
+    col_names = ['Best Score',
+                "CQL S.MDP.T",
+                "CQL S.MDP.T.P",
+                "CQL S.MDP",
+
+                "CQL SP.MDP.T",
+                "CQL SP.MDP.T.P",
+                "CQL SP.MDP",
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_STD():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preTD_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preTD_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preTD_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        
+        "cql_cross_pretrain_preproj0_TD_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_TD_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_TD_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        ]
+    col_names = ['Best Score',
+                "CQL S.TD.T",
+                "CQL S.TD.T.P",
+                "CQL S.TD",
+
+                "CQL SP.TD.T",
+                "CQL SP.TD.T.P",
+                "CQL SP.TD",
+                 ]
+    envs = all_envs
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
+
+def iclr_generate_cql_cross_SMC_2():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preq_noact_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preq_noact_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preq_noact_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj0_q_noact_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_q_noact_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_q_noact_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        ]
+    col_names = ['Best Score',
+                "CQL S.MC.T",
+                "CQL S.MC.T.P",
+                "CQL S.MC",
+
+                "CQL SP.MC.T",
+                "CQL SP.MC.T.P",
+                "CQL SP.MC",
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_SMDP_2():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preq_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preq_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preq_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj0_q_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_q_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_q_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        ]
+    col_names = ['Best Score',
+                "CQL S.MDP.T",
+                "CQL S.MDP.T.P",
+                "CQL S.MDP",
+
+                "CQL SP.MDP.T",
+                "CQL SP.MDP.T.P",
+                "CQL SP.MDP",
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_STD_2():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preTD_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preTD_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preTD_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        
+        "cql_cross_pretrain_preproj0_TD_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_TD_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj0_TD_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        ]
+    col_names = ['Best Score',
+                "CQL S.TD.T",
+                "CQL S.TD.T.P",
+                "CQL S.TD",
+
+                "CQL SP.TD.T",
+                "CQL SP.TD.T.P",
+                "CQL SP.TD",
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+
+
+
+def iclr_generate_cql_cross_NMC():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+    ]
+    col_names = ['Best Score',
+                "CQL N.MC.T",
+                "CQL N.MC.T.P",
+                "CQL N.MC",
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_NMDP():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preproj3_q_sprime_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+    ]
+    col_names = ['Best Score',
+                
+                "CQL N.MDP.T",
+                "CQL N.MDP.T.P",
+                "CQL N.MDP",
+
+                "CQL NAD.MDP.T",
+                "CQL NAD.MDP.T.P",
+                "CQL NAD.MDP",
+
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_NTD():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+
+        "cql_cross_pretrain_preproj3_TD_text_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+    ]
+    col_names = ['Best Score',
+                
+                "CQL N.TD.T",
+                "CQL N.TD.T.P",
+                "CQL N.TD",
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_2NMC():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_1_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_1_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_1_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        
+    ]
+    col_names = ['Best Score',
+                "CQL 2N.MC.T",
+                "CQL 2N.MC.T.P",
+                "CQL 2N.MC",
+
+                
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_2NMDP():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        
+        "cql_cross_pretrain_preproj3_q_sprime_text_1_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_1_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_1_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        
+    ]
+    col_names = ['Best Score',
+                
+
+                "CQL 2N.MDP.T",
+                "CQL 2N.MDP.T.P",
+                "CQL 2N.MDP",
+
+                "CQL 2NAD.MDP.T",
+                "CQL 2NAD.MDP.T.P",
+                "CQL 2NAD.MDP",
+
+                
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_2NTD():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        
+
+        "cql_cross_pretrain_preproj3_TD_text_1_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_1_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_1_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+    ]
+    col_names = ['Best Score',
+                
+
+                "CQL 2N.TD.T",
+                "CQL 2N.TD.T.P",
+                "CQL 2N.TD",
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_3NMC():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_2_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_2_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_2_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        
+    ]
+    col_names = ['Best Score',
+                "CQL 3N.MC.T",
+                "CQL 3N.MC.T.P",
+                "CQL 3N.MC",
+
+                
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_3NMDP():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        
+
+        "cql_cross_pretrain_preproj3_q_sprime_text_2_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_2_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_2_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+       
+    ]
+    col_names = ['Best Score',
+               
+
+                "CQL 3N.MDP.T",
+                "CQL 3N.MDP.T.P",
+                "CQL 3N.MDP",
+
+                "CQL 3NAD.MDP.T",
+                "CQL 3NAD.MDP.T.P",
+                "CQL 3NAD.MDP",
+
+                
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_3NTD():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        
+
+        "cql_cross_pretrain_preproj3_TD_text_2_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_2_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_2_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+    ]
+    col_names = ['Best Score',
+                
+
+                "CQL 3N.TD.T",
+                "CQL 3N.TD.T.P",
+                "CQL 3N.TD",
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_AEMC():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_allbut_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_allbut_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_noact_sprime_text_allbut_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        
+    ]
+    col_names = ['Best Score',
+                "CQL AE.MC.T",
+                "CQL AE.MC.T.P",
+                "CQL AE.MC",
+
+                "CQL AEB.MC.T",
+                "CQL AEB.MC.T.P",
+                "CQL AEB.MC",
+
+                
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_AEMDP():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        
+
+        "cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_all_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj3_q_sprime_text_allbut_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_allbut_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_q_sprime_text_allbut_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        
+    ]
+    col_names = ['Best Score',
+                
+
+                "CQL AE.MDP.T",
+                "CQL AE.MDP.T.P",
+                "CQL AE.MDP",
+
+                "CQL AEB.MDP.T",
+                "CQL AEB.MDP.T.P",
+                "CQL AEB.MDP",
+
+                
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+
+def iclr_generate_cql_cross_AETD():
+    # algs = [
+    #     cql_base,
+    #     cql_mdp_pretrain_nstate1,
+    #     cql_mdp_pretrain_nstate10,
+    #     cql_mdp_pretrain_nstate100,
+    #     cql_mdp_pretrain_nstate1000,
+    #     cql_mdp_pretrain_nstate10000,
+    # ]
+    algs = [
+        
+        "cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_all_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+
+        "cql_cross_pretrain_preproj3_TD_text_allbut_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_allbut_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+        "cql_cross_pretrain_preproj3_TD_text_allbut_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003",
+    ]
+    col_names = ['Best Score',
+                
+
+                "CQL AE.TD.T",
+                "CQL AE.TD.T.P",
+                "CQL AE.TD",
+
+                "CQL AEB.TD.T",
+                "CQL AEB.TD.T.P",
+                "CQL AEB.TD",
+                 ]
+    envs = exc_me
+    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names)
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
+
+    #col_names[0] = 'Average Score'
+    #generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    #generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+
+    col_names[0] = 'Average Later Half'
+    generate_per_env_score_table_new_2(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
 
 def iclr_generate_cql_mdp_compare_temp():
     algs = [
         cql_base,
-        # cql_jul_mdp_noproj_s100_t0_0001,
+        cql_jul_mdp_noproj_s100_t0_0001,
         cql_jul_mdp_noproj_s100_t0_001,
-        cql_jul_mdp_noproj_s100_t0_01,
+        # cql_jul_mdp_noproj_s100_t0_01,
         cql_jul_mdp_noproj_s100_t0_1,
         cql_jul_mdp_noproj_s100_t1,
-        cql_jul_mdp_noproj_s100_t10,
+        # cql_jul_mdp_noproj_s100_t10,
         cql_jul_mdp_noproj_s100_t100,
-        # cql_jul_mdp_noproj_s100_t1000,
-    ]
-    col_names = ['Best Score',
-                 'CQL',
-                 # 'S100 t0.0001',
-                 't0.001',
-                 't0.01',
-                 't0.1',
-                 't1',
-                 't10',
-                 't100',
-                 # 'S100 t1000',
-                 ]
-    envs = all_envs
-    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
-
-    col_names[0] = 'Average Score'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
-
-    col_names[0] = 'Average Later Half'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-
-
-
-def iclr_generate_cql_mdp_compare_temp_with_random():
-    algs = [
-        cql_base,
-        cql_jul_mdp_noproj_s100_t1,
         cql_jul_mdp_noproj_s100_t1000,
-        cql_random_pretrain,
     ]
     col_names = ['Best Score',
                  'CQL',
+                 'S100 t0.0001',
+                 'S100 t0.001',
+                 # 'S100 t0.01',
+                 'S100 t0.1',
                  'S100 t1',
+                 # 'S100 t10',
+                 'S100 t100',
                  'S100 t1000',
-                 'Sinf t1000',
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -1113,7 +2816,7 @@ def iclr_generate_same_task_pretrain():
     col_names = ['Best Score',
                  'CQL',
                  'CQL MDP S100 t1',
-                 'CQL same data',
+                 'CQL same task',
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
@@ -1129,87 +2832,29 @@ def iclr_generate_same_task_pretrain():
     generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
 
-def iclr_generate_cql_iid():
+def july_test_only1():
     algs = [
+        cql_base,
+        cql_fd_pretrain,
         cql_jul,
-        cql_jul_mdp_noproj_s1_t1,
-        cql_jul_mdp_noproj_s100_t0_0001,
-        cql_jul_mdp_noproj_s100_t1,
-        cql_jul_mdp_noproj_s100_t1000,
-        cql_jul_mdp_noproj_s100000_t1,
-        # cql_jul_mdp_noproj_s100000_t0_0001,
-        # cql_jul_mdp_noproj_s100000_t1000,
-        # cql_jul_mdp_noproj_iid,
+        cql_jul_fd_pretrain,
     ]
     col_names = ['Best Score',
                  'CQL',
-                 'S1',
-                 'S100 t0.0001',
-                 'S100 t1',
-                 'S100 t1000',
-                 'S100000 t1',
+                 'CQL same task',
+                 'CQL jul',
+                 'CQL same task jul',
                  ]
     envs = all_envs
     alg_dataset_dict = get_alg_dataset_dict(algs, envs)
     generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
     generate_aggregate_performance(algs, alg_dataset_dict, col_names)
 
-    col_names[0] = 'Average Later Half'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
+    col_names[0] = 'Average Score'
+    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
+    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_100percent_normalized')
 
 
-
-def iclr_data_ratio1():
-    algs = [
-        cql_jul_pdr1_dr0_001,
-        cql_jul_pdr1_dr1,
-        cql_jul_same_data_pdr1_dr0_001,
-        cql_jul_same_data_pdr1_dr1,
-        cql_jul_mdp_pdr1_dr0_001,
-        cql_jul_mdp_pdr1_dr1,
-    ]
-    col_names = ['Best Score',
-                 'cql finetune 0.1\\%',
-                 'cql finetune 100\\%',
-                 'same finetune 0.1\\%',
-                 'same finetune 100\\%',
-                 'mdp finetune 0.1\\%',
-                 'mdp finetune 100\\%',
-                 ]
-    envs = all_envs
-    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
-
-    col_names[0] = 'Average Later Half'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-
-
-def iclr_data_ratio2():
-    algs = [
-        cql_jul_pdr1_dr1,
-        cql_jul_same_data_pdr0_001_dr1,
-        cql_jul_same_data_pdr1_dr1,
-        cql_jul_mdp_pdr0_001_dr1,
-        cql_jul_mdp_pdr1_dr1,
-    ]
-    col_names = ['Best Score',
-                 'cql',
-                 'same pretrain 0.1\\%',
-                 'same pretrain 100\\%',
-                 'mdp pretrain 0.1\\%',
-                 'mdp pretrain 100\\%',
-                 ]
-    envs = all_envs
-    alg_dataset_dict = get_alg_dataset_dict(algs, envs)
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names)
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names)
-
-    col_names[0] = 'Average Later Half'
-    generate_per_env_score_table_new(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
-    generate_aggregate_performance(algs, alg_dataset_dict, col_names, measure='best_later_half_normalized')
 
 
 ##################### table generation
@@ -1244,26 +2889,66 @@ def iclr_data_ratio2():
 # generate_table_cql_with_target_networks3()
 # generate_table_cql_with_target_networks4()
 
-# test only
-# iclr_generate_cql_mdp_compare_temp_with_random()
-
-
 # TODO ICLR paper run these
 # iclr_generate_dt_first_table_per_env()
 # iclr_generate_dt_mc_table_100_states_different_steps()
 # iclr_generate_dt_mc_table_different_number_of_states()
 # iclr_generate_dt_mc_table_different_temperatures()
 
-# iclr_generate_dt_same_data_table()
-
 
 # iclr_generate_cql_section_table()
 # iclr_generate_cql_mdp_compare_n_state()
 # iclr_generate_cql_mdp_compare_temp()
 # iclr_generate_same_task_pretrain()
+#iclr_generate_dt_first_table_per_walker_2()
+# iclr_generate_dt_random_different()
 
 
-# TODO after july 10
-# iclr_generate_cql_iid()
-iclr_data_ratio1()
-iclr_data_ratio2()
+#iclr_generate_dt_first_table_per_env()
+#iclr_generate_dt_first_table_per_env_20seeds()
+#iclr_generate_dt_first_table_per_env_conv_iter_20seeds()
+#iclr_generate_dt()
+#iclr_generate_dt_first_table_per_env_conv_iter()
+#iclr_generate_dt_mc_table_100_states_different_steps()
+#iclr_generate_dt_mc_table_100_states_different_steps_20seeds()
+#iclr_generate_dt_mc_table_different_number_of_states()
+#iclr_generate_dt_mc_table_different_number_of_states_20seeds()
+#iclr_generate_dt_mc_table_different_temperatures()
+#iclr_generate_dt_mc_table_different_temperatures_20seeds()
+#iclr_generate_dt_random_different_states()
+#iclr_generate_dt_long()
+#iclr_generate_dt_short_table_per_env()
+#iclr_generate_dt_very_short_table_per_env()
+#iclr_generate_dt_mc_table_data_size()
+#iclr_generate_dt_medium_short_table_per_env()
+#iclr_generate_dt_kmeans()
+#iclr_generate_dt_kmeans_2()
+#iclr_generate_dt_iid_20seeds()
+#iclr_generate_dt_syn_20seeds()
+#iclr_generate_dt_more_seeds()
+#iclr_generate_dt_separate_data()
+#iclr_generate_dt_early_checkpoint()
+#iclr_generate_dt_long_new()
+#iclr_generate_dt_first_table_per_env_20seeds_diff_pretrain()
+
+#iclr_generate_dt_analysis()
+#iclr_generate_dt_analysis_agg()
+#iclr_generate_cql_mdp_compare_n_state()
+iclr_generate_cql_cross_SMC()
+iclr_generate_cql_cross_SMDP()
+iclr_generate_cql_cross_STD()
+iclr_generate_cql_cross_NMC()
+iclr_generate_cql_cross_NMDP()
+iclr_generate_cql_cross_NTD()
+iclr_generate_cql_cross_2NMC()
+iclr_generate_cql_cross_2NMDP()
+iclr_generate_cql_cross_2NTD()
+iclr_generate_cql_cross_3NMC()
+iclr_generate_cql_cross_3NMDP()
+iclr_generate_cql_cross_3NTD()
+iclr_generate_cql_cross_AEMC()
+iclr_generate_cql_cross_AEMDP()
+iclr_generate_cql_cross_AETD()
+iclr_generate_cql_cross_SMC_2()
+iclr_generate_cql_cross_SMDP_2()
+iclr_generate_cql_cross_STD_2()

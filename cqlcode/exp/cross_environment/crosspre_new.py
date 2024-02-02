@@ -34,7 +34,7 @@ def main():
 
     variant = get_default_variant_dict() # this is a dictionary
     ###########################################################
-    exp_prefix = 'cql_cross_pretrain' #TODO specify the experimnent name prefix
+    exp_prefix = 'cql_cross_pretrain_new' #TODO specify the experimnent name prefix
     settings = [
         'env', '', MUJOCO_4_ENVS, # this contains 4 mujoco envs: ant, halfcheetah, hopper, walker2d
         'dataset', '', MUJOCO_3_DATASETS, # this contains 3 mujoco datasets: medium, medium-expert, medium-replay
@@ -82,9 +82,9 @@ def main():
                                     "None"),
                                 ],
 
-        "policy_with_text", 'pwt', [True, False], # whether to use text discription in policy networks
+        "policy_with_text", 'pwt', [False],#True, False], # whether to use text discription in policy networks
 
-        "offline_data_ratio", 'fr', [1.0], # data ratio for offline learning
+        "offline_data_ratio", 'fr', [0.1], # data ratio for offline learning
         "pretrain_data_ratio", 'pr', [1.0], # data ratio for pretraining
 
         'qf_hidden_layer', 'ql', [3], # hidden layers for q networks

@@ -23,26 +23,27 @@ def get_other_score_measures(path):
     return d
 
 
-base_path = '../code/checkpoints/final'
+base_path = '../code/sendback_cross'
+# base_path = '../code/testonly'
 for root, dirs, files in os.walk(base_path):
-    if '/postICLR' in root:
+    if 'cql_cross' in root:
         for dir in dirs:
             # Go through every subfolder in this folder
-                subfolder = os.path.join(root, dir)
-                for file in os.listdir(subfolder):
-                    if file == 'progress.csv':
-                        try:
-                            extra_measures_dict = get_other_score_measures(os.path.join(subfolder, file))
-                            ex = os.path.join(subfolder, 'extra.json')
-                            ex_to_use = ex
-                            if os.path.exists(ex):
-                                # load extra.json
-                                print(ex_to_use)
-                                with open(ex_to_use, 'r') as ex_file:
-                                    extra_dict = json.load(ex_file)
+            subfolder = os.path.join(root, dir)
+            for file in os.listdir(subfolder):
+                if file == 'progress.csv':
+                    try:
+                        extra_measures_dict = get_other_score_measures(os.path.join(subfolder, file))
+                        ex = os.path.join(subfolder, 'extra.json')
+                        ex_to_use = ex
+                        if os.path.exists(ex):
+                            # load extra.json
+                            print(ex_to_use)
+                            with open(ex_to_use, 'r') as ex_file:
+                                extra_dict = json.load(ex_file)
 
-                                extra_dict.update(extra_measures_dict)
-                                with open(ex_to_use, 'w') as ex_file:
-                                    json.dump(extra_dict, ex_file)
-                        except Exception as e:
-                            print(e)
+                            extra_dict.update(extra_measures_dict)
+                            with open(ex_to_use, 'w') as ex_file:
+                                json.dump(extra_dict, ex_file)
+                    except Exception as e:
+                        print(dir, e)

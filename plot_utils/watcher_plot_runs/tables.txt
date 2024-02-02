@@ -1,0 +1,1158 @@
+
+Now generate latex table:
+
+Best Score & CQL S.MC.T & CQL S.MC.T.P & CQL S.MC & CQL SP.MC.T & CQL SP.MC.T.P & CQL SP.MC \\
+		\hline 
+halfcheetah-medium-expert & \textbf{97.2} $\pm$ 0.6 & \textbf{97.2} $\pm$ 0.2 & \textbf{97.4} $\pm$ 0.2 & \textbf{96.6} $\pm$ 0.4 & 95.9 $\pm$ 0.8 & \textbf{96.6} $\pm$ 0.3\\
+hopper-medium-expert & \textbf{112.3} $\pm$ 0.2 & \textbf{112.1} $\pm$ 0.2 & \textbf{112.7} $\pm$ 0.4 & \textbf{112.6} $\pm$ 0.1 & \textbf{112.2} $\pm$ 0.3 & \textbf{112.5} $\pm$ 0.1\\
+walker2d-medium-expert & \textbf{112.9} $\pm$ 0.9 & \textbf{112.5} $\pm$ 1.0 & 111.6 $\pm$ 0.1 & 111.7 $\pm$ 0.5 & \textbf{111.8} $\pm$ 0.7 & \textbf{112.9} $\pm$ 1.2\\
+halfcheetah-medium & \textbf{50.1} $\pm$ 0.1 & \textbf{50.4} $\pm$ 0.2 & \textbf{50.4} $\pm$ 0.1 & \textbf{50.0} $\pm$ 0.2 & \textbf{50.0} $\pm$ 0.1 & \textbf{50.2} $\pm$ 0.1\\
+hopper-medium & 90.0 $\pm$ 4.9 & 90.2 $\pm$ 1.6 & 87.4 $\pm$ 2.7 & 84.9 $\pm$ 2.2 & \textbf{95.6} $\pm$ 1.7 & 84.1 $\pm$ 2.4\\
+walker2d-medium & 85.7 $\pm$ 0.1 & \textbf{86.4} $\pm$ 0.4 & \textbf{86.7} $\pm$ 0.7 & \textbf{86.0} $\pm$ 0.2 & \textbf{86.1} $\pm$ 0.1 & \textbf{86.5} $\pm$ 0.5\\
+ant-medium & \textbf{114.0} $\pm$ 0.2 & \textbf{112.9} $\pm$ 0.1 & \textbf{113.3} $\pm$ 0.6 & \textbf{113.2} $\pm$ 0.1 & 112.8 $\pm$ 0.5 & \textbf{113.3} $\pm$ 0.6\\
+halfcheetah-medium-replay & \textbf{48.7} $\pm$ 0.3 & \textbf{48.7} $\pm$ 0.2 & \textbf{49.0} $\pm$ 0.3 & 48.2 $\pm$ 0.3 & 48.1 $\pm$ 0.2 & 48.5 $\pm$ 0.2\\
+hopper-medium-replay & \textbf{101.4} $\pm$ 0.6 & 101.1 $\pm$ 0.8 & \textbf{102.2} $\pm$ 0.5 & \textbf{101.9} $\pm$ 0.4 & \textbf{101.5} $\pm$ 0.8 & \textbf{101.8} $\pm$ 0.3\\
+walker2d-medium-replay & \textbf{90.7} $\pm$ 0.9 & \textbf{91.2} $\pm$ 0.4 & 90.2 $\pm$ 0.9 & \textbf{91.2} $\pm$ 1.3 & \textbf{90.4} $\pm$ 0.6 & \textbf{90.9} $\pm$ 1.1\\
+ant-medium-replay & \textbf{109.8} $\pm$ 0.6 & \textbf{109.9} $\pm$ 0.6 & \textbf{110.3} $\pm$ 0.6 & \textbf{110.4} $\pm$ 0.6 & 109.3 $\pm$ 0.3 & \textbf{110.8} $\pm$ 1.2\\
+		\hline 
+Average (All Settings) & \textbf{92.1} $\pm$ 0.9 & \textbf{92.1} $\pm$ 0.5 & \textbf{91.9} $\pm$ 0.6 & \textbf{91.5} $\pm$ 0.6 & \textbf{92.2} $\pm$ 0.6 & \textbf{91.6} $\pm$ 0.7\\
+
+Now generate latex table:
+
+Average Later Half & CQL S.MC.T & CQL S.MC.T.P & CQL S.MC & CQL SP.MC.T & CQL SP.MC.T.P & CQL SP.MC \\
+		\hline 
+halfcheetah-medium-expert & 87.5 $\pm$ 3.1 & \textbf{88.6} $\pm$ 1.4 & \textbf{88.1} $\pm$ 2.1 & 84.4 $\pm$ 1.2 & 85.1 $\pm$ 4.6 & \textbf{87.9} $\pm$ 2.1\\
+hopper-medium-expert & 95.6 $\pm$ 3.3 & 92.9 $\pm$ 3.7 & \textbf{103.7} $\pm$ 1.2 & 80.9 $\pm$ 4.0 & 80.5 $\pm$ 6.2 & 97.6 $\pm$ 0.9\\
+walker2d-medium-expert & \textbf{109.4} $\pm$ 0.1 & \textbf{109.3} $\pm$ 0.1 & \textbf{109.6} $\pm$ 0.1 & \textbf{109.3} $\pm$ 0.1 & \textbf{109.2} $\pm$ 0.1 & \textbf{109.7} $\pm$ 0.1\\
+halfcheetah-medium & \textbf{49.2} $\pm$ 0.1 & \textbf{49.3} $\pm$ 0.1 & \textbf{49.4} $\pm$ 0.0 & \textbf{49.1} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.1 & \textbf{49.2} $\pm$ 0.1\\
+hopper-medium & 64.9 $\pm$ 0.3 & 63.4 $\pm$ 0.4 & 65.0 $\pm$ 0.5 & \textbf{65.7} $\pm$ 0.4 & 64.3 $\pm$ 0.6 & 64.3 $\pm$ 1.3\\
+walker2d-medium & \textbf{82.9} $\pm$ 0.3 & \textbf{83.2} $\pm$ 0.2 & \textbf{83.4} $\pm$ 0.2 & \textbf{82.8} $\pm$ 0.3 & \textbf{83.1} $\pm$ 0.2 & \textbf{82.8} $\pm$ 0.2\\
+ant-medium & \textbf{104.8} $\pm$ 0.3 & \textbf{104.9} $\pm$ 1.5 & \textbf{104.6} $\pm$ 0.2 & 103.8 $\pm$ 1.1 & 103.7 $\pm$ 0.8 & \textbf{104.1} $\pm$ 1.0\\
+halfcheetah-medium-replay & \textbf{47.0} $\pm$ 0.1 & \textbf{46.9} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.2 & \textbf{46.8} $\pm$ 0.2 & \textbf{46.9} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.2\\
+hopper-medium-replay & \textbf{97.3} $\pm$ 0.9 & 94.4 $\pm$ 1.0 & 96.8 $\pm$ 0.5 & \textbf{98.3} $\pm$ 0.4 & 95.3 $\pm$ 0.8 & 97.3 $\pm$ 0.2\\
+walker2d-medium-replay & 83.2 $\pm$ 0.4 & \textbf{83.6} $\pm$ 0.4 & 82.5 $\pm$ 1.9 & \textbf{84.4} $\pm$ 1.4 & 82.2 $\pm$ 1.7 & 82.5 $\pm$ 0.7\\
+ant-medium-replay & 95.1 $\pm$ 2.5 & 94.1 $\pm$ 2.4 & \textbf{96.7} $\pm$ 2.0 & 95.5 $\pm$ 0.6 & 94.4 $\pm$ 1.7 & \textbf{96.7} $\pm$ 1.4\\
+		\hline 
+Average (All Settings) & 83.4 $\pm$ 1.0 & 82.8 $\pm$ 1.0 & \textbf{84.3} $\pm$ 0.8 & 81.9 $\pm$ 0.9 & 81.3 $\pm$ 1.5 & \textbf{83.5} $\pm$ 0.7\\
+
+Now generate latex table:
+
+Best Score & CQL S.MDP.T & CQL S.MDP.T.P & CQL S.MDP & CQL SP.MDP.T & CQL SP.MDP.T.P & CQL SP.MDP \\
+		\hline 
+halfcheetah-medium-expert & \textbf{96.4} $\pm$ 0.1 & \textbf{96.5} $\pm$ 0.4 & \textbf{97.1} $\pm$ 0.3 & \textbf{96.1} $\pm$ 0.5 & \textbf{96.7} $\pm$ 0.1 & \textbf{96.3} $\pm$ 0.8\\
+hopper-medium-expert & \textbf{112.4} $\pm$ 0.2 & \textbf{112.6} $\pm$ 0.1 & \textbf{112.8} $\pm$ 0.2 & \textbf{112.6} $\pm$ 0.3 & \textbf{112.5} $\pm$ 0.4 & \textbf{112.7} $\pm$ 0.2\\
+walker2d-medium-expert & 112.0 $\pm$ 0.4 & 111.7 $\pm$ 0.8 & 111.6 $\pm$ 0.1 & \textbf{112.2} $\pm$ 0.7 & \textbf{113.2} $\pm$ 1.5 & 111.7 $\pm$ 0.4\\
+halfcheetah-medium & \textbf{50.3} $\pm$ 0.3 & \textbf{50.3} $\pm$ 0.2 & \textbf{50.6} $\pm$ 0.1 & 50.1 $\pm$ 0.1 & 50.0 $\pm$ 0.1 & \textbf{50.2} $\pm$ 0.1\\
+hopper-medium & 86.8 $\pm$ 0.6 & 90.9 $\pm$ 2.3 & 88.2 $\pm$ 0.5 & 85.8 $\pm$ 1.9 & \textbf{93.9} $\pm$ 1.8 & 88.2 $\pm$ 1.9\\
+walker2d-medium & \textbf{86.3} $\pm$ 0.5 & \textbf{86.4} $\pm$ 0.4 & 86.2 $\pm$ 0.5 & 85.7 $\pm$ 0.4 & 86.2 $\pm$ 0.3 & \textbf{87.1} $\pm$ 1.3\\
+ant-medium & \textbf{113.3} $\pm$ 0.2 & \textbf{113.9} $\pm$ 0.7 & \textbf{113.2} $\pm$ 0.2 & \textbf{113.0} $\pm$ 0.3 & \textbf{113.0} $\pm$ 0.5 & \textbf{113.2} $\pm$ 0.6\\
+halfcheetah-medium-replay & \textbf{48.9} $\pm$ 0.1 & 48.8 $\pm$ 0.2 & \textbf{49.4} $\pm$ 0.3 & 48.5 $\pm$ 0.4 & 48.3 $\pm$ 0.2 & 48.4 $\pm$ 0.1\\
+hopper-medium-replay & \textbf{102.0} $\pm$ 0.1 & \textbf{101.6} $\pm$ 1.0 & \textbf{102.0} $\pm$ 0.2 & \textbf{101.8} $\pm$ 0.2 & \textbf{102.5} $\pm$ 0.4 & \textbf{101.9} $\pm$ 0.4\\
+walker2d-medium-replay & \textbf{91.9} $\pm$ 0.4 & 91.0 $\pm$ 1.4 & \textbf{92.8} $\pm$ 0.8 & 90.7 $\pm$ 0.9 & 91.2 $\pm$ 0.7 & 91.6 $\pm$ 0.3\\
+ant-medium-replay & 110.1 $\pm$ 0.6 & \textbf{111.0} $\pm$ 1.0 & \textbf{111.8} $\pm$ 0.3 & 109.8 $\pm$ 0.3 & 110.6 $\pm$ 1.4 & 109.8 $\pm$ 0.3\\
+		\hline 
+Average (All Settings) & \textbf{91.9} $\pm$ 0.3 & \textbf{92.2} $\pm$ 0.8 & \textbf{92.3} $\pm$ 0.3 & 91.5 $\pm$ 0.6 & \textbf{92.6} $\pm$ 0.7 & \textbf{91.9} $\pm$ 0.6\\
+
+Now generate latex table:
+
+Average Later Half & CQL S.MDP.T & CQL S.MDP.T.P & CQL S.MDP & CQL SP.MDP.T & CQL SP.MDP.T.P & CQL SP.MDP \\
+		\hline 
+halfcheetah-medium-expert & 80.5 $\pm$ 2.9 & 80.0 $\pm$ 1.7 & \textbf{86.0} $\pm$ 0.9 & 80.9 $\pm$ 1.5 & 82.8 $\pm$ 2.2 & 83.9 $\pm$ 2.7\\
+hopper-medium-expert & 93.6 $\pm$ 3.9 & 82.7 $\pm$ 19.2 & \textbf{101.8} $\pm$ 1.4 & 88.6 $\pm$ 5.4 & 77.2 $\pm$ 3.0 & 95.9 $\pm$ 3.6\\
+walker2d-medium-expert & \textbf{109.1} $\pm$ 0.7 & \textbf{108.9} $\pm$ 0.1 & \textbf{109.4} $\pm$ 0.2 & \textbf{109.5} $\pm$ 0.2 & \textbf{109.3} $\pm$ 0.2 & \textbf{109.7} $\pm$ 0.1\\
+halfcheetah-medium & \textbf{49.4} $\pm$ 0.2 & \textbf{49.2} $\pm$ 0.1 & \textbf{49.6} $\pm$ 0.1 & \textbf{49.1} $\pm$ 0.1 & 49.1 $\pm$ 0.1 & \textbf{49.3} $\pm$ 0.0\\
+hopper-medium & \textbf{65.5} $\pm$ 1.1 & 64.4 $\pm$ 0.6 & 64.4 $\pm$ 1.2 & \textbf{65.5} $\pm$ 0.6 & \textbf{65.2} $\pm$ 1.2 & 64.1 $\pm$ 0.7\\
+walker2d-medium & \textbf{82.8} $\pm$ 0.3 & \textbf{83.3} $\pm$ 0.3 & \textbf{83.6} $\pm$ 0.2 & 82.5 $\pm$ 0.1 & \textbf{83.1} $\pm$ 0.2 & 82.5 $\pm$ 0.3\\
+ant-medium & \textbf{104.8} $\pm$ 1.4 & 102.9 $\pm$ 1.4 & \textbf{104.9} $\pm$ 0.3 & 102.6 $\pm$ 1.0 & 102.0 $\pm$ 0.2 & 102.7 $\pm$ 1.3\\
+halfcheetah-medium-replay & \textbf{47.1} $\pm$ 0.2 & \textbf{47.3} $\pm$ 0.2 & \textbf{47.2} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.3 & \textbf{47.0} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.2\\
+hopper-medium-replay & \textbf{97.6} $\pm$ 0.9 & 97.0 $\pm$ 1.1 & \textbf{98.1} $\pm$ 1.1 & 96.4 $\pm$ 0.6 & \textbf{97.3} $\pm$ 0.3 & \textbf{97.7} $\pm$ 0.4\\
+walker2d-medium-replay & 83.5 $\pm$ 0.5 & 82.1 $\pm$ 2.3 & \textbf{84.8} $\pm$ 2.2 & 83.1 $\pm$ 0.7 & 83.5 $\pm$ 0.9 & 81.4 $\pm$ 4.5\\
+ant-medium-replay & 96.5 $\pm$ 0.7 & 93.3 $\pm$ 1.6 & \textbf{98.2} $\pm$ 0.9 & 95.4 $\pm$ 1.1 & 97.1 $\pm$ 1.0 & 93.5 $\pm$ 2.8\\
+		\hline 
+Average (All Settings) & 82.7 $\pm$ 1.2 & 81.0 $\pm$ 2.6 & \textbf{84.4} $\pm$ 0.8 & 81.9 $\pm$ 1.1 & 81.2 $\pm$ 0.9 & 82.5 $\pm$ 1.5\\
+
+Now generate latex table:
+
+Best Score & CQL S.TD.T & CQL S.TD.T.P & CQL S.TD & CQL SP.TD.T & CQL SP.TD.T.P & CQL SP.TD \\
+		\hline 
+halfcheetah-medium-expert & 93.3 $\pm$ 2.1 & 92.2 $\pm$ 2.7 & \textbf{95.6} $\pm$ 0.3 & 94.4 $\pm$ 1.0 & 94.3 $\pm$ 1.0 & \textbf{94.8} $\pm$ 0.6\\
+hopper-medium-expert & \textbf{112.4} $\pm$ 0.2 & \textbf{112.4} $\pm$ 0.1 & \textbf{112.2} $\pm$ 0.2 & \textbf{112.7} $\pm$ 0.6 & \textbf{112.1} $\pm$ 0.1 & \textbf{112.5} $\pm$ 0.0\\
+walker2d-medium-expert & 111.1 $\pm$ 0.3 & 114.9 $\pm$ 2.9 & 111.7 $\pm$ 1.0 & \textbf{116.4} $\pm$ 2.3 & 112.1 $\pm$ 0.9 & 111.9 $\pm$ 0.2\\
+halfcheetah-medium & \textbf{50.1} $\pm$ 0.1 & \textbf{50.2} $\pm$ 0.2 & \textbf{50.5} $\pm$ 0.1 & 50.0 $\pm$ 0.3 & 50.0 $\pm$ 0.0 & 49.9 $\pm$ 0.1\\
+hopper-medium & 86.0 $\pm$ 3.5 & \textbf{91.5} $\pm$ 2.4 & 87.3 $\pm$ 1.3 & 87.2 $\pm$ 1.8 & \textbf{91.4} $\pm$ 4.4 & 87.9 $\pm$ 3.2\\
+walker2d-medium & \textbf{86.2} $\pm$ 0.1 & \textbf{86.0} $\pm$ 0.5 & \textbf{86.4} $\pm$ 0.3 & \textbf{86.2} $\pm$ 0.5 & \textbf{86.1} $\pm$ 0.4 & \textbf{86.1} $\pm$ 0.3\\
+ant-medium & \textbf{112.2} $\pm$ 0.5 & \textbf{112.3} $\pm$ 0.4 & \textbf{112.8} $\pm$ 0.6 & \textbf{112.1} $\pm$ 0.3 & \textbf{112.0} $\pm$ 0.7 & \textbf{113.1} $\pm$ 0.5\\
+halfcheetah-medium-replay & \textbf{48.5} $\pm$ 0.3 & \textbf{48.4} $\pm$ 0.3 & \textbf{48.9} $\pm$ 0.3 & 48.1 $\pm$ 0.2 & 48.3 $\pm$ 0.3 & 48.3 $\pm$ 0.3\\
+hopper-medium-replay & \textbf{101.3} $\pm$ 0.9 & \textbf{101.2} $\pm$ 0.2 & \textbf{101.8} $\pm$ 0.6 & \textbf{101.2} $\pm$ 0.1 & \textbf{100.9} $\pm$ 1.0 & \textbf{101.5} $\pm$ 0.8\\
+walker2d-medium-replay & 90.3 $\pm$ 0.4 & \textbf{91.8} $\pm$ 0.6 & 90.4 $\pm$ 0.9 & 90.9 $\pm$ 1.8 & \textbf{91.4} $\pm$ 0.8 & \textbf{91.5} $\pm$ 0.2\\
+ant-medium-replay & \textbf{109.9} $\pm$ 0.1 & \textbf{109.8} $\pm$ 0.7 & \textbf{110.0} $\pm$ 0.6 & \textbf{110.4} $\pm$ 0.6 & \textbf{109.7} $\pm$ 1.1 & \textbf{110.0} $\pm$ 0.3\\
+		\hline 
+Average (All Settings) & \textbf{91.0} $\pm$ 0.8 & \textbf{91.9} $\pm$ 1.0 & \textbf{91.6} $\pm$ 0.6 & \textbf{91.8} $\pm$ 0.9 & \textbf{91.7} $\pm$ 1.0 & \textbf{91.6} $\pm$ 0.6\\
+
+Now generate latex table:
+
+Average Later Half & CQL S.TD.T & CQL S.TD.T.P & CQL S.TD & CQL SP.TD.T & CQL SP.TD.T.P & CQL SP.TD \\
+		\hline 
+halfcheetah-medium-expert & 72.2 $\pm$ 5.3 & 69.6 $\pm$ 4.9 & 72.6 $\pm$ 2.1 & \textbf{73.6} $\pm$ 5.1 & 72.5 $\pm$ 6.6 & 71.1 $\pm$ 2.6\\
+hopper-medium-expert & \textbf{96.9} $\pm$ 3.5 & 89.4 $\pm$ 4.3 & \textbf{97.7} $\pm$ 2.0 & 84.5 $\pm$ 4.2 & 66.5 $\pm$ 1.8 & 89.7 $\pm$ 3.0\\
+walker2d-medium-expert & \textbf{109.0} $\pm$ 0.2 & \textbf{108.9} $\pm$ 0.2 & \textbf{109.4} $\pm$ 0.1 & \textbf{109.2} $\pm$ 0.2 & \textbf{109.0} $\pm$ 0.2 & \textbf{109.0} $\pm$ 0.5\\
+halfcheetah-medium & \textbf{49.0} $\pm$ 0.2 & \textbf{49.0} $\pm$ 0.1 & \textbf{49.4} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.2 & \textbf{49.0} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.1\\
+hopper-medium & \textbf{67.3} $\pm$ 0.4 & 64.9 $\pm$ 2.3 & \textbf{67.4} $\pm$ 0.4 & \textbf{67.3} $\pm$ 0.3 & \textbf{67.7} $\pm$ 2.2 & 66.2 $\pm$ 1.4\\
+walker2d-medium & \textbf{82.9} $\pm$ 0.3 & \textbf{82.8} $\pm$ 0.0 & \textbf{82.8} $\pm$ 0.7 & \textbf{82.4} $\pm$ 0.6 & 82.0 $\pm$ 0.5 & \textbf{82.8} $\pm$ 0.3\\
+ant-medium & 102.3 $\pm$ 0.3 & 99.5 $\pm$ 2.2 & 102.0 $\pm$ 0.8 & 99.7 $\pm$ 0.9 & 99.2 $\pm$ 0.9 & \textbf{103.4} $\pm$ 1.6\\
+halfcheetah-medium-replay & \textbf{46.9} $\pm$ 0.2 & 46.7 $\pm$ 0.0 & \textbf{47.2} $\pm$ 0.1 & 46.7 $\pm$ 0.1 & 46.7 $\pm$ 0.2 & \textbf{47.0} $\pm$ 0.3\\
+hopper-medium-replay & 94.8 $\pm$ 1.3 & 92.4 $\pm$ 1.9 & 94.0 $\pm$ 2.6 & \textbf{95.8} $\pm$ 0.3 & 93.2 $\pm$ 1.7 & \textbf{96.0} $\pm$ 0.5\\
+walker2d-medium-replay & \textbf{83.7} $\pm$ 0.3 & 82.6 $\pm$ 1.4 & \textbf{83.6} $\pm$ 0.3 & \textbf{84.2} $\pm$ 0.4 & 83.2 $\pm$ 2.1 & 82.5 $\pm$ 0.9\\
+ant-medium-replay & 96.7 $\pm$ 2.2 & 92.6 $\pm$ 1.0 & 95.1 $\pm$ 1.1 & \textbf{98.6} $\pm$ 1.1 & 97.0 $\pm$ 2.5 & 95.0 $\pm$ 4.1\\
+		\hline 
+Average (All Settings) & \textbf{81.9} $\pm$ 1.3 & 79.9 $\pm$ 1.7 & \textbf{81.9} $\pm$ 0.9 & 81.0 $\pm$ 1.2 & 78.7 $\pm$ 1.7 & 81.1 $\pm$ 1.4\\
+
+Now generate latex table:
+
+Best Score & CQL N.MC.T & CQL N.MC.T.P & CQL N.MC \\
+		\hline 
+halfcheetah-medium & \textbf{50.2} $\pm$ 0.1 & \textbf{50.1} $\pm$ 0.2 & \textbf{50.4} $\pm$ 0.1\\
+hopper-medium & 85.1 $\pm$ 3.2 & \textbf{93.7} $\pm$ 2.9 & 86.2 $\pm$ 1.8\\
+walker2d-medium & \textbf{86.0} $\pm$ 0.3 & \textbf{85.8} $\pm$ 0.3 & \textbf{86.0} $\pm$ 0.3\\
+ant-medium & \textbf{113.1} $\pm$ 0.7 & \textbf{112.0} $\pm$ 0.5 & \textbf{113.1} $\pm$ 0.4\\
+halfcheetah-medium-replay & \textbf{48.2} $\pm$ 0.3 & \textbf{48.1} $\pm$ 0.1 & \textbf{48.4} $\pm$ 0.1\\
+hopper-medium-replay & \textbf{101.6} $\pm$ 0.4 & \textbf{102.0} $\pm$ 0.6 & \textbf{102.2} $\pm$ 0.5\\
+walker2d-medium-replay & \textbf{91.0} $\pm$ 0.1 & \textbf{90.8} $\pm$ 0.9 & \textbf{90.4} $\pm$ 0.7\\
+ant-medium-replay & \textbf{109.6} $\pm$ 0.3 & \textbf{110.0} $\pm$ 0.2 & \textbf{109.6} $\pm$ 0.3\\
+		\hline 
+Average (All Settings) & 85.6 $\pm$ 0.7 & \textbf{86.6} $\pm$ 0.7 & \textbf{85.8} $\pm$ 0.5\\
+
+Now generate latex table:
+
+Average Later Half & CQL N.MC.T & CQL N.MC.T.P & CQL N.MC \\
+		\hline 
+halfcheetah-medium & \textbf{49.2} $\pm$ 0.1 & \textbf{49.1} $\pm$ 0.2 & \textbf{49.4} $\pm$ 0.1\\
+hopper-medium & \textbf{65.5} $\pm$ 1.6 & 64.2 $\pm$ 0.9 & 64.7 $\pm$ 0.7\\
+walker2d-medium & \textbf{82.8} $\pm$ 0.3 & \textbf{82.8} $\pm$ 0.4 & \textbf{83.0} $\pm$ 0.1\\
+ant-medium & 100.4 $\pm$ 1.4 & 99.3 $\pm$ 0.6 & \textbf{102.5} $\pm$ 1.6\\
+halfcheetah-medium-replay & \textbf{46.8} $\pm$ 0.3 & \textbf{46.7} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.1\\
+hopper-medium-replay & 96.0 $\pm$ 0.9 & 94.2 $\pm$ 2.3 & \textbf{97.2} $\pm$ 0.6\\
+walker2d-medium-replay & \textbf{84.2} $\pm$ 1.0 & 83.2 $\pm$ 0.9 & 81.6 $\pm$ 1.5\\
+ant-medium-replay & \textbf{96.1} $\pm$ 0.7 & 93.6 $\pm$ 2.5 & 94.4 $\pm$ 0.2\\
+		\hline 
+Average (All Settings) & \textbf{77.6} $\pm$ 0.8 & 76.6 $\pm$ 1.0 & \textbf{77.5} $\pm$ 0.6\\
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_halfcheetah_medium-replay has nothing for measure: last_four_normalized
+
+Now generate latex table:
+
+Best Score & CQL N.MDP.T & CQL N.MDP.T.P & CQL N.MDP & CQL NAD.MDP.T & CQL NAD.MDP.T.P & CQL NAD.MDP \\
+		\hline 
+halfcheetah-medium & 50.1 $\pm$ 0.1 & 50.3 $\pm$ 0.1 & 50.4 $\pm$ 0.1 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+hopper-medium & 85.5 $\pm$ 3.5 & \textbf{96.7} $\pm$ 1.0 & 89.5 $\pm$ 4.2 & 88.5 $\pm$ 1.9 & 94.9 $\pm$ 1.3 & 84.3 $\pm$ 2.8\\
+walker2d-medium & \textbf{86.1} $\pm$ 0.7 & \textbf{86.3} $\pm$ 0.7 & 86.1 $\pm$ 0.3 & 85.8 $\pm$ 0.3 & 86.1 $\pm$ 0.3 & \textbf{87.0} $\pm$ 0.4\\
+ant-medium & \textbf{112.6} $\pm$ 0.6 & \textbf{112.6} $\pm$ 0.1 & \textbf{112.9} $\pm$ 0.2 & \textbf{112.8} $\pm$ 0.4 & \textbf{112.3} $\pm$ 0.7 & \textbf{112.8} $\pm$ 0.3\\
+halfcheetah-medium-replay & 48.2 $\pm$ 0.2 & 48.1 $\pm$ 0.2 & 48.5 $\pm$ 0.2 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+hopper-medium-replay & \textbf{101.8} $\pm$ 0.4 & \textbf{101.8} $\pm$ 0.5 & \textbf{101.8} $\pm$ 0.9 & \textbf{101.5} $\pm$ 0.9 & \textbf{101.9} $\pm$ 0.1 & \textbf{101.2} $\pm$ 0.5\\
+walker2d-medium-replay & \textbf{92.8} $\pm$ 1.3 & 90.9 $\pm$ 0.7 & 91.2 $\pm$ 0.1 & 91.1 $\pm$ 1.1 & 91.5 $\pm$ 1.9 & 91.3 $\pm$ 0.7\\
+ant-medium-replay & \textbf{111.0} $\pm$ 0.1 & \textbf{110.4} $\pm$ 0.4 & \textbf{110.0} $\pm$ 0.6 & \textbf{110.1} $\pm$ 1.1 & \textbf{110.0} $\pm$ 1.9 & \textbf{110.6} $\pm$ 0.8\\
+		\hline 
+Average (All Settings) & 86.0 $\pm$ 0.9 & 87.2 $\pm$ 0.5 & 86.3 $\pm$ 0.8 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+
+Now generate latex table:
+
+Average Later Half & CQL N.MDP.T & CQL N.MDP.T.P & CQL N.MDP & CQL NAD.MDP.T & CQL NAD.MDP.T.P & CQL NAD.MDP \\
+		\hline 
+halfcheetah-medium & 49.1 $\pm$ 0.2 & 49.2 $\pm$ 0.1 & 49.4 $\pm$ 0.1 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+hopper-medium & \textbf{66.0} $\pm$ 0.8 & 63.1 $\pm$ 1.6 & 64.8 $\pm$ 1.5 & \textbf{65.6} $\pm$ 0.6 & 63.9 $\pm$ 1.3 & 63.7 $\pm$ 0.7\\
+walker2d-medium & \textbf{82.6} $\pm$ 0.1 & \textbf{82.4} $\pm$ 0.4 & \textbf{83.1} $\pm$ 0.1 & \textbf{82.8} $\pm$ 0.2 & \textbf{82.7} $\pm$ 0.1 & \textbf{83.1} $\pm$ 0.2\\
+ant-medium & 100.3 $\pm$ 1.1 & 100.5 $\pm$ 1.2 & \textbf{104.0} $\pm$ 0.8 & 101.8 $\pm$ 0.9 & 100.6 $\pm$ 0.9 & 102.6 $\pm$ 0.8\\
+halfcheetah-medium-replay & 47.0 $\pm$ 0.2 & 46.7 $\pm$ 0.2 & 47.3 $\pm$ 0.0 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+hopper-medium-replay & \textbf{96.0} $\pm$ 1.6 & \textbf{96.1} $\pm$ 0.8 & \textbf{96.4} $\pm$ 0.7 & \textbf{96.1} $\pm$ 1.6 & \textbf{96.4} $\pm$ 1.2 & \textbf{96.5} $\pm$ 0.5\\
+walker2d-medium-replay & \textbf{82.8} $\pm$ 2.8 & 78.3 $\pm$ 6.5 & 79.4 $\pm$ 5.3 & 79.9 $\pm$ 2.1 & \textbf{83.5} $\pm$ 2.7 & 82.3 $\pm$ 2.0\\
+ant-medium-replay & 93.3 $\pm$ 0.1 & \textbf{96.8} $\pm$ 2.6 & \textbf{96.4} $\pm$ 1.8 & 96.0 $\pm$ 2.1 & \textbf{97.0} $\pm$ 1.7 & \textbf{96.1} $\pm$ 2.2\\
+		\hline 
+Average (All Settings) & 77.1 $\pm$ 0.8 & 76.6 $\pm$ 1.7 & 77.6 $\pm$ 1.3 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+
+Now generate latex table:
+
+Best Score & CQL N.TD.T & CQL N.TD.T.P & CQL N.TD \\
+		\hline 
+halfcheetah-medium & \textbf{49.9} $\pm$ 0.1 & \textbf{50.0} $\pm$ 0.0 & \textbf{50.4} $\pm$ 0.3\\
+hopper-medium & 90.4 $\pm$ 4.8 & \textbf{94.4} $\pm$ 2.9 & 87.2 $\pm$ 1.8\\
+walker2d-medium & \textbf{85.5} $\pm$ 0.4 & \textbf{85.5} $\pm$ 0.5 & \textbf{85.9} $\pm$ 0.2\\
+ant-medium & 109.1 $\pm$ 1.9 & \textbf{111.6} $\pm$ 0.7 & \textbf{112.4} $\pm$ 0.4\\
+halfcheetah-medium-replay & \textbf{48.2} $\pm$ 0.1 & \textbf{48.0} $\pm$ 0.2 & \textbf{48.1} $\pm$ 0.2\\
+hopper-medium-replay & 100.8 $\pm$ 0.9 & \textbf{102.4} $\pm$ 0.8 & 101.1 $\pm$ 0.2\\
+walker2d-medium-replay & \textbf{91.1} $\pm$ 1.0 & \textbf{90.2} $\pm$ 1.8 & \textbf{90.6} $\pm$ 0.9\\
+ant-medium-replay & \textbf{110.8} $\pm$ 1.2 & 109.3 $\pm$ 0.3 & \textbf{109.8} $\pm$ 0.4\\
+		\hline 
+Average (All Settings) & \textbf{85.7} $\pm$ 1.3 & \textbf{86.4} $\pm$ 0.9 & \textbf{85.7} $\pm$ 0.6\\
+
+Now generate latex table:
+
+Average Later Half & CQL N.TD.T & CQL N.TD.T.P & CQL N.TD \\
+		\hline 
+halfcheetah-medium & \textbf{49.0} $\pm$ 0.1 & \textbf{48.9} $\pm$ 0.1 & \textbf{49.2} $\pm$ 0.1\\
+hopper-medium & \textbf{68.2} $\pm$ 1.4 & 65.4 $\pm$ 1.9 & 66.3 $\pm$ 0.5\\
+walker2d-medium & \textbf{82.8} $\pm$ 0.4 & \textbf{82.4} $\pm$ 0.3 & \textbf{83.1} $\pm$ 0.3\\
+ant-medium & 91.1 $\pm$ 5.3 & 95.6 $\pm$ 1.7 & \textbf{100.8} $\pm$ 1.2\\
+halfcheetah-medium-replay & \textbf{46.7} $\pm$ 0.0 & \textbf{46.5} $\pm$ 0.0 & \textbf{46.9} $\pm$ 0.1\\
+hopper-medium-replay & \textbf{94.1} $\pm$ 0.9 & \textbf{94.4} $\pm$ 2.1 & \textbf{94.0} $\pm$ 2.4\\
+walker2d-medium-replay & 81.8 $\pm$ 1.0 & \textbf{83.4} $\pm$ 0.5 & \textbf{83.1} $\pm$ 1.4\\
+ant-medium-replay & 95.9 $\pm$ 3.6 & \textbf{97.9} $\pm$ 1.0 & 94.3 $\pm$ 2.0\\
+		\hline 
+Average (All Settings) & 76.2 $\pm$ 1.6 & \textbf{76.8} $\pm$ 0.9 & \textbf{77.2} $\pm$ 1.0\\
+
+Now generate latex table:
+
+Best Score & CQL 2N.MC.T & CQL 2N.MC.T.P & CQL 2N.MC \\
+		\hline 
+halfcheetah-medium & \textbf{50.1} $\pm$ 0.1 & \textbf{50.3} $\pm$ 0.2 & \textbf{50.4} $\pm$ 0.3\\
+hopper-medium & 88.4 $\pm$ 2.3 & \textbf{90.9} $\pm$ 3.3 & 88.7 $\pm$ 2.5\\
+walker2d-medium & \textbf{85.6} $\pm$ 0.2 & \textbf{85.9} $\pm$ 0.6 & \textbf{86.4} $\pm$ 0.6\\
+ant-medium & \textbf{112.7} $\pm$ 0.3 & \textbf{112.5} $\pm$ 0.1 & \textbf{113.4} $\pm$ 0.7\\
+halfcheetah-medium-replay & \textbf{48.6} $\pm$ 0.1 & 48.1 $\pm$ 0.6 & \textbf{48.1} $\pm$ 0.5\\
+hopper-medium-replay & \textbf{103.3} $\pm$ 0.4 & 101.7 $\pm$ 0.4 & 102.2 $\pm$ 0.7\\
+walker2d-medium-replay & \textbf{90.9} $\pm$ 0.8 & \textbf{90.2} $\pm$ 1.1 & 89.3 $\pm$ 0.4\\
+ant-medium-replay & \textbf{109.3} $\pm$ 1.0 & \textbf{109.1} $\pm$ 0.5 & \textbf{109.8} $\pm$ 0.4\\
+		\hline 
+Average (All Settings) & \textbf{86.1} $\pm$ 0.6 & \textbf{86.1} $\pm$ 0.8 & \textbf{86.1} $\pm$ 0.8\\
+
+Now generate latex table:
+
+Average Later Half & CQL 2N.MC.T & CQL 2N.MC.T.P & CQL 2N.MC \\
+		\hline 
+halfcheetah-medium & \textbf{49.1} $\pm$ 0.1 & \textbf{49.1} $\pm$ 0.2 & \textbf{49.3} $\pm$ 0.2\\
+hopper-medium & \textbf{65.5} $\pm$ 1.2 & 64.0 $\pm$ 1.7 & \textbf{65.5} $\pm$ 1.1\\
+walker2d-medium & \textbf{82.9} $\pm$ 0.2 & \textbf{82.8} $\pm$ 0.2 & \textbf{82.9} $\pm$ 0.6\\
+ant-medium & 100.7 $\pm$ 1.7 & \textbf{102.7} $\pm$ 1.2 & \textbf{103.0} $\pm$ 0.3\\
+halfcheetah-medium-replay & \textbf{46.9} $\pm$ 0.3 & \textbf{46.7} $\pm$ 0.2 & 45.1 $\pm$ 3.0\\
+hopper-medium-replay & \textbf{96.9} $\pm$ 1.8 & \textbf{96.4} $\pm$ 1.0 & \textbf{96.4} $\pm$ 0.6\\
+walker2d-medium-replay & \textbf{83.4} $\pm$ 0.6 & \textbf{82.7} $\pm$ 1.8 & 81.9 $\pm$ 0.2\\
+ant-medium-replay & 93.9 $\pm$ 1.1 & 93.5 $\pm$ 1.0 & \textbf{95.9} $\pm$ 2.8\\
+		\hline 
+Average (All Settings) & \textbf{77.4} $\pm$ 0.9 & \textbf{77.2} $\pm$ 0.9 & \textbf{77.5} $\pm$ 1.1\\
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_1_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_walker2d_medium-replay has nothing for measure: last_four_normalized
+
+Now generate latex table:
+
+Best Score & CQL 2N.MDP.T & CQL 2N.MDP.T.P & CQL 2N.MDP & CQL 2NAD.MDP.T & CQL 2NAD.MDP.T.P & CQL 2NAD.MDP \\
+		\hline 
+halfcheetah-medium & \textbf{50.2} $\pm$ 0.1 & \textbf{50.0} $\pm$ 0.0 & \textbf{50.3} $\pm$ 0.1 & \textbf{50.3} $\pm$ 0.2 & \textbf{50.2} $\pm$ 0.2 & \textbf{50.4} $\pm$ 0.1\\
+hopper-medium & 84.1 $\pm$ 0.9 & \textbf{93.1} $\pm$ 2.8 & 88.3 $\pm$ 3.6 & 88.6 $\pm$ 2.5 & \textbf{93.0} $\pm$ 1.0 & 85.8 $\pm$ 3.2\\
+walker2d-medium & 86.2 $\pm$ 0.3 & 86.2 $\pm$ 0.5 & 86.1 $\pm$ 0.4 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+ant-medium & \textbf{113.0} $\pm$ 0.4 & \textbf{113.0} $\pm$ 0.6 & \textbf{113.0} $\pm$ 0.8 & \textbf{113.4} $\pm$ 0.6 & \textbf{113.0} $\pm$ 0.2 & \textbf{112.4} $\pm$ 0.3\\
+halfcheetah-medium-replay & \textbf{48.2} $\pm$ 0.2 & \textbf{48.6} $\pm$ 0.2 & \textbf{48.4} $\pm$ 0.2 & \textbf{48.6} $\pm$ 0.3 & \textbf{48.2} $\pm$ 0.3 & \textbf{48.6} $\pm$ 0.2\\
+hopper-medium-replay & \textbf{101.2} $\pm$ 1.2 & \textbf{101.3} $\pm$ 0.9 & \textbf{101.4} $\pm$ 0.2 & \textbf{101.8} $\pm$ 1.0 & \textbf{101.3} $\pm$ 0.5 & \textbf{101.9} $\pm$ 0.3\\
+walker2d-medium-replay & 91.5 $\pm$ 0.6 & 91.4 $\pm$ 1.6 & 91.5 $\pm$ 0.4 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+ant-medium-replay & \textbf{110.4} $\pm$ 0.5 & \textbf{110.0} $\pm$ 1.0 & \textbf{109.9} $\pm$ 0.4 & \textbf{110.2} $\pm$ 0.4 & \textbf{109.3} $\pm$ 0.6 & \textbf{109.6} $\pm$ 0.4\\
+		\hline 
+Average (All Settings) & 85.6 $\pm$ 0.5 & 86.7 $\pm$ 0.9 & 86.1 $\pm$ 0.7 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+
+Now generate latex table:
+
+Average Later Half & CQL 2N.MDP.T & CQL 2N.MDP.T.P & CQL 2N.MDP & CQL 2NAD.MDP.T & CQL 2NAD.MDP.T.P & CQL 2NAD.MDP \\
+		\hline 
+halfcheetah-medium & \textbf{49.2} $\pm$ 0.0 & \textbf{49.2} $\pm$ 0.1 & \textbf{49.3} $\pm$ 0.1 & \textbf{49.1} $\pm$ 0.1 & \textbf{49.1} $\pm$ 0.1 & \textbf{49.4} $\pm$ 0.0\\
+hopper-medium & \textbf{66.0} $\pm$ 0.9 & \textbf{66.6} $\pm$ 0.7 & 65.3 $\pm$ 1.4 & 64.8 $\pm$ 0.6 & 64.6 $\pm$ 0.2 & 64.6 $\pm$ 1.4\\
+walker2d-medium & 82.8 $\pm$ 0.1 & 82.7 $\pm$ 0.1 & 83.4 $\pm$ 0.2 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+ant-medium & \textbf{102.0} $\pm$ 1.4 & \textbf{102.2} $\pm$ 1.3 & \textbf{102.6} $\pm$ 1.4 & \textbf{102.0} $\pm$ 1.2 & \textbf{102.5} $\pm$ 1.9 & 100.9 $\pm$ 0.9\\
+halfcheetah-medium-replay & \textbf{46.8} $\pm$ 0.1 & \textbf{47.2} $\pm$ 0.2 & \textbf{47.0} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.1 & \textbf{46.8} $\pm$ 0.1 & \textbf{47.2} $\pm$ 0.1\\
+hopper-medium-replay & \textbf{96.5} $\pm$ 1.9 & 95.6 $\pm$ 1.0 & \textbf{96.8} $\pm$ 1.0 & \textbf{96.7} $\pm$ 1.6 & \textbf{96.3} $\pm$ 0.2 & \textbf{97.0} $\pm$ 1.6\\
+walker2d-medium-replay & 83.4 $\pm$ 2.0 & 82.2 $\pm$ 2.1 & 81.7 $\pm$ 0.4 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+ant-medium-replay & 94.7 $\pm$ 2.3 & \textbf{96.3} $\pm$ 2.6 & \textbf{95.6} $\pm$ 1.7 & \textbf{95.4} $\pm$ 0.7 & 94.9 $\pm$ 0.2 & \textbf{95.4} $\pm$ 1.5\\
+		\hline 
+Average (All Settings) & 77.7 $\pm$ 1.1 & 77.7 $\pm$ 1.0 & 77.7 $\pm$ 0.8 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+
+Now generate latex table:
+
+Best Score & CQL 2N.TD.T & CQL 2N.TD.T.P & CQL 2N.TD \\
+		\hline 
+halfcheetah-medium & \textbf{49.6} $\pm$ 0.1 & \textbf{49.8} $\pm$ 0.3 & \textbf{50.0} $\pm$ 0.0\\
+hopper-medium & 89.5 $\pm$ 2.0 & \textbf{96.6} $\pm$ 1.3 & 88.1 $\pm$ 0.5\\
+walker2d-medium & \textbf{86.1} $\pm$ 0.2 & \textbf{86.1} $\pm$ 0.7 & \textbf{86.0} $\pm$ 0.3\\
+ant-medium & \textbf{112.5} $\pm$ 1.0 & \textbf{112.1} $\pm$ 0.5 & \textbf{112.5} $\pm$ 0.3\\
+halfcheetah-medium-replay & \textbf{48.3} $\pm$ 0.2 & \textbf{48.3} $\pm$ 0.1 & \textbf{48.4} $\pm$ 0.3\\
+hopper-medium-replay & \textbf{101.3} $\pm$ 0.7 & 100.2 $\pm$ 1.2 & \textbf{101.7} $\pm$ 0.3\\
+walker2d-medium-replay & \textbf{92.0} $\pm$ 1.0 & 91.1 $\pm$ 1.4 & 90.9 $\pm$ 0.9\\
+ant-medium-replay & \textbf{110.4} $\pm$ 0.7 & 108.7 $\pm$ 0.5 & \textbf{110.3} $\pm$ 0.5\\
+		\hline 
+Average (All Settings) & \textbf{86.2} $\pm$ 0.8 & \textbf{86.6} $\pm$ 0.8 & \textbf{86.0} $\pm$ 0.4\\
+
+Now generate latex table:
+
+Average Later Half & CQL 2N.TD.T & CQL 2N.TD.T.P & CQL 2N.TD \\
+		\hline 
+halfcheetah-medium & \textbf{48.7} $\pm$ 0.1 & \textbf{48.8} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.0\\
+hopper-medium & \textbf{66.2} $\pm$ 0.3 & \textbf{66.1} $\pm$ 2.0 & \textbf{65.7} $\pm$ 0.7\\
+walker2d-medium & \textbf{82.8} $\pm$ 0.3 & \textbf{82.6} $\pm$ 0.6 & \textbf{82.8} $\pm$ 0.2\\
+ant-medium & 99.6 $\pm$ 1.7 & \textbf{100.4} $\pm$ 1.4 & \textbf{100.8} $\pm$ 0.7\\
+halfcheetah-medium-replay & \textbf{46.7} $\pm$ 0.1 & \textbf{46.9} $\pm$ 0.0 & \textbf{46.8} $\pm$ 0.4\\
+hopper-medium-replay & 94.9 $\pm$ 0.2 & 95.1 $\pm$ 1.9 & \textbf{96.9} $\pm$ 0.4\\
+walker2d-medium-replay & 77.2 $\pm$ 6.7 & 83.2 $\pm$ 1.2 & \textbf{84.0} $\pm$ 1.0\\
+ant-medium-replay & \textbf{98.0} $\pm$ 0.4 & \textbf{97.0} $\pm$ 1.4 & 95.1 $\pm$ 1.8\\
+		\hline 
+Average (All Settings) & 76.8 $\pm$ 1.2 & \textbf{77.5} $\pm$ 1.1 & \textbf{77.7} $\pm$ 0.7\\
+
+Now generate latex table:
+
+Best Score & CQL 3N.MC.T & CQL 3N.MC.T.P & CQL 3N.MC \\
+		\hline 
+halfcheetah-medium & \textbf{50.1} $\pm$ 0.1 & \textbf{50.5} $\pm$ 0.2 & \textbf{50.3} $\pm$ 0.1\\
+hopper-medium & 88.2 $\pm$ 1.6 & \textbf{95.2} $\pm$ 1.0 & 92.5 $\pm$ 3.2\\
+walker2d-medium & 85.8 $\pm$ 0.1 & \textbf{86.9} $\pm$ 0.8 & 85.8 $\pm$ 0.4\\
+ant-medium & \textbf{113.0} $\pm$ 0.9 & \textbf{112.0} $\pm$ 0.9 & \textbf{112.2} $\pm$ 0.5\\
+halfcheetah-medium-replay & \textbf{48.3} $\pm$ 0.2 & 48.0 $\pm$ 0.1 & \textbf{48.8} $\pm$ 0.2\\
+hopper-medium-replay & \textbf{101.9} $\pm$ 1.0 & \textbf{101.7} $\pm$ 0.8 & \textbf{101.7} $\pm$ 0.1\\
+walker2d-medium-replay & \textbf{90.4} $\pm$ 0.3 & \textbf{90.5} $\pm$ 0.6 & \textbf{91.0} $\pm$ 0.7\\
+ant-medium-replay & 109.5 $\pm$ 0.3 & \textbf{110.0} $\pm$ 0.9 & \textbf{110.7} $\pm$ 0.5\\
+		\hline 
+Average (All Settings) & 85.9 $\pm$ 0.6 & \textbf{86.8} $\pm$ 0.6 & \textbf{86.6} $\pm$ 0.7\\
+
+Now generate latex table:
+
+Average Later Half & CQL 3N.MC.T & CQL 3N.MC.T.P & CQL 3N.MC \\
+		\hline 
+halfcheetah-medium & \textbf{49.1} $\pm$ 0.0 & \textbf{49.2} $\pm$ 0.0 & \textbf{49.5} $\pm$ 0.1\\
+hopper-medium & \textbf{65.1} $\pm$ 1.3 & 63.8 $\pm$ 0.2 & \textbf{65.0} $\pm$ 0.3\\
+walker2d-medium & \textbf{83.1} $\pm$ 0.3 & \textbf{83.3} $\pm$ 0.4 & \textbf{82.8} $\pm$ 0.2\\
+ant-medium & \textbf{100.7} $\pm$ 0.8 & \textbf{100.1} $\pm$ 0.9 & \textbf{100.5} $\pm$ 1.6\\
+halfcheetah-medium-replay & \textbf{46.8} $\pm$ 0.1 & 46.5 $\pm$ 0.1 & \textbf{47.3} $\pm$ 0.2\\
+hopper-medium-replay & \textbf{96.6} $\pm$ 1.3 & \textbf{96.8} $\pm$ 1.0 & \textbf{97.1} $\pm$ 0.2\\
+walker2d-medium-replay & \textbf{82.2} $\pm$ 1.3 & 81.3 $\pm$ 2.7 & \textbf{81.8} $\pm$ 1.7\\
+ant-medium-replay & 95.4 $\pm$ 2.5 & \textbf{96.9} $\pm$ 0.9 & \textbf{97.6} $\pm$ 0.4\\
+		\hline 
+Average (All Settings) & \textbf{77.4} $\pm$ 0.9 & \textbf{77.2} $\pm$ 0.8 & \textbf{77.7} $\pm$ 0.6\\
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_2_3x_teNone_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_hopper_medium-replay has nothing for measure: last_four_normalized
+
+Now generate latex table:
+
+Best Score & CQL 3N.MDP.T & CQL 3N.MDP.T.P & CQL 3N.MDP & CQL 3NAD.MDP.T & CQL 3NAD.MDP.T.P & CQL 3NAD.MDP \\
+		\hline 
+halfcheetah-medium & \textbf{50.0} $\pm$ 0.1 & \textbf{50.3} $\pm$ 0.0 & \textbf{50.2} $\pm$ 0.1 & \textbf{50.2} $\pm$ 0.2 & \textbf{50.0} $\pm$ 0.1 & \textbf{50.4} $\pm$ 0.1\\
+hopper-medium & 83.8 $\pm$ 1.5 & 94.2 $\pm$ 1.9 & 88.8 $\pm$ 1.6 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+walker2d-medium & \textbf{86.1} $\pm$ 0.2 & \textbf{85.8} $\pm$ 0.3 & \textbf{86.2} $\pm$ 0.0 & \textbf{86.6} $\pm$ 0.9 & \textbf{85.9} $\pm$ 0.3 & \textbf{86.4} $\pm$ 0.5\\
+ant-medium & \textbf{112.4} $\pm$ 0.4 & \textbf{112.9} $\pm$ 0.4 & \textbf{112.9} $\pm$ 0.8 & \textbf{113.1} $\pm$ 0.2 & \textbf{112.7} $\pm$ 0.6 & \textbf{113.3} $\pm$ 0.4\\
+halfcheetah-medium-replay & 48.2 $\pm$ 0.0 & \textbf{48.2} $\pm$ 0.3 & \textbf{48.5} $\pm$ 0.2 & \textbf{48.4} $\pm$ 0.4 & 48.1 $\pm$ 0.3 & \textbf{48.7} $\pm$ 0.3\\
+hopper-medium-replay & 101.8 $\pm$ 0.8 & 101.8 $\pm$ 0.8 & 101.6 $\pm$ 0.2 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+walker2d-medium-replay & 91.1 $\pm$ 0.9 & \textbf{91.6} $\pm$ 0.3 & 90.9 $\pm$ 1.7 & 90.3 $\pm$ 0.7 & \textbf{92.1} $\pm$ 2.1 & 89.9 $\pm$ 0.6\\
+ant-medium-replay & 109.9 $\pm$ 0.7 & \textbf{110.3} $\pm$ 1.1 & 109.9 $\pm$ 0.3 & 109.9 $\pm$ 0.5 & 109.9 $\pm$ 0.2 & \textbf{111.1} $\pm$ 0.6\\
+		\hline 
+Average (All Settings) & 85.4 $\pm$ 0.6 & 86.9 $\pm$ 0.7 & 86.1 $\pm$ 0.6 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+
+Now generate latex table:
+
+Average Later Half & CQL 3N.MDP.T & CQL 3N.MDP.T.P & CQL 3N.MDP & CQL 3NAD.MDP.T & CQL 3NAD.MDP.T.P & CQL 3NAD.MDP \\
+		\hline 
+halfcheetah-medium & \textbf{49.0} $\pm$ 0.1 & \textbf{49.2} $\pm$ 0.1 & \textbf{49.3} $\pm$ 0.0 & \textbf{49.2} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.1 & \textbf{49.4} $\pm$ 0.1\\
+hopper-medium & 64.4 $\pm$ 0.5 & 65.5 $\pm$ 0.5 & 65.4 $\pm$ 1.1 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+walker2d-medium & \textbf{83.1} $\pm$ 0.1 & \textbf{83.0} $\pm$ 0.1 & \textbf{83.3} $\pm$ 0.3 & \textbf{83.3} $\pm$ 0.2 & \textbf{83.1} $\pm$ 0.1 & \textbf{83.4} $\pm$ 0.5\\
+ant-medium & 101.0 $\pm$ 0.5 & \textbf{103.0} $\pm$ 1.2 & 101.0 $\pm$ 1.4 & 101.6 $\pm$ 0.9 & \textbf{103.0} $\pm$ 0.6 & 101.5 $\pm$ 1.1\\
+halfcheetah-medium-replay & \textbf{46.9} $\pm$ 0.1 & \textbf{46.8} $\pm$ 0.2 & \textbf{47.2} $\pm$ 0.1 & \textbf{47.1} $\pm$ 0.3 & \textbf{46.8} $\pm$ 0.1 & \textbf{47.2} $\pm$ 0.1\\
+hopper-medium-replay & 96.9 $\pm$ 0.8 & 95.0 $\pm$ 0.1 & 96.0 $\pm$ 0.4 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+walker2d-medium-replay & 81.5 $\pm$ 2.6 & \textbf{84.2} $\pm$ 1.1 & 80.1 $\pm$ 1.4 & 81.9 $\pm$ 1.3 & 77.8 $\pm$ 9.6 & 81.7 $\pm$ 0.3\\
+ant-medium-replay & 95.5 $\pm$ 1.4 & \textbf{97.9} $\pm$ 0.3 & 94.6 $\pm$ 0.9 & 96.0 $\pm$ 3.1 & 95.8 $\pm$ 3.0 & 94.0 $\pm$ 0.8\\
+		\hline 
+Average (All Settings) & 77.3 $\pm$ 0.8 & 78.1 $\pm$ 0.5 & 77.1 $\pm$ 0.7 & nan $\pm$ nan & nan $\pm$ nan & nan $\pm$ nan\\
+
+Now generate latex table:
+
+Best Score & CQL 3N.TD.T & CQL 3N.TD.T.P & CQL 3N.TD \\
+		\hline 
+halfcheetah-medium & \textbf{49.8} $\pm$ 0.1 & \textbf{50.0} $\pm$ 0.2 & \textbf{50.2} $\pm$ 0.3\\
+hopper-medium & \textbf{90.0} $\pm$ 3.8 & \textbf{89.3} $\pm$ 0.1 & 88.9 $\pm$ 1.1\\
+walker2d-medium & 85.9 $\pm$ 0.1 & 85.7 $\pm$ 0.3 & \textbf{87.1} $\pm$ 0.4\\
+ant-medium & \textbf{111.9} $\pm$ 0.1 & \textbf{112.1} $\pm$ 0.8 & \textbf{112.5} $\pm$ 0.1\\
+halfcheetah-medium-replay & \textbf{48.4} $\pm$ 0.2 & \textbf{48.2} $\pm$ 0.3 & \textbf{48.4} $\pm$ 0.4\\
+hopper-medium-replay & \textbf{101.7} $\pm$ 0.1 & \textbf{101.6} $\pm$ 0.3 & \textbf{101.5} $\pm$ 0.1\\
+walker2d-medium-replay & \textbf{92.1} $\pm$ 1.8 & 89.1 $\pm$ 0.4 & 90.8 $\pm$ 0.6\\
+ant-medium-replay & \textbf{110.6} $\pm$ 0.5 & \textbf{109.5} $\pm$ 0.9 & \textbf{109.5} $\pm$ 0.2\\
+		\hline 
+Average (All Settings) & \textbf{86.3} $\pm$ 0.8 & \textbf{85.7} $\pm$ 0.4 & \textbf{86.1} $\pm$ 0.4\\
+
+Now generate latex table:
+
+Average Later Half & CQL 3N.TD.T & CQL 3N.TD.T.P & CQL 3N.TD \\
+		\hline 
+halfcheetah-medium & \textbf{48.9} $\pm$ 0.1 & \textbf{48.9} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.2\\
+hopper-medium & \textbf{66.4} $\pm$ 0.6 & 65.4 $\pm$ 1.6 & \textbf{65.9} $\pm$ 1.7\\
+walker2d-medium & \textbf{82.6} $\pm$ 0.5 & \textbf{82.5} $\pm$ 0.4 & 81.3 $\pm$ 2.9\\
+ant-medium & \textbf{99.4} $\pm$ 1.8 & \textbf{99.1} $\pm$ 0.9 & \textbf{99.8} $\pm$ 1.7\\
+halfcheetah-medium-replay & \textbf{46.8} $\pm$ 0.2 & \textbf{46.7} $\pm$ 0.0 & \textbf{46.9} $\pm$ 0.3\\
+hopper-medium-replay & \textbf{97.0} $\pm$ 0.6 & 95.0 $\pm$ 1.2 & 95.6 $\pm$ 0.5\\
+walker2d-medium-replay & \textbf{85.4} $\pm$ 0.7 & 81.2 $\pm$ 1.0 & \textbf{84.8} $\pm$ 0.3\\
+ant-medium-replay & 95.6 $\pm$ 2.1 & \textbf{97.3} $\pm$ 0.3 & \textbf{97.3} $\pm$ 0.4\\
+		\hline 
+Average (All Settings) & \textbf{77.8} $\pm$ 0.8 & \textbf{77.0} $\pm$ 0.7 & \textbf{77.6} $\pm$ 1.0\\
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_noact_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: last_four_normalized
+
+Now generate latex table:
+
+Best Score & CQL AE.MC.T & CQL AE.MC.T.P & CQL AE.MC & CQL AEB.MC.T & CQL AEB.MC.T.P & CQL AEB.MC \\
+		\hline 
+halfcheetah-medium & \textbf{50.0} $\pm$ 0.1 & \textbf{50.1} $\pm$ 0.3 & \textbf{50.3} $\pm$ 0.1 & \textbf{50.1} $\pm$ 0.2 & \textbf{50.2} $\pm$ 0.0 & \textbf{50.3} $\pm$ 0.1\\
+hopper-medium & 86.3 $\pm$ 0.9 & \textbf{95.5} $\pm$ 1.6 & 87.3 $\pm$ 4.5 & 89.4 $\pm$ 0.7 & 92.2 $\pm$ 2.1 & 89.0 $\pm$ 1.8\\
+walker2d-medium & \textbf{86.0} $\pm$ 0.4 & \textbf{86.2} $\pm$ 0.4 & \textbf{86.6} $\pm$ 0.4 & \textbf{85.9} $\pm$ 0.2 & 85.5 $\pm$ 0.2 & \textbf{86.7} $\pm$ 0.7\\
+ant-medium & nan $\pm$ nan & nan $\pm$ nan & 112.7 $\pm$ 0.4 & 113.0 $\pm$ 0.6 & 112.6 $\pm$ 0.7 & 113.8 $\pm$ 0.3\\
+halfcheetah-medium-replay & \textbf{48.1} $\pm$ 0.2 & \textbf{48.2} $\pm$ 0.4 & \textbf{48.4} $\pm$ 0.1 & \textbf{48.0} $\pm$ 0.2 & \textbf{48.1} $\pm$ 0.3 & \textbf{48.3} $\pm$ 0.2\\
+hopper-medium-replay & 101.2 $\pm$ 0.9 & \textbf{101.8} $\pm$ 1.0 & \textbf{101.8} $\pm$ 0.3 & \textbf{102.5} $\pm$ 0.9 & \textbf{102.2} $\pm$ 0.3 & 101.5 $\pm$ 0.8\\
+walker2d-medium-replay & 90.4 $\pm$ 1.6 & 89.9 $\pm$ 0.6 & \textbf{91.5} $\pm$ 0.2 & 89.5 $\pm$ 0.1 & \textbf{91.2} $\pm$ 0.9 & \textbf{91.5} $\pm$ 0.3\\
+ant-medium-replay & \textbf{110.0} $\pm$ 1.1 & \textbf{109.6} $\pm$ 0.7 & \textbf{110.0} $\pm$ 0.9 & 109.2 $\pm$ 0.6 & 108.6 $\pm$ 0.6 & \textbf{110.6} $\pm$ 0.6\\
+		\hline 
+Average (All Settings) & nan $\pm$ nan & nan $\pm$ nan & 86.1 $\pm$ 0.9 & 86.0 $\pm$ 0.4 & 86.3 $\pm$ 0.6 & 86.5 $\pm$ 0.6\\
+
+Now generate latex table:
+
+Average Later Half & CQL AE.MC.T & CQL AE.MC.T.P & CQL AE.MC & CQL AEB.MC.T & CQL AEB.MC.T.P & CQL AEB.MC \\
+		\hline 
+halfcheetah-medium & \textbf{49.1} $\pm$ 0.0 & \textbf{49.1} $\pm$ 0.1 & \textbf{49.4} $\pm$ 0.0 & \textbf{49.1} $\pm$ 0.1 & \textbf{49.1} $\pm$ 0.1 & \textbf{49.4} $\pm$ 0.1\\
+hopper-medium & 65.2 $\pm$ 1.3 & 64.6 $\pm$ 1.6 & 64.2 $\pm$ 1.4 & \textbf{66.2} $\pm$ 0.3 & 65.1 $\pm$ 2.1 & 63.9 $\pm$ 0.2\\
+walker2d-medium & \textbf{83.0} $\pm$ 0.2 & \textbf{83.0} $\pm$ 0.1 & \textbf{83.2} $\pm$ 0.2 & \textbf{83.2} $\pm$ 0.3 & \textbf{82.5} $\pm$ 0.3 & \textbf{82.9} $\pm$ 0.1\\
+ant-medium & nan $\pm$ nan & nan $\pm$ nan & 102.0 $\pm$ 1.6 & 102.0 $\pm$ 0.5 & 101.9 $\pm$ 0.7 & 104.3 $\pm$ 1.1\\
+halfcheetah-medium-replay & \textbf{46.6} $\pm$ 0.1 & \textbf{46.8} $\pm$ 0.1 & \textbf{46.9} $\pm$ 0.0 & \textbf{46.8} $\pm$ 0.2 & \textbf{46.8} $\pm$ 0.1 & \textbf{46.9} $\pm$ 0.1\\
+hopper-medium-replay & \textbf{97.1} $\pm$ 1.3 & 94.3 $\pm$ 2.8 & \textbf{97.7} $\pm$ 0.3 & \textbf{97.5} $\pm$ 1.4 & 96.6 $\pm$ 2.0 & 96.2 $\pm$ 0.9\\
+walker2d-medium-replay & 82.1 $\pm$ 1.4 & 81.4 $\pm$ 1.4 & 76.3 $\pm$ 4.8 & \textbf{83.0} $\pm$ 0.8 & \textbf{83.4} $\pm$ 0.9 & 82.0 $\pm$ 2.1\\
+ant-medium-replay & \textbf{96.1} $\pm$ 0.5 & 95.5 $\pm$ 1.3 & \textbf{96.4} $\pm$ 1.8 & 95.3 $\pm$ 2.9 & 94.8 $\pm$ 1.0 & \textbf{96.5} $\pm$ 2.2\\
+		\hline 
+Average (All Settings) & nan $\pm$ nan & nan $\pm$ nan & 77.0 $\pm$ 1.3 & 77.9 $\pm$ 0.8 & 77.5 $\pm$ 0.9 & 77.8 $\pm$ 0.8\\
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_q_sprime_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: last_four_normalized
+
+Now generate latex table:
+
+Best Score & CQL AE.MDP.T & CQL AE.MDP.T.P & CQL AE.MDP & CQL AEB.MDP.T & CQL AEB.MDP.T.P & CQL AEB.MDP \\
+		\hline 
+halfcheetah-medium & \textbf{50.3} $\pm$ 0.1 & \textbf{50.2} $\pm$ 0.3 & \textbf{50.3} $\pm$ 0.2 & \textbf{50.5} $\pm$ 0.2 & \textbf{50.2} $\pm$ 0.1 & \textbf{50.3} $\pm$ 0.1\\
+hopper-medium & 88.2 $\pm$ 4.1 & 93.4 $\pm$ 2.2 & 88.7 $\pm$ 1.1 & 87.4 $\pm$ 4.9 & \textbf{94.8} $\pm$ 1.4 & 92.1 $\pm$ 4.9\\
+walker2d-medium & \textbf{86.2} $\pm$ 0.4 & \textbf{86.0} $\pm$ 0.1 & \textbf{86.3} $\pm$ 0.3 & \textbf{86.2} $\pm$ 0.2 & \textbf{86.0} $\pm$ 0.4 & \textbf{86.6} $\pm$ 0.3\\
+ant-medium & nan $\pm$ nan & nan $\pm$ nan & 112.7 $\pm$ 0.4 & 112.6 $\pm$ 0.5 & 113.0 $\pm$ 0.5 & 113.3 $\pm$ 0.4\\
+halfcheetah-medium-replay & 48.1 $\pm$ 0.1 & 48.1 $\pm$ 0.2 & \textbf{48.5} $\pm$ 0.3 & 48.0 $\pm$ 0.0 & 48.1 $\pm$ 0.2 & \textbf{48.6} $\pm$ 0.2\\
+hopper-medium-replay & \textbf{102.7} $\pm$ 0.8 & 101.1 $\pm$ 0.7 & \textbf{101.8} $\pm$ 0.3 & 101.6 $\pm$ 0.4 & 101.3 $\pm$ 0.8 & \textbf{102.1} $\pm$ 0.8\\
+walker2d-medium-replay & 90.0 $\pm$ 0.5 & 90.1 $\pm$ 1.1 & 90.1 $\pm$ 0.7 & 89.8 $\pm$ 0.7 & \textbf{90.5} $\pm$ 0.5 & \textbf{91.2} $\pm$ 0.3\\
+ant-medium-replay & 109.3 $\pm$ 1.2 & \textbf{110.2} $\pm$ 0.3 & \textbf{110.6} $\pm$ 1.1 & 108.8 $\pm$ 0.4 & \textbf{110.2} $\pm$ 1.5 & \textbf{111.1} $\pm$ 1.0\\
+		\hline 
+Average (All Settings) & nan $\pm$ nan & nan $\pm$ nan & 86.1 $\pm$ 0.5 & 85.6 $\pm$ 0.9 & 86.8 $\pm$ 0.7 & 86.9 $\pm$ 1.0\\
+
+Now generate latex table:
+
+Average Later Half & CQL AE.MDP.T & CQL AE.MDP.T.P & CQL AE.MDP & CQL AEB.MDP.T & CQL AEB.MDP.T.P & CQL AEB.MDP \\
+		\hline 
+halfcheetah-medium & \textbf{49.2} $\pm$ 0.1 & \textbf{49.1} $\pm$ 0.2 & \textbf{49.3} $\pm$ 0.0 & \textbf{49.2} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.0 & \textbf{49.4} $\pm$ 0.1\\
+hopper-medium & 64.8 $\pm$ 0.8 & 64.2 $\pm$ 1.1 & 64.8 $\pm$ 0.8 & \textbf{67.0} $\pm$ 1.7 & 63.3 $\pm$ 1.5 & 64.2 $\pm$ 0.3\\
+walker2d-medium & \textbf{82.8} $\pm$ 0.3 & \textbf{83.0} $\pm$ 0.1 & \textbf{83.3} $\pm$ 0.2 & \textbf{83.0} $\pm$ 0.2 & \textbf{83.1} $\pm$ 0.2 & \textbf{83.5} $\pm$ 0.2\\
+ant-medium & nan $\pm$ nan & nan $\pm$ nan & 102.0 $\pm$ 1.2 & 103.1 $\pm$ 0.8 & 101.4 $\pm$ 0.2 & 103.7 $\pm$ 0.2\\
+halfcheetah-medium-replay & 46.6 $\pm$ 0.2 & \textbf{46.8} $\pm$ 0.2 & \textbf{46.9} $\pm$ 0.1 & 46.7 $\pm$ 0.1 & 46.5 $\pm$ 0.1 & \textbf{47.3} $\pm$ 0.2\\
+hopper-medium-replay & \textbf{96.4} $\pm$ 0.4 & 95.8 $\pm$ 0.7 & \textbf{96.5} $\pm$ 0.6 & \textbf{96.9} $\pm$ 0.2 & 95.7 $\pm$ 0.4 & \textbf{96.9} $\pm$ 1.1\\
+walker2d-medium-replay & 76.6 $\pm$ 5.2 & \textbf{82.3} $\pm$ 0.5 & 79.2 $\pm$ 1.7 & 80.8 $\pm$ 2.5 & 81.6 $\pm$ 0.8 & \textbf{82.8} $\pm$ 0.5\\
+ant-medium-replay & \textbf{97.0} $\pm$ 1.1 & 96.0 $\pm$ 2.9 & \textbf{96.4} $\pm$ 0.9 & 94.5 $\pm$ 3.3 & 94.4 $\pm$ 1.9 & 94.2 $\pm$ 2.5\\
+		\hline 
+Average (All Settings) & nan $\pm$ nan & nan $\pm$ nan & 77.3 $\pm$ 0.7 & 77.7 $\pm$ 1.1 & 76.9 $\pm$ 0.7 & 77.7 $\pm$ 0.7\\
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtFalse_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: last_four_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_return
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_test_normalized_returns
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_0_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_1_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_iter
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: convergence_step
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_diff
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_feature_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: final_weight_sim
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_5percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_10percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_25percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_50percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_100percent_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: best_later_half_normalized
+../../code/sendback_cross/cql_cross_pretrain_preproj3_TD_text_all_teallMiniLML12_pwtTrue_fr1.0_pr1.0_ql3_pl3_preUps5000_preEp20_e200_s5000_plr0.0003_fqlr0.0003_fplr0.0003_ant_medium has nothing for measure: last_four_normalized
+
+Now generate latex table:
+
+Best Score & CQL AE.TD.T & CQL AE.TD.T.P & CQL AE.TD & CQL AEB.TD.T & CQL AEB.TD.T.P & CQL AEB.TD \\
+		\hline 
+halfcheetah-medium & \textbf{50.1} $\pm$ 0.2 & \textbf{49.9} $\pm$ 0.2 & \textbf{50.4} $\pm$ 0.3 & \textbf{50.1} $\pm$ 0.1 & \textbf{50.0} $\pm$ 0.4 & \textbf{50.2} $\pm$ 0.1\\
+hopper-medium & 84.5 $\pm$ 0.6 & \textbf{92.2} $\pm$ 3.8 & 89.2 $\pm$ 3.4 & 86.2 $\pm$ 2.8 & 87.7 $\pm$ 0.8 & 88.7 $\pm$ 3.1\\
+walker2d-medium & \textbf{85.4} $\pm$ 0.3 & \textbf{85.9} $\pm$ 0.0 & \textbf{85.6} $\pm$ 0.7 & \textbf{85.7} $\pm$ 0.4 & \textbf{86.2} $\pm$ 0.2 & \textbf{86.1} $\pm$ 0.5\\
+ant-medium & nan $\pm$ nan & nan $\pm$ nan & 112.9 $\pm$ 0.6 & 112.2 $\pm$ 0.5 & 111.5 $\pm$ 0.4 & 112.1 $\pm$ 0.3\\
+halfcheetah-medium-replay & \textbf{48.6} $\pm$ 0.1 & \textbf{48.5} $\pm$ 0.1 & \textbf{48.7} $\pm$ 0.2 & \textbf{48.3} $\pm$ 0.3 & \textbf{48.5} $\pm$ 0.3 & \textbf{48.5} $\pm$ 0.3\\
+hopper-medium-replay & \textbf{102.5} $\pm$ 0.6 & \textbf{102.3} $\pm$ 0.5 & \textbf{101.8} $\pm$ 0.8 & 101.3 $\pm$ 0.2 & \textbf{101.7} $\pm$ 0.3 & \textbf{101.6} $\pm$ 0.9\\
+walker2d-medium-replay & 90.2 $\pm$ 1.0 & \textbf{91.9} $\pm$ 0.9 & 90.5 $\pm$ 0.7 & 89.9 $\pm$ 0.5 & 90.3 $\pm$ 0.9 & \textbf{92.0} $\pm$ 1.1\\
+ant-medium-replay & 109.7 $\pm$ 0.1 & \textbf{111.5} $\pm$ 0.2 & 109.9 $\pm$ 0.6 & 110.3 $\pm$ 0.7 & 110.1 $\pm$ 0.8 & 110.3 $\pm$ 0.1\\
+		\hline 
+Average (All Settings) & nan $\pm$ nan & nan $\pm$ nan & 86.1 $\pm$ 0.9 & 85.5 $\pm$ 0.7 & 85.8 $\pm$ 0.5 & 86.2 $\pm$ 0.8\\
+
+Now generate latex table:
+
+Average Later Half & CQL AE.TD.T & CQL AE.TD.T.P & CQL AE.TD & CQL AEB.TD.T & CQL AEB.TD.T.P & CQL AEB.TD \\
+		\hline 
+halfcheetah-medium & \textbf{49.0} $\pm$ 0.1 & \textbf{48.9} $\pm$ 0.1 & \textbf{49.2} $\pm$ 0.1 & \textbf{48.8} $\pm$ 0.1 & \textbf{48.9} $\pm$ 0.1 & \textbf{49.2} $\pm$ 0.1\\
+hopper-medium & \textbf{66.2} $\pm$ 2.1 & \textbf{66.3} $\pm$ 1.0 & \textbf{66.1} $\pm$ 0.3 & \textbf{66.2} $\pm$ 1.4 & 65.0 $\pm$ 2.1 & \textbf{65.7} $\pm$ 0.7\\
+walker2d-medium & \textbf{82.4} $\pm$ 0.1 & \textbf{82.4} $\pm$ 0.1 & \textbf{82.8} $\pm$ 0.2 & \textbf{82.4} $\pm$ 0.2 & \textbf{82.7} $\pm$ 0.6 & \textbf{82.9} $\pm$ 0.6\\
+ant-medium & nan $\pm$ nan & nan $\pm$ nan & 101.5 $\pm$ 1.0 & 97.5 $\pm$ 1.2 & 97.6 $\pm$ 0.8 & 100.0 $\pm$ 0.9\\
+halfcheetah-medium-replay & \textbf{47.0} $\pm$ 0.3 & \textbf{47.2} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.0 & \textbf{46.8} $\pm$ 0.1 & \textbf{46.9} $\pm$ 0.2 & \textbf{47.0} $\pm$ 0.5\\
+hopper-medium-replay & \textbf{96.1} $\pm$ 0.7 & \textbf{95.4} $\pm$ 1.2 & \textbf{95.9} $\pm$ 1.4 & \textbf{95.6} $\pm$ 0.3 & \textbf{95.4} $\pm$ 2.0 & \textbf{96.0} $\pm$ 2.0\\
+walker2d-medium-replay & 83.0 $\pm$ 0.9 & 82.9 $\pm$ 0.5 & \textbf{84.5} $\pm$ 0.6 & 83.0 $\pm$ 0.4 & 81.3 $\pm$ 1.3 & 80.1 $\pm$ 3.5\\
+ant-medium-replay & 97.2 $\pm$ 2.6 & \textbf{101.6} $\pm$ 0.8 & 95.6 $\pm$ 1.1 & 97.2 $\pm$ 1.1 & 98.3 $\pm$ 1.6 & 97.1 $\pm$ 0.7\\
+		\hline 
+Average (All Settings) & nan $\pm$ nan & nan $\pm$ nan & 77.8 $\pm$ 0.6 & 77.2 $\pm$ 0.6 & 77.0 $\pm$ 1.1 & 77.2 $\pm$ 1.1\\
+
+Now generate latex table:
+
+Best Score & CQL S.MC.T & CQL S.MC.T.P & CQL S.MC & CQL SP.MC.T & CQL SP.MC.T.P & CQL SP.MC \\
+		\hline 
+halfcheetah-medium & \textbf{50.1} $\pm$ 0.1 & \textbf{50.4} $\pm$ 0.2 & \textbf{50.4} $\pm$ 0.1 & \textbf{50.0} $\pm$ 0.2 & \textbf{50.0} $\pm$ 0.1 & \textbf{50.2} $\pm$ 0.1\\
+hopper-medium & 90.0 $\pm$ 4.9 & 90.2 $\pm$ 1.6 & 87.4 $\pm$ 2.7 & 84.9 $\pm$ 2.2 & \textbf{95.6} $\pm$ 1.7 & 84.1 $\pm$ 2.4\\
+walker2d-medium & 85.7 $\pm$ 0.1 & \textbf{86.4} $\pm$ 0.4 & \textbf{86.7} $\pm$ 0.7 & \textbf{86.0} $\pm$ 0.2 & \textbf{86.1} $\pm$ 0.1 & \textbf{86.5} $\pm$ 0.5\\
+ant-medium & \textbf{114.0} $\pm$ 0.2 & \textbf{112.9} $\pm$ 0.1 & \textbf{113.3} $\pm$ 0.6 & \textbf{113.2} $\pm$ 0.1 & 112.8 $\pm$ 0.5 & \textbf{113.3} $\pm$ 0.6\\
+halfcheetah-medium-replay & \textbf{48.7} $\pm$ 0.3 & \textbf{48.7} $\pm$ 0.2 & \textbf{49.0} $\pm$ 0.3 & 48.2 $\pm$ 0.3 & 48.1 $\pm$ 0.2 & 48.5 $\pm$ 0.2\\
+hopper-medium-replay & \textbf{101.4} $\pm$ 0.6 & 101.1 $\pm$ 0.8 & \textbf{102.2} $\pm$ 0.5 & \textbf{101.9} $\pm$ 0.4 & \textbf{101.5} $\pm$ 0.8 & \textbf{101.8} $\pm$ 0.3\\
+walker2d-medium-replay & \textbf{90.7} $\pm$ 0.9 & \textbf{91.2} $\pm$ 0.4 & 90.2 $\pm$ 0.9 & \textbf{91.2} $\pm$ 1.3 & \textbf{90.4} $\pm$ 0.6 & \textbf{90.9} $\pm$ 1.1\\
+ant-medium-replay & \textbf{109.8} $\pm$ 0.6 & \textbf{109.9} $\pm$ 0.6 & \textbf{110.3} $\pm$ 0.6 & \textbf{110.4} $\pm$ 0.6 & 109.3 $\pm$ 0.3 & \textbf{110.8} $\pm$ 1.2\\
+		\hline 
+Average (All Settings) & \textbf{86.3} $\pm$ 1.0 & \textbf{86.4} $\pm$ 0.5 & \textbf{86.2} $\pm$ 0.8 & 85.7 $\pm$ 0.7 & \textbf{86.7} $\pm$ 0.5 & 85.8 $\pm$ 0.8\\
+
+Now generate latex table:
+
+Average Later Half & CQL S.MC.T & CQL S.MC.T.P & CQL S.MC & CQL SP.MC.T & CQL SP.MC.T.P & CQL SP.MC \\
+		\hline 
+halfcheetah-medium & \textbf{49.2} $\pm$ 0.1 & \textbf{49.3} $\pm$ 0.1 & \textbf{49.4} $\pm$ 0.0 & \textbf{49.1} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.1 & \textbf{49.2} $\pm$ 0.1\\
+hopper-medium & 64.9 $\pm$ 0.3 & 63.4 $\pm$ 0.4 & 65.0 $\pm$ 0.5 & \textbf{65.7} $\pm$ 0.4 & 64.3 $\pm$ 0.6 & 64.3 $\pm$ 1.3\\
+walker2d-medium & \textbf{82.9} $\pm$ 0.3 & \textbf{83.2} $\pm$ 0.2 & \textbf{83.4} $\pm$ 0.2 & \textbf{82.8} $\pm$ 0.3 & \textbf{83.1} $\pm$ 0.2 & \textbf{82.8} $\pm$ 0.2\\
+ant-medium & \textbf{104.8} $\pm$ 0.3 & \textbf{104.9} $\pm$ 1.5 & \textbf{104.6} $\pm$ 0.2 & 103.8 $\pm$ 1.1 & 103.7 $\pm$ 0.8 & \textbf{104.1} $\pm$ 1.0\\
+halfcheetah-medium-replay & \textbf{47.0} $\pm$ 0.1 & \textbf{46.9} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.2 & \textbf{46.8} $\pm$ 0.2 & \textbf{46.9} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.2\\
+hopper-medium-replay & \textbf{97.3} $\pm$ 0.9 & 94.4 $\pm$ 1.0 & 96.8 $\pm$ 0.5 & \textbf{98.3} $\pm$ 0.4 & 95.3 $\pm$ 0.8 & 97.3 $\pm$ 0.2\\
+walker2d-medium-replay & 83.2 $\pm$ 0.4 & \textbf{83.6} $\pm$ 0.4 & 82.5 $\pm$ 1.9 & \textbf{84.4} $\pm$ 1.4 & 82.2 $\pm$ 1.7 & 82.5 $\pm$ 0.7\\
+ant-medium-replay & 95.1 $\pm$ 2.5 & 94.1 $\pm$ 2.4 & \textbf{96.7} $\pm$ 2.0 & 95.5 $\pm$ 0.6 & 94.4 $\pm$ 1.7 & \textbf{96.7} $\pm$ 1.4\\
+		\hline 
+Average (All Settings) & \textbf{78.1} $\pm$ 0.6 & 77.5 $\pm$ 0.8 & \textbf{78.2} $\pm$ 0.7 & \textbf{78.3} $\pm$ 0.6 & 77.4 $\pm$ 0.8 & \textbf{78.0} $\pm$ 0.6\\
+
+Now generate latex table:
+
+Best Score & CQL S.MDP.T & CQL S.MDP.T.P & CQL S.MDP & CQL SP.MDP.T & CQL SP.MDP.T.P & CQL SP.MDP \\
+		\hline 
+halfcheetah-medium & \textbf{50.3} $\pm$ 0.3 & \textbf{50.3} $\pm$ 0.2 & \textbf{50.6} $\pm$ 0.1 & 50.1 $\pm$ 0.1 & 50.0 $\pm$ 0.1 & \textbf{50.2} $\pm$ 0.1\\
+hopper-medium & 86.8 $\pm$ 0.6 & 90.9 $\pm$ 2.3 & 88.2 $\pm$ 0.5 & 85.8 $\pm$ 1.9 & \textbf{93.9} $\pm$ 1.8 & 88.2 $\pm$ 1.9\\
+walker2d-medium & \textbf{86.3} $\pm$ 0.5 & \textbf{86.4} $\pm$ 0.4 & 86.2 $\pm$ 0.5 & 85.7 $\pm$ 0.4 & 86.2 $\pm$ 0.3 & \textbf{87.1} $\pm$ 1.3\\
+ant-medium & \textbf{113.3} $\pm$ 0.2 & \textbf{113.9} $\pm$ 0.7 & \textbf{113.2} $\pm$ 0.2 & \textbf{113.0} $\pm$ 0.3 & \textbf{113.0} $\pm$ 0.5 & \textbf{113.2} $\pm$ 0.6\\
+halfcheetah-medium-replay & \textbf{48.9} $\pm$ 0.1 & 48.8 $\pm$ 0.2 & \textbf{49.4} $\pm$ 0.3 & 48.5 $\pm$ 0.4 & 48.3 $\pm$ 0.2 & 48.4 $\pm$ 0.1\\
+hopper-medium-replay & \textbf{102.0} $\pm$ 0.1 & \textbf{101.6} $\pm$ 1.0 & \textbf{102.0} $\pm$ 0.2 & \textbf{101.8} $\pm$ 0.2 & \textbf{102.5} $\pm$ 0.4 & \textbf{101.9} $\pm$ 0.4\\
+walker2d-medium-replay & \textbf{91.9} $\pm$ 0.4 & 91.0 $\pm$ 1.4 & \textbf{92.8} $\pm$ 0.8 & 90.7 $\pm$ 0.9 & 91.2 $\pm$ 0.7 & 91.6 $\pm$ 0.3\\
+ant-medium-replay & 110.1 $\pm$ 0.6 & \textbf{111.0} $\pm$ 1.0 & \textbf{111.8} $\pm$ 0.3 & 109.8 $\pm$ 0.3 & 110.6 $\pm$ 1.4 & 109.8 $\pm$ 0.3\\
+		\hline 
+Average (All Settings) & \textbf{86.2} $\pm$ 0.4 & \textbf{86.7} $\pm$ 0.9 & \textbf{86.8} $\pm$ 0.4 & 85.7 $\pm$ 0.6 & \textbf{87.0} $\pm$ 0.7 & \textbf{86.3} $\pm$ 0.6\\
+
+Now generate latex table:
+
+Average Later Half & CQL S.MDP.T & CQL S.MDP.T.P & CQL S.MDP & CQL SP.MDP.T & CQL SP.MDP.T.P & CQL SP.MDP \\
+		\hline 
+halfcheetah-medium & \textbf{49.4} $\pm$ 0.2 & \textbf{49.2} $\pm$ 0.1 & \textbf{49.6} $\pm$ 0.1 & \textbf{49.1} $\pm$ 0.1 & 49.1 $\pm$ 0.1 & \textbf{49.3} $\pm$ 0.0\\
+hopper-medium & \textbf{65.5} $\pm$ 1.1 & 64.4 $\pm$ 0.6 & 64.4 $\pm$ 1.2 & \textbf{65.5} $\pm$ 0.6 & \textbf{65.2} $\pm$ 1.2 & 64.1 $\pm$ 0.7\\
+walker2d-medium & \textbf{82.8} $\pm$ 0.3 & \textbf{83.3} $\pm$ 0.3 & \textbf{83.6} $\pm$ 0.2 & 82.5 $\pm$ 0.1 & \textbf{83.1} $\pm$ 0.2 & 82.5 $\pm$ 0.3\\
+ant-medium & \textbf{104.8} $\pm$ 1.4 & 102.9 $\pm$ 1.4 & \textbf{104.9} $\pm$ 0.3 & 102.6 $\pm$ 1.0 & 102.0 $\pm$ 0.2 & 102.7 $\pm$ 1.3\\
+halfcheetah-medium-replay & \textbf{47.1} $\pm$ 0.2 & \textbf{47.3} $\pm$ 0.2 & \textbf{47.2} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.3 & \textbf{47.0} $\pm$ 0.1 & \textbf{47.0} $\pm$ 0.2\\
+hopper-medium-replay & \textbf{97.6} $\pm$ 0.9 & 97.0 $\pm$ 1.1 & \textbf{98.1} $\pm$ 1.1 & 96.4 $\pm$ 0.6 & \textbf{97.3} $\pm$ 0.3 & \textbf{97.7} $\pm$ 0.4\\
+walker2d-medium-replay & 83.5 $\pm$ 0.5 & 82.1 $\pm$ 2.3 & \textbf{84.8} $\pm$ 2.2 & 83.1 $\pm$ 0.7 & 83.5 $\pm$ 0.9 & 81.4 $\pm$ 4.5\\
+ant-medium-replay & 96.5 $\pm$ 0.7 & 93.3 $\pm$ 1.6 & \textbf{98.2} $\pm$ 0.9 & 95.4 $\pm$ 1.1 & 97.1 $\pm$ 1.0 & 93.5 $\pm$ 2.8\\
+		\hline 
+Average (All Settings) & \textbf{78.4} $\pm$ 0.7 & 77.5 $\pm$ 0.9 & \textbf{78.8} $\pm$ 0.8 & 77.7 $\pm$ 0.6 & 78.0 $\pm$ 0.5 & 77.3 $\pm$ 1.3\\
+
+Now generate latex table:
+
+Best Score & CQL S.TD.T & CQL S.TD.T.P & CQL S.TD & CQL SP.TD.T & CQL SP.TD.T.P & CQL SP.TD \\
+		\hline 
+halfcheetah-medium & \textbf{50.1} $\pm$ 0.1 & \textbf{50.2} $\pm$ 0.2 & \textbf{50.5} $\pm$ 0.1 & 50.0 $\pm$ 0.3 & 50.0 $\pm$ 0.0 & 49.9 $\pm$ 0.1\\
+hopper-medium & 86.0 $\pm$ 3.5 & \textbf{91.5} $\pm$ 2.4 & 87.3 $\pm$ 1.3 & 87.2 $\pm$ 1.8 & \textbf{91.4} $\pm$ 4.4 & 87.9 $\pm$ 3.2\\
+walker2d-medium & \textbf{86.2} $\pm$ 0.1 & \textbf{86.0} $\pm$ 0.5 & \textbf{86.4} $\pm$ 0.3 & \textbf{86.2} $\pm$ 0.5 & \textbf{86.1} $\pm$ 0.4 & \textbf{86.1} $\pm$ 0.3\\
+ant-medium & \textbf{112.2} $\pm$ 0.5 & \textbf{112.3} $\pm$ 0.4 & \textbf{112.8} $\pm$ 0.6 & \textbf{112.1} $\pm$ 0.3 & \textbf{112.0} $\pm$ 0.7 & \textbf{113.1} $\pm$ 0.5\\
+halfcheetah-medium-replay & \textbf{48.5} $\pm$ 0.3 & \textbf{48.4} $\pm$ 0.3 & \textbf{48.9} $\pm$ 0.3 & 48.1 $\pm$ 0.2 & 48.3 $\pm$ 0.3 & 48.3 $\pm$ 0.3\\
+hopper-medium-replay & \textbf{101.3} $\pm$ 0.9 & \textbf{101.2} $\pm$ 0.2 & \textbf{101.8} $\pm$ 0.6 & \textbf{101.2} $\pm$ 0.1 & \textbf{100.9} $\pm$ 1.0 & \textbf{101.5} $\pm$ 0.8\\
+walker2d-medium-replay & 90.3 $\pm$ 0.4 & \textbf{91.8} $\pm$ 0.6 & 90.4 $\pm$ 0.9 & 90.9 $\pm$ 1.8 & \textbf{91.4} $\pm$ 0.8 & \textbf{91.5} $\pm$ 0.2\\
+ant-medium-replay & \textbf{109.9} $\pm$ 0.1 & \textbf{109.8} $\pm$ 0.7 & \textbf{110.0} $\pm$ 0.6 & \textbf{110.4} $\pm$ 0.6 & \textbf{109.7} $\pm$ 1.1 & \textbf{110.0} $\pm$ 0.3\\
+		\hline 
+Average (All Settings) & \textbf{85.6} $\pm$ 0.7 & \textbf{86.4} $\pm$ 0.7 & \textbf{86.0} $\pm$ 0.6 & \textbf{85.8} $\pm$ 0.7 & \textbf{86.2} $\pm$ 1.1 & \textbf{86.0} $\pm$ 0.7\\
+
+Now generate latex table:
+
+Average Later Half & CQL S.TD.T & CQL S.TD.T.P & CQL S.TD & CQL SP.TD.T & CQL SP.TD.T.P & CQL SP.TD \\
+		\hline 
+halfcheetah-medium & \textbf{49.0} $\pm$ 0.2 & \textbf{49.0} $\pm$ 0.1 & \textbf{49.4} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.2 & \textbf{49.0} $\pm$ 0.1 & \textbf{49.0} $\pm$ 0.1\\
+hopper-medium & \textbf{67.3} $\pm$ 0.4 & 64.9 $\pm$ 2.3 & \textbf{67.4} $\pm$ 0.4 & \textbf{67.3} $\pm$ 0.3 & \textbf{67.7} $\pm$ 2.2 & 66.2 $\pm$ 1.4\\
+walker2d-medium & \textbf{82.9} $\pm$ 0.3 & \textbf{82.8} $\pm$ 0.0 & \textbf{82.8} $\pm$ 0.7 & \textbf{82.4} $\pm$ 0.6 & 82.0 $\pm$ 0.5 & \textbf{82.8} $\pm$ 0.3\\
+ant-medium & 102.3 $\pm$ 0.3 & 99.5 $\pm$ 2.2 & 102.0 $\pm$ 0.8 & 99.7 $\pm$ 0.9 & 99.2 $\pm$ 0.9 & \textbf{103.4} $\pm$ 1.6\\
+halfcheetah-medium-replay & \textbf{46.9} $\pm$ 0.2 & 46.7 $\pm$ 0.0 & \textbf{47.2} $\pm$ 0.1 & 46.7 $\pm$ 0.1 & 46.7 $\pm$ 0.2 & \textbf{47.0} $\pm$ 0.3\\
+hopper-medium-replay & 94.8 $\pm$ 1.3 & 92.4 $\pm$ 1.9 & 94.0 $\pm$ 2.6 & \textbf{95.8} $\pm$ 0.3 & 93.2 $\pm$ 1.7 & \textbf{96.0} $\pm$ 0.5\\
+walker2d-medium-replay & \textbf{83.7} $\pm$ 0.3 & 82.6 $\pm$ 1.4 & \textbf{83.6} $\pm$ 0.3 & \textbf{84.2} $\pm$ 0.4 & 83.2 $\pm$ 2.1 & 82.5 $\pm$ 0.9\\
+ant-medium-replay & 96.7 $\pm$ 2.2 & 92.6 $\pm$ 1.0 & 95.1 $\pm$ 1.1 & \textbf{98.6} $\pm$ 1.1 & 97.0 $\pm$ 2.5 & 95.0 $\pm$ 4.1\\
+		\hline 
+Average (All Settings) & \textbf{77.9} $\pm$ 0.6 & 76.3 $\pm$ 1.1 & \textbf{77.7} $\pm$ 0.7 & \textbf{78.0} $\pm$ 0.5 & \textbf{77.3} $\pm$ 1.3 & \textbf{77.7} $\pm$ 1.1\\

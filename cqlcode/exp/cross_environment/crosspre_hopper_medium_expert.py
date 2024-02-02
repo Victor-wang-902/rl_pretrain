@@ -36,8 +36,8 @@ def main():
     ###########################################################
     exp_prefix = 'cql_cross_pretrain' #TODO specify the experimnent name prefix
     settings = [
-        'env', '', MUJOCO_4_ENVS, # this contains 4 mujoco envs: ant, halfcheetah, hopper, walker2d
-        'dataset', '', MUJOCO_3_DATASETS, # this contains 3 mujoco datasets: medium, medium-expert, medium-replay
+        'env', '', ["hopper"], # this contains 4 mujoco envs: ant, halfcheetah, hopper, walker2d
+        'dataset', '', ["medium-expert"], # this contains 3 mujoco datasets: medium, medium-expert, medium-replay
         'pretrain_mode', 'pre', [#'q_sprime_text', # pretrain on the same dataset without projections using next state prediction (MDP)
                                 #'q_noact_sprime_text', # pretrain on the same dataset without projections using next state prediction without conditioning on the action
                                 #'proj0_q_sprime_text', # pretrain on the same dataset but still use projections, using next state prediction (MDP)
@@ -46,21 +46,21 @@ def main():
                                 #'proj0_TD', # pretrain on the same dataset with projections using CQL
                                 #'proj3_q_sprime_text', # pretrain on the current dataset of the next env (with projections) using next state prediction (MDP)
                                 #'proj3_q_sprime_text_1', # pretrain on the current dataset of the second next env (with projections) using next state prediction (MDP)
-                                #'proj3_q_sprime_text_2',  # pretrain on the current dataset of the third next env (with projections) using next state prediction (MDP)
-                                #'proj3_q_sprime_text_all', # pretrain on all envs (the current dataset for all envs) with projections, using next state prediction (MDP)
-                                #'proj3_q_sprime_text_allbut', # pretrain on all but current env (the current dataset for each env) with projections, using next state prediction (MDP)
+                                'proj3_q_sprime_text_2',  # pretrain on the current dataset of the third next env (with projections) using next state prediction (MDP)
+                                'proj3_q_sprime_text_all', # pretrain on all envs (the current dataset for all envs) with projections, using next state prediction (MDP)
+                                'proj3_q_sprime_text_allbut', # pretrain on all but current env (the current dataset for each env) with projections, using next state prediction (MDP)
                                 #'proj3_q_noact_sprime_text', # pretrain on the current dataset of the next env (with projections) using next state prediction without conditioning on the action (MC)
                                 #'proj3_q_noact_sprime_text_1', # pretrain on the current dataset of the second next env (with projections) using next state prediction without conditioning on the action (MC)
-                                #'proj3_q_noact_sprime_text_2', # pretrain on the current dataset of the third next env (with projections) using next state prediction without conditioning on the action (MC)
-                                #'proj3_q_noact_sprime_text_all', # pretrain on all envs (the current dataset for all envs) with projections, using next state prediction without conditioning on the action (MC)
-                                #'proj3_q_noact_sprime_text_allbut', # pretrain on all but current env (the current dataset for each env) with projections, using next state prediction without conditioning on the action (MC)
+                                'proj3_q_noact_sprime_text_2', # pretrain on the current dataset of the third next env (with projections) using next state prediction without conditioning on the action (MC)
+                                'proj3_q_noact_sprime_text_all', # pretrain on all envs (the current dataset for all envs) with projections, using next state prediction without conditioning on the action (MC)
+                                'proj3_q_noact_sprime_text_allbut', # pretrain on all but current env (the current dataset for each env) with projections, using next state prediction without conditioning on the action (MC)
                                 #'proj3_TD_text', # pretrain on the current dataset of the next env (with projections) using CQL
                                 #'proj3_TD_text_1', # pretrain on the current dataset of the second next env (with projections) using CQL
                                 'proj3_TD_text_2', # pretrain on the current dataset of the third next env (with projections) using CQL
                                 'proj3_TD_text_all', # pretrain on all envs (the current dataset for all envs) with projections, using CQL
                                 'proj3_TD_text_allbut', # pretrain on all but current env (the current dataset for each env) with projections, using CQL
-                                'proj3_q_sprime_text_3x', # pretrain on the all datasets of the next env (with projections) using next state prediction (MDP)
-                                'proj3_q_sprime_text_1_3x', # pretrain on all datasets of the second next env (with projections) using next state prediction (MDP)
+                                #'proj3_q_sprime_text_3x', # pretrain on the all datasets of the next env (with projections) using next state prediction (MDP)
+                                #'proj3_q_sprime_text_1_3x', # pretrain on all datasets of the second next env (with projections) using next state prediction (MDP)
                                 'proj3_q_sprime_text_2_3x', # pretrain on all datasets of the third next env (with projections) using next state prediction (MDP)
                                 #'proj3_q_sprime_text_all_3x', # pretrain on all datasets of all envs (10 datasets in total, EXCLUDING the two other datasets for the current env) with projections, using next state prediction (MDP)
                                 #'proj3_q_sprime_text_allbut_3x', # pretrain on all datasets of all envs EXCEPT for the current env (9 datasets in total) with projections, using next state prediction (MDP)
